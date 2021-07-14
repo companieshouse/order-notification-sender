@@ -6,21 +6,24 @@ import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
-import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 public abstract class KafkaProducer implements InitializingBean {
 
-    private static final Logger LOGGER = LoggingUtils.getLogger();
-
     private CHKafkaProducer chKafkaProducer;
+
+    protected LoggingUtils loggingUtils;
+
+    public KafkaProducer(LoggingUtils loggingUtils) {
+        this.loggingUtils = loggingUtils;
+    }
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String brokerAddresses;
 
     @Override
     public void afterPropertiesSet() {
-        LOGGER.trace("Configuring CH Kafka producer");
+        loggingUtils.getLogger().trace("Configuring CH Kafka producer");
         final ProducerConfig config = createProducerConfig();
         config.setRoundRobinPartitioner(true);
         config.setAcks(Acks.WAIT_FOR_ALL);

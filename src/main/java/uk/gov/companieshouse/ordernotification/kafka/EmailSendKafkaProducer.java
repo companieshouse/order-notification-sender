@@ -12,6 +12,10 @@ import java.util.function.Consumer;
 @Service
 public class EmailSendKafkaProducer extends KafkaProducer {
 
+    public EmailSendKafkaProducer(LoggingUtils loggingUtils) {
+        super(loggingUtils);
+    }
+
     /**
      * Sends message to Kafka topic
      * @param message certificate or certified copy order message to be produced to the <code>email-send</code> topic
@@ -25,7 +29,7 @@ public class EmailSendKafkaProducer extends KafkaProducer {
                             final String orderReference,
                             final Consumer<RecordMetadata> asyncResponseLogger)
             throws ExecutionException, InterruptedException {
-        LoggingUtils.logMessageWithOrderReference(message, "Sending message to Kafka", orderReference);
+        loggingUtils.logMessageWithOrderReference(message, "Sending message to Kafka", orderReference);
 
         final Future<RecordMetadata> recordMetadataFuture = getChKafkaProducer().sendAndReturnFuture(message);
         asyncResponseLogger.accept(recordMetadataFuture.get());

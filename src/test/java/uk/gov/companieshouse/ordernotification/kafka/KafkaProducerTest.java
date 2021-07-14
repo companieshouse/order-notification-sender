@@ -11,6 +11,7 @@ import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
+import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -40,7 +41,11 @@ class KafkaProducerTest {
     /**
      * Extends {@link KafkaProducer} to provide a concrete implementation for testing.
      */
-    private static class TestKafkaProducer extends KafkaProducer {}
+    private static class TestKafkaProducer extends KafkaProducer {
+        public TestKafkaProducer() {
+            super(new LoggingUtils());
+        }
+    }
 
     /**
      * Extends {@link KafkaProducer} to provide a concrete implementation for testing that allows us to stub out
@@ -50,6 +55,10 @@ class KafkaProducerTest {
         private boolean modifyProducerConfigCalled;
         private boolean createProducerConfigCalled;
         private boolean createChKafkaProducerCalled;
+
+        public TestKafkaProducer2(LoggingUtils loggingUtils) {
+            super(loggingUtils);
+        }
 
         boolean isModifyProducerConfigCalled() {
             return modifyProducerConfigCalled;
@@ -99,7 +108,7 @@ class KafkaProducerTest {
     void afterPropertiesSetCallsTemplateMethods() {
 
         // Given
-        final TestKafkaProducer2 kafkaProducerUnderTest = new TestKafkaProducer2();
+        final TestKafkaProducer2 kafkaProducerUnderTest = new TestKafkaProducer2(new LoggingUtils());
 
         // When
         kafkaProducerUnderTest.afterPropertiesSet();
@@ -116,7 +125,7 @@ class KafkaProducerTest {
     void afterPropertiesSetSetsProducerMember() {
 
         // Given
-        final TestKafkaProducer2 kafkaProducerUnderTest = new TestKafkaProducer2();
+        final TestKafkaProducer2 kafkaProducerUnderTest = new TestKafkaProducer2(new LoggingUtils());
 
         // When
         kafkaProducerUnderTest.afterPropertiesSet();
@@ -131,7 +140,7 @@ class KafkaProducerTest {
     void afterPropertiesSetSetsProducerConfigProperties() {
 
         // Given
-        final TestKafkaProducer2 kafkaProducerUnderTest = new TestKafkaProducer2();
+        final TestKafkaProducer2 kafkaProducerUnderTest = new TestKafkaProducer2(new LoggingUtils());
 
         // When
         kafkaProducerUnderTest.afterPropertiesSet();

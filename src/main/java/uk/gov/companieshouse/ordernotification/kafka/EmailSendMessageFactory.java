@@ -17,9 +17,11 @@ public class EmailSendMessageFactory {
 
 	private final SerializerFactory serializerFactory;
 	private static final String EMAIL_SEND_TOPIC = "email-send";
+	private LoggingUtils loggingUtils;
 
-	public EmailSendMessageFactory(SerializerFactory serializer) {
+	public EmailSendMessageFactory(SerializerFactory serializer, LoggingUtils loggingUtils) {
 		serializerFactory = serializer;
+		this.loggingUtils = loggingUtils;
 	}
 
 	/**
@@ -29,16 +31,16 @@ public class EmailSendMessageFactory {
 	 * @throws SerializationException should there be a failure to serialize the EmailSend object
 	 */
 	public Message createMessage(final EmailSend emailSend, String orderReference) throws SerializationException {
-        Map<String, Object> logMap = LoggingUtils.createLogMapWithOrderReference(orderReference);
+        Map<String, Object> logMap = loggingUtils.createLogMapWithOrderReference(orderReference);
 	    logMap.put(LoggingUtils.TOPIC, EMAIL_SEND_TOPIC);
-		LoggingUtils.getLogger().info("Create kafka message", logMap);
+		loggingUtils.getLogger().info("Create kafka message", logMap);
 		final AvroSerializer<EmailSend> serializer =
 				serializerFactory.getGenericRecordSerializer(EmailSend.class);
 		final Message message = new Message();
 		message.setValue(serializer.toBinary(emailSend));
 		message.setTopic(EMAIL_SEND_TOPIC);
 		message.setTimestamp(new Date().getTime());
-		LoggingUtils.getLogger().info("Kafka message created", logMap);
+		loggingUtils.getLogger().info("Kafka message created", logMap);
 		return message;
 	}
 }

@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.email.EmailSend;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.message.Message;
@@ -22,6 +23,8 @@ class EmailSendMessageFactoryTest {
     private SerializerFactory serializerFactory;
     @Autowired
     private DeserializerFactory deserializerFactory;
+    @Autowired
+    private LoggingUtils loggingUtils;
 
     private static final String APP_ID = "App Id";
     private static final String EMAIL_DATA = "Message content";
@@ -36,7 +39,7 @@ class EmailSendMessageFactoryTest {
     @Test
     void createMessageSuccessfullyCreatesMessage() throws Exception {
         // Given
-        EmailSendMessageFactory messageFactory = new EmailSendMessageFactory(serializerFactory);
+        EmailSendMessageFactory messageFactory = new EmailSendMessageFactory(serializerFactory, loggingUtils);
 
         // When
         Message message = messageFactory.createMessage(createEmailSend(), ORDER_REF);

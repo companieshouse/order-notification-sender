@@ -4,29 +4,27 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.message.Message;
-import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.ordernotification.email.EmailSend;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.email.EmailSend;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_REFERENCE_NUMBER;
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.createLogMapWithAcknowledgedKafkaMessage;
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.logIfNotNull;
 
 @Service
 public class EmailSendMessageProducer {
 
-    private static final Logger LOGGER = LoggingUtils.getLogger();
-
     private final EmailSendMessageFactory emailSendAvroSerializer;
     private final EmailSendKafkaProducer emailSendKafkaProducer;
+    private final LoggingUtils loggingUtils;
 
     public EmailSendMessageProducer(final EmailSendMessageFactory avroSerializer,
-                                    final EmailSendKafkaProducer kafkaMessageProducer) {
+                                    final EmailSendKafkaProducer kafkaMessageProducer,
+                                    final LoggingUtils loggingUtils) {
         this.emailSendAvroSerializer = avroSerializer;
         this.emailSendKafkaProducer = kafkaMessageProducer;
+        this.loggingUtils = loggingUtils;
     }
 
     /**
@@ -39,9 +37,9 @@ public class EmailSendMessageProducer {
     public void sendMessage(final EmailSend email, String orderReference)
             throws SerializationException, ExecutionException, InterruptedException {
         Map<String, Object> logMap =
-                LoggingUtils.logWithOrderReference("Sending message to kafka producer", orderReference);
+                loggingUtils.logWithOrderReference("Sending message to kafka producer", orderReference);
         final Message message = emailSendAvroSerializer.createMessage(email, orderReference);
-        logIfNotNull(logMap, LoggingUtils.TOPIC, message.getTopic());
+        loggingUtils.logIfNotNull(logMap, LoggingUtils.TOPIC, message.getTopic());
         emailSendKafkaProducer.sendMessage(message, orderReference,
                 recordMetadata ->
                     logOffsetFollowingSendIngOfMessage(orderReference, recordMetadata));
@@ -54,8 +52,8 @@ public class EmailSendMessageProducer {
      */
     void logOffsetFollowingSendIngOfMessage(final String orderReference,
                                             final RecordMetadata recordMetadata) {
-        final Map<String, Object> logMapCallback =  createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
-        logIfNotNull(logMapCallback, ORDER_REFERENCE_NUMBER, orderReference);
-        LOGGER.info("Message sent to Kafka topic", logMapCallback);
+        final Map<String, Object> logMapCallback =  loggingUtils.createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
+        loggingUtils.logIfNotNull(logMapCallback, ORDER_REFERENCE_NUMBER, orderReference);
+        loggingUtils.getLogger().info("Message sent to Kafka topic", logMapCallback);
     }
 }
