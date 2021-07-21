@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.email;
+package uk.gov.companieshouse.ordernotification.emailsender.service;
 
 import email.email_send;
 

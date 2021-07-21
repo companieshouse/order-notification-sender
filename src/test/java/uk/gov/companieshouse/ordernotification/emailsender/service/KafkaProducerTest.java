@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.kafka;
+package uk.gov.companieshouse.ordernotification.emailsender.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

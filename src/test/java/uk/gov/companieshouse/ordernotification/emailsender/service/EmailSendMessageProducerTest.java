@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.kafka;
+package uk.gov.companieshouse.ordernotification.emailsender.service;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.StructuredLogger;
-import uk.gov.companieshouse.ordernotification.email.EmailSend;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import java.util.Map;
@@ -111,7 +110,7 @@ public class EmailSendMessageProducerTest {
 
         // Then
         verify(loggingUtils, times(1)).createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
-        verify(loggingUtils).logIfNotNull(any(Map.class), eq(ORDER_REFERENCE_NUMBER), eq((Object)ORDER_REFERENCE));
+        verify(loggingUtils).logIfNotNull(any(Map.class), eq(ORDER_REFERENCE_NUMBER), eq(ORDER_REFERENCE));
         verify(loggingUtils.getLogger()).info(eq("Message sent to Kafka topic"), any(Map.class));
    }
 }

@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.client;
+package uk.gov.companieshouse.ordernotification.ordersapi.service;
 
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.InternalApiClient;

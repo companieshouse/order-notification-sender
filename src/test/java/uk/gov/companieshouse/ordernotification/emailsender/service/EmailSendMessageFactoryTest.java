@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.kafka;
+package uk.gov.companieshouse.ordernotification.emailsender.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -7,8 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.companieshouse.ordernotification.emailsender.service.EmailSendMessageFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.email.EmailSend;
+import uk.gov.companieshouse.ordernotification.emailsender.service.EmailSend;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.kafka.serialization.AvroSerializer;

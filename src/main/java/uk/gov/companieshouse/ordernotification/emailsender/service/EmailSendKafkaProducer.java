@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.kafka;
+package uk.gov.companieshouse.ordernotification.emailsender.service;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.stereotype.Service;

@@ -1,11 +1,10 @@
-package uk.gov.companieshouse.ordernotification.kafka;
+package uk.gov.companieshouse.ordernotification.emailsender.service;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.email.EmailSend;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
