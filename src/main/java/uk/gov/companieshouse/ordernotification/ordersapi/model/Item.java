@@ -1,7 +1,5 @@
 package uk.gov.companieshouse.ordernotification.ordersapi.model;
 
-import uk.gov.companieshouse.orders.items.ItemCosts;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;

@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ORDER_REFERENCE;
+import static uk.gov.companieshouse.ordernotification.fixtures.TestUtils.ORDER_REFERENCE;
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_REFERENCE_NUMBER;
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.TOPIC;
 
