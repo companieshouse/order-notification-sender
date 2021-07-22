@@ -1,12 +1,12 @@
 package uk.gov.companieshouse.ordernotification.fixtures;
 
-import uk.gov.companieshouse.ordernotification.ordersapi.model.ActionedBy;
-import uk.gov.companieshouse.ordernotification.ordersapi.model.DeliveryDetails;
-import uk.gov.companieshouse.ordernotification.ordersapi.model.Item;
-import uk.gov.companieshouse.ordernotification.ordersapi.model.ItemCosts;
-import uk.gov.companieshouse.ordernotification.ordersapi.model.ItemLinks;
-import uk.gov.companieshouse.ordernotification.ordersapi.model.MissingImageDeliveryItemOptions;
-import uk.gov.companieshouse.ordernotification.ordersapi.model.OrderData;
+import uk.gov.companieshouse.ordernotification.orders.model.ActionedBy;
+import uk.gov.companieshouse.ordernotification.orders.model.DeliveryDetails;
+import uk.gov.companieshouse.ordernotification.orders.model.Item;
+import uk.gov.companieshouse.ordernotification.orders.model.ItemCosts;
+import uk.gov.companieshouse.ordernotification.orders.model.ItemLinks;
+import uk.gov.companieshouse.ordernotification.orders.model.MissingImageDeliveryItemOptions;
+import uk.gov.companieshouse.ordernotification.orders.model.OrderData;
 import uk.gov.companieshouse.orders.items.ChdItemOrdered;
 import uk.gov.companieshouse.orders.items.Links;
 import uk.gov.companieshouse.orders.items.OrderedBy;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
-import static uk.gov.companieshouse.ordernotification.ordersapi.model.ProductType.MISSING_IMAGE_DELIVERY_ACCOUNTS;
+import static uk.gov.companieshouse.ordernotification.orders.model.ProductType.MISSING_IMAGE_DELIVERY_ACCOUNTS;
 
 public class TestUtils {
 
