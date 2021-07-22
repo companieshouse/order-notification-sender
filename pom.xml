@@ -22,10 +22,11 @@
         <kafka-models.version>1.0.22</kafka-models.version>
         <structured-logging.version>1.9.7</structured-logging.version>
         <mockito-junit-jupiter-version>2.18.0</mockito-junit-jupiter-version>
-        <junit-jupiter.version>5.5.0</junit-jupiter.version>
-        <junit-jupiter-engine-version>5.2.0</junit-jupiter-engine-version>
+        <junit-jupiter.version>5.7.0</junit-jupiter.version>
+        <junit-jupiter-engine-version>5.7.0</junit-jupiter-engine-version>
         <private-api-sdk-java.version>2.0.72</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
+        <testcontainers.version>1.16.0</testcontainers.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -60,12 +61,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -145,6 +141,24 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

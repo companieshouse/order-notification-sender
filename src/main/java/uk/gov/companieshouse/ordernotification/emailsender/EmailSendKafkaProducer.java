@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.message.Message;
+import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import java.util.concurrent.ExecutionException;
@@ -10,10 +12,14 @@ import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 @Service
-class EmailSendKafkaProducer extends KafkaProducer {
+class EmailSendKafkaProducer {
+    private LoggingUtils loggingUtils;
+    private CHKafkaProducer chKafkaProducer;
 
-    public EmailSendKafkaProducer(LoggingUtils loggingUtils) {
-        super(loggingUtils);
+    @Autowired
+    public EmailSendKafkaProducer(LoggingUtils loggingUtils, CHKafkaProducer chKafkaProducer) {
+        this.loggingUtils = loggingUtils;
+        this.chKafkaProducer = chKafkaProducer;
     }
 
     /**
@@ -31,7 +37,7 @@ class EmailSendKafkaProducer extends KafkaProducer {
             throws ExecutionException, InterruptedException {
         loggingUtils.logMessageWithOrderReference(message, "Sending message to Kafka", orderReference);
 
-        final Future<RecordMetadata> recordMetadataFuture = getChKafkaProducer().sendAndReturnFuture(message);
+        final Future<RecordMetadata> recordMetadataFuture = chKafkaProducer.sendAndReturnFuture(message);
         asyncResponseLogger.accept(recordMetadataFuture.get());
     }
 

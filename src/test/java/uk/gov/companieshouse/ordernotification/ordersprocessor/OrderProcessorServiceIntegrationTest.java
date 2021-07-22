@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.orderprocessor;
+package uk.gov.companieshouse.ordernotification.ordersprocessor;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,8 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import uk.gov.companieshouse.kafka.message.Message;
-import uk.gov.companieshouse.ordernotification.emailsender.service.ItemKafkaProducer;
 import uk.gov.companieshouse.ordernotification.emailsender.KafkaMessagingException;
 import uk.gov.companieshouse.ordernotification.fixtures.TestUtils;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
@@ -18,15 +16,10 @@ import uk.gov.companieshouse.ordernotification.orders.model.OrderData;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersService;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersServiceException;
 
-import java.io.InterruptedIOException;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestUtils.createOrder;
 
@@ -43,9 +36,6 @@ class OrderProcessorServiceIntegrationTest {
 
     @MockBean
     private OrdersService ordersApi;
-
-    @MockBean
-    private ItemKafkaProducer itemKafkaProducer;
 
     @MockBean
     private Consumer consumer;
@@ -86,30 +76,4 @@ class OrderProcessorServiceIntegrationTest {
                     "null of string in field item_uri of uk.gov.companieshouse.orders.items.Item in field item of " +
                             "uk.gov.companieshouse.orders.items.ChdItemOrdered"));
     }
-
-    @Test
-    @DisplayName("processOrderReceived() propagates retryable RetryableErrorException so consumer can retry")
-    void propagatesRetryableErrorException() throws Exception {
-
-        // Given we have a valid order...
-        final OrderData order = createOrder();
-        when(ordersApi.getOrderData(anyString())).thenReturn(order);
-
-        // ...but something prevents successful production of the message to the topic
-        final ExecutionException messageProductionError =
-                new ExecutionException("Test generated exception.", new InterruptedIOException());
-        doThrow(messageProductionError)
-                .when(itemKafkaProducer).sendMessage(eq(TestUtils.ORDER_REFERENCE),
-                                                     eq(TestUtils.MISSING_IMAGE_DELIVERY_ITEM_ID),
-                                                     any(Message.class),
-                                                     any(Consumer.class));
-
-        // and when the order is processed then the message production error is propagated as a retryable error
-        assertThatExceptionOfType(RetryableErrorException.class).isThrownBy(() ->
-            orderProcessorServiceUnderTest.processOrderReceived(TestUtils.ORDER_RECEIVED_URI))
-            .withMessage(
-                "Kafka item message could not be sent for order reference ORD-432118-793830 item ID MID-242116-007650")
-            .withCause(messageProductionError);
-    }
-
 }

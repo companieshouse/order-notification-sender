@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.orderprocessor;
+package uk.gov.companieshouse.ordernotification.ordersprocessor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,6 @@ import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER
 public class OrderProcessorService {
 
     private final OrdersService ordersService;
-    //private final OrderRouterService orderRouter; // TODO: create new email sender
     private final LoggingUtils loggingUtils;
 
     @Autowired
