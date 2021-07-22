@@ -2,6 +2,7 @@ package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,6 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@Disabled("Subject to rework using Spring events")
 class OrdersKafkaConsumerTest {
     private static final String ORDER_RECEIVED_URI = "/order/ORDER-12345";
     private static final String ORDER_RECEIVED_TOPIC = "order-received";

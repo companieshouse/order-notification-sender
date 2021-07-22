@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.ordersprocessor;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ import static uk.gov.companieshouse.ordernotification.fixtures.TestUtils.createO
 @EmbeddedKafka
 @DirtiesContext
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
+@Disabled("Subject to rework using Spring events")
 class OrderProcessorServiceIntegrationTest {
 
     @Autowired

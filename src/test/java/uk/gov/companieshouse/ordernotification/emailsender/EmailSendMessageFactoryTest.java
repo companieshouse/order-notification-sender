@@ -1,12 +1,16 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import org.testcontainers.containers.KafkaContainer;
+import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.message.Message;
@@ -16,7 +20,7 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 @SpringBootTest
 @DirtiesContext
 @EmbeddedKafka
-@TestPropertySource(locations = "classpath:application-stubbed.properties")
+@TestPropertySource(locations = "classpath:application-stubbed-empty.properties")
 class EmailSendMessageFactoryTest {
     @Autowired
     private SerializerFactory serializerFactory;
@@ -24,6 +28,8 @@ class EmailSendMessageFactoryTest {
     private DeserializerFactory deserializerFactory;
     @Autowired
     private LoggingUtils loggingUtils;
+
+    private static KafkaContainer kafkaContainer;
 
     private static final String APP_ID = "App Id";
     private static final String EMAIL_DATA = "Message content";
@@ -34,6 +40,18 @@ class EmailSendMessageFactoryTest {
     private static final String CREATED_AT = "2020-08-25T09:27:09.519+01:00";
 
     private static final String TOPIC = "email-send";
+
+    @BeforeAll
+    static void before() {
+        kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
+        kafkaContainer.start();
+        System.setProperty("spring.kafka.bootstrap-servers", kafkaContainer.getBootstrapServers());
+    }
+
+    @AfterAll
+    static void after() {
+        kafkaContainer.stop();
+    }
 
     @Test
     void createMessageSuccessfullyCreatesMessage() throws Exception {

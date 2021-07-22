@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @ContextConfiguration(classes = KafkaBrokerConfiguration.class)
-@TestPropertySource(locations = "classpath:application-stubbed.properties")
+@TestPropertySource(locations = "classpath:application-stubbed-empty.properties")
 class KafkaProducerConfigurationIntegrationTest {
 
     @Autowired
