@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>120</x>
+      <y>252</y>
+      <w>438</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersconsumer::KafkaOrdersConsumer
+--
+--
+@KafkaListener
++processOrderReceived(org.springframework.messaging.Message&lt;OrderReceived&gt; message): void
+@KafkaListener
++processOrderReceivedRetry(uk.gov.companieshouse.ordersconsumer::RetryOrderReceived): void
+@KafkaListener
++processOrderReceivedError(org.springframework.messaging.Message&lt;OrderReceived&gt; message): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>942</x>
+      <y>258</y>
+      <w>354</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersproducer::ErrorHandlingService
+--
+--
+@EventListener
++handleEvent(ErrorEvent event) : void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1122</x>
+      <y>156</y>
+      <w>66</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;produces&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>996</x>
+      <y>114</y>
+      <w>276</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.kafka.producer::
+CHKafkaProducer
+--
+bg=gray
++sendAndReturnFuture(Message msg) : Future&lt;RecordMetadata&gt; 
++send(Message msg) : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1008</x>
+      <y>432</y>
+      <w>222</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.events::
+ErrorEvent
+--
++getRetryCount() : int
++getOrderReceived() : OrderReceived
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1122</x>
+      <y>324</y>
+      <w>66</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;consumes&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;180.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>534</x>
+      <y>432</y>
+      <w>384</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersprocessor::OrderProcessorService
+--
+--
++OrderProcessorService(final OrdersService ordersService, LoggingUtils loggingUtils): ctor
+@EventListener
++handleProcessOrderEvent(ProcessOrderEvent event): void
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>210</x>
+      <y>426</y>
+      <w>240</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.events::
+ProcessOrderEvent
+--
++getRetryCount() : int
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>330</x>
+      <y>324</y>
+      <w>66</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;producess&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;170.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>444</x>
+      <y>444</y>
+      <w>102</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;consumes&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;20.0;150.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>912</x>
+      <y>456</y>
+      <w>108</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;produces&gt;&gt;</panel_attributes>
+    <additional_attributes>160.0;20.0;10.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>234</x>
+      <y>180</y>
+      <w>66</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;consumes&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>168</x>
+      <y>138</y>
+      <w>150</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.orders::
+OrderReceived
+--
+bg=gray</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>1242</x>
+      <y>354</y>
+      <w>186</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>if (retryCount &lt; limit)
+  Publish to retry topic
+else 
+  Publish to error topic
+
+[Event handling based on 
+method signature]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>756</x>
+      <y>348</y>
+      <w>150</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+org.springframework.context::
+ApplicationContext
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>654</x>
+      <y>276</y>
+      <w>150</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+org.springframework.context::
+ApplicationEventPublisher
+bg=yellow</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>768</x>
+      <y>306</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>552</x>
+      <y>288</y>
+      <w>114</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>170.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>720</x>
+      <y>306</y>
+      <w>18</w>
+      <h>138</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;210.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>366</x>
+      <y>138</y>
+      <w>258</w>
+      <h>48</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordersconsumer::RetryOrderReceived
+--
++getRetryCount() : int
++getOrderReceived() : OrderReceived
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>312</x>
+      <y>156</y>
+      <w>66</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>480</x>
+      <y>180</y>
+      <w>66</w>
+      <h>84</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;consumes&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>618</x>
+      <y>168</y>
+      <w>336</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;540.0;180.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>126</x>
+      <y>0</y>
+      <w>222</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Class Diagram: order-notification-sender
+--
+
+Describes relationships between significant
+classes that consume and produce events</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1182</x>
+      <y>324</y>
+      <w>72</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=..</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;80.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>702</x>
+      <y>108</y>
+      <w>180</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>Dedicated retry message helper that wraps 
+the original and provides and additional
+retry count</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>618</x>
+      <y>120</y>
+      <w>96</w>
+      <h>42</h>
+    </coordinates>
+    <panel_attributes>lt=..</panel_attributes>
+    <additional_attributes>10.0;50.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>480</x>
+      <y>732</y>
+      <w>210</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification::
+EmailSendModel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>594</x>
+      <y>570</y>
+      <w>258</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersprocessor::
+OrderMapperFactory
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>162</x>
+      <y>732</y>
+      <w>240</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.orders.model::
+OrdersData</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>354</x>
+      <y>642</y>
+      <w>120</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>/CertificateOrderMapper/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>252</x>
+      <y>570</y>
+      <w>288</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersprocessor::
+/OrderMapper/
+--
++getEmailSendModel(OrdersData ordersData) : EmailSendModel
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>408</x>
+      <y>600</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>732</x>
+      <y>726</y>
+      <w>276</w>
+      <h>66</h>
+    </coordinates>
+    <panel_attributes>ordernotification.emailsender::
+EmailSenderService
+--
+@EventListener
++handleSendEmailEvent(SendEmailEvent event) : void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>798</x>
+      <y>618</y>
+      <w>126</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>ordernotification.emailsender:
+SendEmailEvent</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>858</x>
+      <y>648</y>
+      <w>66</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;consumes&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;130.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>858</x>
+      <y>492</y>
+      <w>60</w>
+      <h>138</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+&lt;&lt;produce&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;210.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>720</x>
+      <y>492</y>
+      <w>18</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;130.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>534</x>
+      <y>582</y>
+      <w>72</w>
+      <h>18</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>312</x>
+      <y>672</y>
+      <w>54</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;100.0;70.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>516</x>
+      <y>600</y>
+      <w>18</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;220.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>366</x>
+      <y>654</y>
+      <w>120</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>/DocumentOrderMapper/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>378</x>
+      <y>666</y>
+      <w>120</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>/MissingImageOrderMapper/
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>306</x>
+      <y>804</y>
+      <w>258</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersprocessor::
+CertificateEmailSendModel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>462</x>
+      <y>858</y>
+      <w>246</w>
+      <h>36</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification::
+DocumentEmailSendModel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>612</x>
+      <y>804</y>
+      <w>240</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>uk.gov.companieshouse.ordernotification::
+MissingImageSendModel</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>534</x>
+      <y>762</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>636</x>
+      <y>762</y>
+      <w>18</w>
+      <h>54</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>582</x>
+      <y>762</y>
+      <w>18</w>
+      <h>108</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;160.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>606</x>
+      <y>642</y>
+      <w>204</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>10.0;150.0;320.0;10.0</additional_attributes>
+  </element>
+</diagram>
