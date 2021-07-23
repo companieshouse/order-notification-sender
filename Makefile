@@ -1,5 +1,6 @@
 artifact_name       := order-notification-sender
-version             := unversioned
+version             := latest
+repository_prefix   := 169942020521.dkr.ecr.eu-west-1.amazonaws.com/local
 
 .PHONY: all
 all: build
@@ -40,5 +41,5 @@ sonar-pr-analysis:
 	mvn sonar:sonar -P sonar-pr-analysis
 
 .PHONY: docker-build
-docker-build:
-	docker build -t $(artifact_name):$(version) .
+docker-build: build
+	DOCKER_BUILDKIT=0 docker build -t $(repository_prefix)/$(artifact_name):$(version) .
