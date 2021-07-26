@@ -5,6 +5,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.ConsumerSeekAware;
@@ -16,7 +18,7 @@ import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.kafka.serialization.AvroSerializer;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.ordersprocessor.OrderProcessorService;
+import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.ordernotification.ordersproducer.OrdersKafkaProducer;
 import uk.gov.companieshouse.orders.OrderReceived;
 
@@ -28,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.APPLICATION_NAMESPACE;
 
 @Service
-public class OrdersKafkaConsumer implements ConsumerSeekAware {
+public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventPublisherAware {
 
     private static final String ORDER_RECEIVED_TOPIC = "order-received";
     private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-retry";
@@ -48,21 +50,15 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware {
     @Value("${uk.gov.companieshouse.item-handler.error-consumer}")
     private boolean errorConsumerEnabled;
     private final SerializerFactory serializerFactory;
-    private final OrdersKafkaProducer kafkaProducer;
     private final KafkaListenerEndpointRegistry registry;
     private final Map<String, Integer> retryCount;
-    private final OrderProcessorService processor;
-
+    private ApplicationEventPublisher applicationEventPublisher;
     private LoggingUtils loggingUtils;
 
-    public OrdersKafkaConsumer(SerializerFactory serializerFactory,
-                               OrdersKafkaProducer kafkaProducer, KafkaListenerEndpointRegistry registry,
-                               final OrderProcessorService processor, LoggingUtils loggingUtils) {
+    public OrdersKafkaConsumer(SerializerFactory serializerFactory, KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
         this.serializerFactory = serializerFactory;
-        this.kafkaProducer = kafkaProducer;
         this.registry = registry;
         this.retryCount = new HashMap<>();
-        this.processor = processor;
         this.loggingUtils = loggingUtils;
     }
 
@@ -76,7 +72,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware {
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
             containerFactory = "kafkaListenerContainerFactory")
     public void processOrderReceived(org.springframework.messaging.Message<OrderReceived> message) {
-        // TODO handleMessage(message);
+        handleMessage(message);
     }
 
     /**
@@ -135,8 +131,11 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware {
         try {
             logMessageReceived(message, orderReceivedUri);
 
-            // process message TODO publish application
-            // processor.processOrderReceived(orderReceivedUri);
+            SendOrderNotificationEvent sendOrderNotificationEvent = new SendOrderNotificationEvent(orderReceivedUri,
+                    retryCount.getOrDefault(receivedTopic + "-" + orderReceivedUri, 0));
+
+            // process message
+            applicationEventPublisher.publishEvent(sendOrderNotificationEvent);
 
             // on successful processing remove counterKey from retryCount
             if (retryCount.containsKey(orderReceivedUri)) {
@@ -228,7 +227,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware {
         loggingUtils.getLogger().info(String.format(
                 "Republishing message: \"%1$s\" received from topic: \"%2$s\" to topic: \"%3$s\"",
                 orderUri, currentTopic, nextTopic), logMap);
-        try {
+        /*try {
             kafkaProducer.sendMessage(createRetryMessage(orderUri, nextTopic));
         } catch (ExecutionException | InterruptedException e) {
             loggingUtils.getLogger().error(String.format("Error sending message: \"%1$s\" to topic: \"%2$s\"",
@@ -236,7 +235,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
-        }
+        }*/
     }
 
     protected Message createRetryMessage(String orderUri, String topic) {
@@ -313,5 +312,10 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware {
     public void onIdleContainer(Map<TopicPartition, Long> map,
             ConsumerSeekCallback consumerSeekCallback) {
         // Do nothing as not required for this implementation
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }
