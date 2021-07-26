@@ -87,7 +87,7 @@ public class LoggingUtils {
     }
 
     public Map<String, Object> getMessageHeadersAsMap(
-            org.springframework.messaging.Message<OrderReceived> message) {
+            org.springframework.messaging.Message<?> message) {
         Map<String, Object> logMap = createLogMap();
         MessageHeaders messageHeaders = message.getHeaders();
 

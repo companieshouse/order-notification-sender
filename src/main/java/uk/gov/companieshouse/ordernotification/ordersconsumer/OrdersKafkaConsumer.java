@@ -10,22 +10,15 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.ConsumerSeekAware;
-import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.kafka.exceptions.SerializationException;
-import uk.gov.companieshouse.kafka.message.Message;
-import uk.gov.companieshouse.kafka.serialization.AvroSerializer;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
-import uk.gov.companieshouse.ordernotification.ordersproducer.OrdersKafkaProducer;
 import uk.gov.companieshouse.orders.OrderReceived;
+import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.APPLICATION_NAMESPACE;
 
@@ -34,7 +27,6 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
 
     private static final String ORDER_RECEIVED_TOPIC = "order-received";
     private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-retry";
-    private static final String ORDER_RECEIVED_KEY_RETRY = ORDER_RECEIVED_TOPIC_RETRY;
     private static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-error";
     private static final String ORDER_RECEIVED_GROUP =
             APPLICATION_NAMESPACE + "-" + ORDER_RECEIVED_TOPIC;
@@ -43,22 +35,17 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private static final String ORDER_RECEIVED_GROUP_ERROR =
             APPLICATION_NAMESPACE + "-" + ORDER_RECEIVED_TOPIC_ERROR;
     private static long errorRecoveryOffset = 0L;
-    private static final int MAX_RETRY_ATTEMPTS = 3;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
     @Value("${uk.gov.companieshouse.item-handler.error-consumer}")
     private boolean errorConsumerEnabled;
-    private final SerializerFactory serializerFactory;
     private final KafkaListenerEndpointRegistry registry;
-    private final Map<String, Integer> retryCount;
     private ApplicationEventPublisher applicationEventPublisher;
     private LoggingUtils loggingUtils;
 
-    public OrdersKafkaConsumer(SerializerFactory serializerFactory, KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
-        this.serializerFactory = serializerFactory;
+    public OrdersKafkaConsumer(KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
         this.registry = registry;
-        this.retryCount = new HashMap<>();
         this.loggingUtils = loggingUtils;
     }
 
@@ -72,7 +59,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
             containerFactory = "kafkaListenerContainerFactory")
     public void processOrderReceived(org.springframework.messaging.Message<OrderReceived> message) {
-        handleMessage(message);
+        handleMessage(new OrderReceivedDecorator(message));
     }
 
     /**
@@ -85,8 +72,8 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
             containerFactory = "kafkaListenerContainerFactory")
     public void processOrderReceivedRetry(
-            org.springframework.messaging.Message<OrderReceived> message) {
-        // TODO handleMessage(message);
+            org.springframework.messaging.Message<OrderReceivedNotificationRetry> message) {
+            handleMessage(new OrderReceivedNotificationRetryDecorator(message));
     }
 
     /**
@@ -107,7 +94,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             org.springframework.messaging.Message<OrderReceived> message) {
         long offset = Long.parseLong("" + message.getHeaders().get("kafka_offset"));
         if (offset <= errorRecoveryOffset) {
-            // TODO handleMessage(message);
+            handleMessage(new OrderReceivedDecorator(message));
         } else {
             Map<String, Object> logMap = loggingUtils.createLogMap();
             logMap.put(LoggingUtils.ORDER_RECEIVED_GROUP_ERROR, errorRecoveryOffset);
@@ -123,143 +110,28 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
      * 
      * @param message
      */
-    protected void handleMessage(org.springframework.messaging.Message<OrderReceived> message) {
-        OrderReceived msg = message.getPayload();
-        String orderReceivedUri = msg.getOrderUri();
-        MessageHeaders headers = message.getHeaders();
-        String receivedTopic = headers.get(KafkaHeaders.RECEIVED_TOPIC).toString();
-        try {
-            logMessageReceived(message, orderReceivedUri);
+    protected void handleMessage(TransformationDecorator<?> message) {
+        String orderReceivedUri = message.transform();
+        logMessageReceived(message.getMessage(), orderReceivedUri);
 
-            SendOrderNotificationEvent sendOrderNotificationEvent = new SendOrderNotificationEvent(orderReceivedUri,
-                    retryCount.getOrDefault(receivedTopic + "-" + orderReceivedUri, 0));
+        applicationEventPublisher.publishEvent(new SendOrderNotificationEvent(orderReceivedUri,
+                message.getRetries()));
 
-            // process message
-            applicationEventPublisher.publishEvent(sendOrderNotificationEvent);
-
-            // on successful processing remove counterKey from retryCount
-            if (retryCount.containsKey(orderReceivedUri)) {
-                resetRetryCount(receivedTopic + "-" + orderReceivedUri);
-            }
-            logMessageProcessed(message, orderReceivedUri);
-        //} catch (RetryableErrorException ex) {
-        //    retryMessage(message, orderReceivedUri, receivedTopic, ex);
-        } catch (Exception x) {
-            logMessageProcessingFailureNonRecoverable(message, x);
-        }
+        logMessageProcessed(message.getMessage(), orderReceivedUri);
     }
 
-    /**
-     * Retries a message that failed processing with a `RetryableErrorException`. Checks which topic
-     * the message was received from and whether any retry attempts remain. The message is published
-     * to the next topic for failover processing, if retries match or exceed `MAX_RETRY_ATTEMPTS`.
-     * 
-     * @param message
-     * @param orderReceivedUri
-     * @param receivedTopic
-     * @param ex
-     */
-    private void retryMessage(org.springframework.messaging.Message<OrderReceived> message,
-            String orderReceivedUri, String receivedTopic, RetryableErrorException ex) {
-        String nextTopic = (receivedTopic.equals(ORDER_RECEIVED_TOPIC)
-                || receivedTopic.equals(ORDER_RECEIVED_TOPIC_ERROR)) ? ORDER_RECEIVED_TOPIC_RETRY
-                        : ORDER_RECEIVED_TOPIC_ERROR;
-        String counterKey = receivedTopic + "-" + orderReceivedUri;
-
-        if (receivedTopic.equals(ORDER_RECEIVED_TOPIC)
-                || retryCount.getOrDefault(counterKey, 1) >= MAX_RETRY_ATTEMPTS) {
-            republishMessageToTopic(orderReceivedUri, receivedTopic, nextTopic);
-            if (!receivedTopic.equals(ORDER_RECEIVED_TOPIC)) {
-                resetRetryCount(counterKey);
-            }
-        } else {
-            retryCount.put(counterKey, retryCount.getOrDefault(counterKey, 1) + 1);
-            logMessageProcessingFailureRecoverable(message, retryCount.get(counterKey), ex);
-            // retry
-            handleMessage(message);
-        }
-    }
-
-    /**
-     * Resets retryCount for message identified by key `counterKey`
-     * 
-     * @param counterKey
-     */
-    private void resetRetryCount(String counterKey) {
-        retryCount.remove(counterKey);
-    }
-
-    protected void logMessageReceived(org.springframework.messaging.Message<OrderReceived> message,
+    protected void logMessageReceived(org.springframework.messaging.Message<?> message,
             String orderUri) {
         Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
-        loggingUtils.getLogger().info("'order-received' message received", logMap);
+        loggingUtils.getLogger().info("'" + message.getHeaders().get("kafka_receivedTopic") + "' message received", logMap);
     }
 
-    protected void logMessageProcessingFailureRecoverable(
-            org.springframework.messaging.Message<OrderReceived> message, int attempt,
-            Exception exception) {
-        Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
-        logMap.put(LoggingUtils.RETRY_ATTEMPT, attempt);
-        loggingUtils.getLogger().error("'order-received' message processing failed with a recoverable exception",
-                exception, logMap);
-    }
-
-    protected void logMessageProcessingFailureNonRecoverable(
-            org.springframework.messaging.Message<OrderReceived> message, Exception exception) {
-        Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
-        loggingUtils.getLogger().error("order-received message processing failed with a non-recoverable exception",
-                exception, logMap);
-    }
-
-    private void logMessageProcessed(org.springframework.messaging.Message<OrderReceived> message,
+    private void logMessageProcessed(org.springframework.messaging.Message<?> message,
             String orderUri) {
         Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
         loggingUtils.logIfNotNull(logMap, loggingUtils.ORDER_URI, orderUri);
         loggingUtils.getLogger().info("Order received message processing completed", logMap);
-    }
-
-    protected void republishMessageToTopic(String orderUri, String currentTopic, String nextTopic) {
-        Map<String, Object> logMap = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logMap, loggingUtils.ORDER_URI, orderUri);
-        loggingUtils.logIfNotNull(logMap, loggingUtils.CURRENT_TOPIC, currentTopic);
-        loggingUtils.logIfNotNull(logMap, loggingUtils.NEXT_TOPIC, nextTopic);
-        loggingUtils.getLogger().info(String.format(
-                "Republishing message: \"%1$s\" received from topic: \"%2$s\" to topic: \"%3$s\"",
-                orderUri, currentTopic, nextTopic), logMap);
-        /*try {
-            kafkaProducer.sendMessage(createRetryMessage(orderUri, nextTopic));
-        } catch (ExecutionException | InterruptedException e) {
-            loggingUtils.getLogger().error(String.format("Error sending message: \"%1$s\" to topic: \"%2$s\"",
-                    orderUri, nextTopic), e, logMap);
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
-        }*/
-    }
-
-    protected Message createRetryMessage(String orderUri, String topic) {
-        final Message message = new Message();
-        AvroSerializer serializer =
-                serializerFactory.getGenericRecordSerializer(OrderReceived.class);
-        OrderReceived orderReceived = new OrderReceived();
-        orderReceived.setOrderUri(orderUri.trim());
-
-        message.setKey(ORDER_RECEIVED_KEY_RETRY);
-        try {
-            message.setValue(serializer.toBinary(orderReceived));
-        } catch (SerializationException e) {
-            Map<String, Object> logMap = loggingUtils.createLogMap();
-            loggingUtils.logIfNotNull(logMap, loggingUtils.MESSAGE, orderUri);
-            loggingUtils.logIfNotNull(logMap, loggingUtils.TOPIC, topic);
-            loggingUtils.logIfNotNull(logMap, loggingUtils.OFFSET, message.getOffset());
-            loggingUtils.getLogger().error(String.format("Error serializing message: \"%1$s\" for topic: \"%2$s\"",
-                    orderUri, topic), e, logMap);
-        }
-        message.setTopic(topic);
-        message.setTimestamp(new Date().getTime());
-
-        return message;
     }
 
     private static void updateErrorRecoveryOffset(long offset) {
