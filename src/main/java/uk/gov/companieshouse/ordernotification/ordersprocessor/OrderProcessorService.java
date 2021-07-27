@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.ordernotification.ordersprocessor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.ordernotification.orders.model.OrderData;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersService;
 
@@ -36,12 +38,13 @@ public class OrderProcessorService {
      * Implements all of the business logic required to process the notification of an order received.
      * @param orderUri the URI representing the order received
      */
-    public void processOrderReceived(final String orderUri) throws Exception {
+    @EventListener
+    public void processOrderReceived(final SendOrderNotificationEvent event) throws Exception {
         final OrderData order;
         Map<String, Object> logMap = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logMap, ORDER_URI, orderUri);
+        loggingUtils.logIfNotNull(logMap, ORDER_URI, event.getOrderReference());
         try {
-            order = ordersService.getOrderData(orderUri);
+            order = ordersService.getOrderData(event.getOrderReference());
         } catch (Exception ex) {
             loggingUtils.getLogger().error("Exception caught getting order data.", ex, logMap);
             throw ex;
