@@ -6,6 +6,9 @@ import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
     @Autowired
@@ -18,7 +21,7 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateApi item = (CertificateApi)order.getItems().get(0); //TODO: for each item
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi)item.getItemOptions();
-        model.setOrderReferenceNumber(model.getOrderReferenceNumber());
+        model.setOrderReferenceNumber(order.getReference());
         model.setCompanyName(item.getCompanyName());
         model.setCompanyNumber(item.getCompanyNumber());
         model.setCertificateType(itemOptions.getCertificateType().getJsonName());
@@ -47,11 +50,12 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         secretaryDetailsModel.setIncludeDobType(itemOptions.getSecretaryDetails().getIncludeDobType().getJsonName());
         secretaryDetailsModel.setIncludeNationality(itemOptions.getSecretaryDetails().getIncludeNationality());
         secretaryDetailsModel.setIncludeOccupation(itemOptions.getSecretaryDetails().getIncludeOccupation());
-        model.setDirectorDetailsModel(secretaryDetailsModel);
+        model.setSecretaryDetailsModel(secretaryDetailsModel);
 
         model.setCompanyObjects(itemOptions.getIncludeCompanyObjectsInformation());
         model.setAmountPaid(order.getTotalOrderCost());
         model.setPaymentReference(order.getPaymentReference());
+        model.setPaymentTime(order.getOrderedAt().format(DateTimeFormatter.ofPattern("dd MMMM yyyy - HH:mm:ss")));
         return model;
     }
 

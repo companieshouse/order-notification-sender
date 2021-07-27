@@ -19,7 +19,7 @@
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <ch-kafka.version>1.4.2</ch-kafka.version>
-        <kafka-models.version>unversioned</kafka-models.version>
+        <kafka-models.version>1.0.24</kafka-models.version>
         <structured-logging.version>1.9.7</structured-logging.version>
         <mockito-junit-jupiter-version>2.18.0</mockito-junit-jupiter-version>
         <junit-jupiter.version>5.7.0</junit-jupiter.version>

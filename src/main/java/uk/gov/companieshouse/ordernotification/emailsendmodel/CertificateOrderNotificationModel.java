@@ -140,4 +140,22 @@ public class CertificateOrderNotificationModel extends OrderModel {
     public int hashCode() {
         return Objects.hash(orderReferenceNumber, companyName, companyNumber, certificateType, statementOfGoodStanding, certificateRegisteredOfficeAddressModel, directorDetailsModel, secretaryDetailsModel, companyObjects, amountPaid, paymentReference, paymentTime);
     }
+
+    @Override
+    public String toString() {
+        return "CertificateOrderNotificationModel{" +
+                "orderReferenceNumber='" + orderReferenceNumber + '\'' +
+                ", companyName='" + companyName + '\'' +
+                ", companyNumber='" + companyNumber + '\'' +
+                ", certificateType='" + certificateType + '\'' +
+                ", statementOfGoodStanding=" + statementOfGoodStanding +
+                ", certificateRegisteredOfficeAddressModel=" + certificateRegisteredOfficeAddressModel +
+                ", directorDetailsModel=" + directorDetailsModel +
+                ", secretaryDetailsModel=" + secretaryDetailsModel +
+                ", companyObjects=" + companyObjects +
+                ", amountPaid='" + amountPaid + '\'' +
+                ", paymentReference='" + paymentReference + '\'' +
+                ", paymentTime='" + paymentTime + '\'' +
+                '}';
+    }
 }
