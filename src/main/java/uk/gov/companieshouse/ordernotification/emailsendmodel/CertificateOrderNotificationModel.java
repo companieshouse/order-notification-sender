@@ -9,10 +9,9 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String companyNumber;
     private String certificateType;
     private boolean statementOfGoodStanding;
-    private String registeredOfficeAddressType;
-    private boolean includeRegisteredOfficeAddressDates;
-    private boolean allDirectorsNames;
-    private boolean allSecretaryNames;
+    private CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel;
+    private CertificateAppointmentDetailsModel directorDetailsModel;
+    private CertificateAppointmentDetailsModel secretaryDetailsModel;
     private boolean companyObjects;
     private String amountPaid;
     private String paymentReference;
@@ -58,36 +57,28 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.statementOfGoodStanding = statementOfGoodStanding;
     }
 
-    public String getRegisteredOfficeAddressType() {
-        return registeredOfficeAddressType;
+    public CertificateRegisteredOfficeAddressModel getCertificateRegisteredOfficeAddressModel() {
+        return certificateRegisteredOfficeAddressModel;
     }
 
-    public void setRegisteredOfficeAddressType(String registeredOfficeAddressType) {
-        this.registeredOfficeAddressType = registeredOfficeAddressType;
+    public void setCertificateRegisteredOfficeAddressModel(CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel) {
+        this.certificateRegisteredOfficeAddressModel = certificateRegisteredOfficeAddressModel;
     }
 
-    public boolean isIncludeRegisteredOfficeAddressDates() {
-        return includeRegisteredOfficeAddressDates;
+    public CertificateAppointmentDetailsModel getDirectorDetailsModel() {
+        return directorDetailsModel;
     }
 
-    public void setIncludeRegisteredOfficeAddressDates(boolean includeRegisteredOfficeAddressDates) {
-        this.includeRegisteredOfficeAddressDates = includeRegisteredOfficeAddressDates;
+    public void setDirectorDetailsModel(CertificateAppointmentDetailsModel directorDetailsModel) {
+        this.directorDetailsModel = directorDetailsModel;
     }
 
-    public boolean isAllDirectorsNames() {
-        return allDirectorsNames;
+    public CertificateAppointmentDetailsModel getSecretaryDetailsModel() {
+        return secretaryDetailsModel;
     }
 
-    public void setAllDirectorsNames(boolean allDirectorsNames) {
-        this.allDirectorsNames = allDirectorsNames;
-    }
-
-    public boolean isAllSecretaryNames() {
-        return allSecretaryNames;
-    }
-
-    public void setAllSecretaryNames(boolean allSecretaryNames) {
-        this.allSecretaryNames = allSecretaryNames;
+    public void setSecretaryDetailsModel(CertificateAppointmentDetailsModel secretaryDetailsModel) {
+        this.secretaryDetailsModel = secretaryDetailsModel;
     }
 
     public boolean isCompanyObjects() {
@@ -124,26 +115,29 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CertificateOrderNotificationModel)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CertificateOrderNotificationModel that = (CertificateOrderNotificationModel) o;
-        return isStatementOfGoodStanding() == that.isStatementOfGoodStanding() &&
-                isIncludeRegisteredOfficeAddressDates() == that.isIncludeRegisteredOfficeAddressDates() &&
-                isAllDirectorsNames() == that.isAllDirectorsNames() &&
-                isAllSecretaryNames() == that.isAllSecretaryNames() &&
-                isCompanyObjects() == that.isCompanyObjects() &&
-                Objects.equals(getOrderReferenceNumber(), that.getOrderReferenceNumber()) &&
-                Objects.equals(getCompanyName(), that.getCompanyName()) &&
-                Objects.equals(getCompanyNumber(), that.getCompanyNumber()) &&
-                Objects.equals(getCertificateType(), that.getCertificateType()) &&
-                Objects.equals(getRegisteredOfficeAddressType(), that.getRegisteredOfficeAddressType()) &&
-                Objects.equals(getAmountPaid(), that.getAmountPaid()) &&
-                Objects.equals(getPaymentReference(), that.getPaymentReference()) &&
-                Objects.equals(getPaymentTime(), that.getPaymentTime());
+        return statementOfGoodStanding == that.statementOfGoodStanding &&
+                companyObjects == that.companyObjects &&
+                Objects.equals(orderReferenceNumber, that.orderReferenceNumber) &&
+                Objects.equals(companyName, that.companyName) &&
+                Objects.equals(companyNumber, that.companyNumber) &&
+                Objects.equals(certificateType, that.certificateType) &&
+                Objects.equals(certificateRegisteredOfficeAddressModel, that.certificateRegisteredOfficeAddressModel) &&
+                Objects.equals(directorDetailsModel, that.directorDetailsModel) &&
+                Objects.equals(secretaryDetailsModel, that.secretaryDetailsModel) &&
+                Objects.equals(amountPaid, that.amountPaid) &&
+                Objects.equals(paymentReference, that.paymentReference) &&
+                Objects.equals(paymentTime, that.paymentTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOrderReferenceNumber(), getCompanyName(), getCompanyNumber(), getCertificateType(), isStatementOfGoodStanding(), getRegisteredOfficeAddressType(), isIncludeRegisteredOfficeAddressDates(), isAllDirectorsNames(), isAllSecretaryNames(), isCompanyObjects(), getAmountPaid(), getPaymentReference(), getPaymentTime());
+        return Objects.hash(orderReferenceNumber, companyName, companyNumber, certificateType, statementOfGoodStanding, certificateRegisteredOfficeAddressModel, directorDetailsModel, secretaryDetailsModel, companyObjects, amountPaid, paymentReference, paymentTime);
     }
 }

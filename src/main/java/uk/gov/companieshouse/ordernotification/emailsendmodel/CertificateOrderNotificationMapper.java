@@ -23,8 +23,32 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         model.setCompanyNumber(item.getCompanyNumber());
         model.setCertificateType(itemOptions.getCertificateType().getJsonName());
         model.setStatementOfGoodStanding(itemOptions.getIncludeGoodStandingInformation());
-//        model.setRegisteredOfficeAddressType(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType().getJsonName());
-//        model.setIncludeRegisteredOfficeAddressDates(itemOptions.getRegisteredOfficeAddressDetails().getIncludeDates());
+
+        CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel =
+                new CertificateRegisteredOfficeAddressModel(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType().getJsonName(),
+                        itemOptions.getRegisteredOfficeAddressDetails().getIncludeDates());
+        model.setCertificateRegisteredOfficeAddressModel(certificateRegisteredOfficeAddressModel);
+
+        CertificateAppointmentDetailsModel directorDetailsModel = new CertificateAppointmentDetailsModel();
+        directorDetailsModel.setIncludeAddress(itemOptions.getDirectorDetails().getIncludeAddress());
+        directorDetailsModel.setIncludeAppointmentDate(itemOptions.getDirectorDetails().getIncludeAppointmentDate());
+        directorDetailsModel.setIncludeBasicInformation(itemOptions.getDirectorDetails().getIncludeBasicInformation());
+        directorDetailsModel.setIncludeCountryOfResidence(itemOptions.getDirectorDetails().getIncludeCountryOfResidence());
+        directorDetailsModel.setIncludeDobType(itemOptions.getDirectorDetails().getIncludeDobType().getJsonName());
+        directorDetailsModel.setIncludeNationality(itemOptions.getDirectorDetails().getIncludeNationality());
+        directorDetailsModel.setIncludeOccupation(itemOptions.getDirectorDetails().getIncludeOccupation());
+        model.setDirectorDetailsModel(directorDetailsModel);
+
+        CertificateAppointmentDetailsModel secretaryDetailsModel = new CertificateAppointmentDetailsModel();
+        secretaryDetailsModel.setIncludeAddress(itemOptions.getSecretaryDetails().getIncludeAddress());
+        secretaryDetailsModel.setIncludeAppointmentDate(itemOptions.getSecretaryDetails().getIncludeAppointmentDate());
+        secretaryDetailsModel.setIncludeBasicInformation(itemOptions.getSecretaryDetails().getIncludeBasicInformation());
+        secretaryDetailsModel.setIncludeCountryOfResidence(itemOptions.getSecretaryDetails().getIncludeCountryOfResidence());
+        secretaryDetailsModel.setIncludeDobType(itemOptions.getSecretaryDetails().getIncludeDobType().getJsonName());
+        secretaryDetailsModel.setIncludeNationality(itemOptions.getSecretaryDetails().getIncludeNationality());
+        secretaryDetailsModel.setIncludeOccupation(itemOptions.getSecretaryDetails().getIncludeOccupation());
+        model.setDirectorDetailsModel(secretaryDetailsModel);
+
         model.setCompanyObjects(itemOptions.getIncludeCompanyObjectsInformation());
         model.setAmountPaid(order.getTotalOrderCost());
         model.setPaymentReference(order.getPaymentReference());
