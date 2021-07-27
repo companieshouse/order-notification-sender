@@ -21,6 +21,10 @@ import java.util.Map;
 
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.APPLICATION_NAMESPACE;
 
+/**
+ * <p>Consumes order-received messages and notifies the application that an order is
+ * ready to be processed.</p>
+ */
 @Service
 public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventPublisherAware {
 
@@ -41,7 +45,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private boolean errorConsumerEnabled;
     private final KafkaListenerEndpointRegistry registry;
     private ApplicationEventPublisher applicationEventPublisher;
-    private LoggingUtils loggingUtils;
+    private final LoggingUtils loggingUtils;
 
     public OrdersKafkaConsumer(KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
         this.registry = registry;
@@ -49,9 +53,11 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     }
 
     /**
-     * Main listener/consumer. Calls `handleMessage` method to process received message.
+     * <p>Consumes a message from the order-received topic and notifies the application that an order
+     * is ready to be published.</p>
      * 
-     * @param message
+     * @param message A {@link org.springframework.messaging.Message message} containing an
+     * {@link OrderReceived order received entity}.
      */
     @KafkaListener(id = ORDER_RECEIVED_GROUP, groupId = ORDER_RECEIVED_GROUP,
             topics = ORDER_RECEIVED_TOPIC,
@@ -62,9 +68,13 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     }
 
     /**
-     * Retry (`-retry`) listener/consumer. Calls `handleMessage` method to process received message.
-     * 
-     * @param message
+     * <p>Consumes a message from the order-received-retry topic and notifies the application that an order
+     * is ready to be published.</p>
+     *
+     * @param message A {@link org.springframework.messaging.Message message} containing an
+     * {@link OrderReceivedNotificationRetry order received retry entity}. This entity contains the original
+     * {@link OrderReceived order that was received} and an integer indicating the number of times the message
+     * has been resent.
      */
     @KafkaListener(id = ORDER_RECEIVED_GROUP_RETRY, groupId = ORDER_RECEIVED_GROUP_RETRY,
             topics = ORDER_RECEIVED_TOPIC_RETRY,
@@ -76,14 +86,12 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     }
 
     /**
-     * Error (`-error`) topic listener/consumer is enabled when the application is launched in error
-     * mode (IS_ERROR_QUEUE_CONSUMER=true). Receives messages up to `errorRecoveryOffset` offset.
-     * Calls `handleMessage` method to process received message. If the `retryable` processor is
-     * unsuccessful with a `retryable` error, after maximum numbers of attempts allowed, the message
-     * is republished to `-retry` topic for failover processing. This listener stops accepting
-     * messages when the topic's offset reaches `errorRecoveryOffset`.
-     * 
-     * @param message
+     * <p>Consumes a message from the order-received-error topic and notifies the application that an order
+     * is ready to be published. Messages are only consumed where IS_ERROR_QUEUE_CONSUMER=true and the offset number is
+     * less than the most recent offset in the error topic at the time the application was started.</p>
+     *
+     * @param message A {@link org.springframework.messaging.Message message} containing an
+     * {@link OrderReceived order received entity}.
      */
     @KafkaListener(id = ORDER_RECEIVED_GROUP_ERROR, groupId = ORDER_RECEIVED_GROUP_ERROR,
             topics = ORDER_RECEIVED_TOPIC_ERROR,
@@ -104,12 +112,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
         }
     }
 
-    /**
-     * Handles processing of received message.
-     * 
-     * @param message
-     */
-    protected void handleMessage(MessageFacade<?> message) {
+    private void handleMessage(MessageFacade<?> message) {
         String orderReceivedUri = message.getOrderUri();
         logMessageReceived(message.getMessage(), orderReceivedUri);
 
@@ -119,7 +122,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
         logMessageProcessed(message.getMessage(), orderReceivedUri);
     }
 
-    protected void logMessageReceived(org.springframework.messaging.Message<?> message,
+    private void logMessageReceived(org.springframework.messaging.Message<?> message,
             String orderUri) {
         Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
@@ -129,7 +132,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private void logMessageProcessed(org.springframework.messaging.Message<?> message,
             String orderUri) {
         Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
-        loggingUtils.logIfNotNull(logMap, loggingUtils.ORDER_URI, orderUri);
+        loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
         loggingUtils.getLogger().info("Order received message processing completed", logMap);
     }
 
@@ -138,7 +141,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     }
 
     private Map<String, Object> errorConsumerConfigs() {
-        Map<String, Object> props = new HashMap();
+        Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, OrderReceivedDeserializer.class);
