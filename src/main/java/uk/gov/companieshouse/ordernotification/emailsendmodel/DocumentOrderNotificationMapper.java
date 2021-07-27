@@ -1,15 +1,15 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 
 public class DocumentOrderNotificationMapper extends OrdersApiMapper {
 
-    public DocumentOrderNotificationMapper(DateGenerator dateGenerator, String dateFormat, String senderEmail) {
-        super(dateGenerator, dateFormat, senderEmail);
+    public DocumentOrderNotificationMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail) {
+        super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
     }
 
     @Override
-    OrderModel generateEmailData(OrdersApi order) {
+    OrderModel generateEmailData(BaseItemApi order) {
         return null;
     }
 

@@ -4,7 +4,6 @@ import java.util.Objects;
 
 public class CertificateOrderNotificationModel extends OrderModel {
 
-    private String orderReferenceNumber;
     private String companyName;
     private String companyNumber;
     private String certificateType;
@@ -13,17 +12,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private CertificateAppointmentDetailsModel directorDetailsModel;
     private CertificateAppointmentDetailsModel secretaryDetailsModel;
     private boolean companyObjects;
-    private String amountPaid;
-    private String paymentReference;
-    private String paymentTime;
-
-    public String getOrderReferenceNumber() {
-        return orderReferenceNumber;
-    }
-
-    public void setOrderReferenceNumber(String orderReferenceNumber) {
-        this.orderReferenceNumber = orderReferenceNumber;
-    }
 
     public String getCompanyName() {
         return companyName;
@@ -89,73 +77,27 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.companyObjects = companyObjects;
     }
 
-    public String getAmountPaid() {
-        return amountPaid;
-    }
-
-    public void setAmountPaid(String amountPaid) {
-        this.amountPaid = amountPaid;
-    }
-
-    public String getPaymentReference() {
-        return paymentReference;
-    }
-
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
-    }
-
-    public String getPaymentTime() {
-        return paymentTime;
-    }
-
-    public void setPaymentTime(String paymentTime) {
-        this.paymentTime = paymentTime;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof CertificateOrderNotificationModel)) {
             return false;
         }
         CertificateOrderNotificationModel that = (CertificateOrderNotificationModel) o;
-        return statementOfGoodStanding == that.statementOfGoodStanding &&
-                companyObjects == that.companyObjects &&
-                Objects.equals(orderReferenceNumber, that.orderReferenceNumber) &&
-                Objects.equals(companyName, that.companyName) &&
-                Objects.equals(companyNumber, that.companyNumber) &&
-                Objects.equals(certificateType, that.certificateType) &&
-                Objects.equals(certificateRegisteredOfficeAddressModel, that.certificateRegisteredOfficeAddressModel) &&
-                Objects.equals(directorDetailsModel, that.directorDetailsModel) &&
-                Objects.equals(secretaryDetailsModel, that.secretaryDetailsModel) &&
-                Objects.equals(amountPaid, that.amountPaid) &&
-                Objects.equals(paymentReference, that.paymentReference) &&
-                Objects.equals(paymentTime, that.paymentTime);
+        return isStatementOfGoodStanding() == that.isStatementOfGoodStanding() &&
+                isCompanyObjects() == that.isCompanyObjects() &&
+                Objects.equals(getCompanyName(), that.getCompanyName()) &&
+                Objects.equals(getCompanyNumber(), that.getCompanyNumber()) &&
+                Objects.equals(getCertificateType(), that.getCertificateType()) &&
+                Objects.equals(getCertificateRegisteredOfficeAddressModel(), that.getCertificateRegisteredOfficeAddressModel()) &&
+                Objects.equals(getDirectorDetailsModel(), that.getDirectorDetailsModel()) &&
+                Objects.equals(getSecretaryDetailsModel(), that.getSecretaryDetailsModel());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderReferenceNumber, companyName, companyNumber, certificateType, statementOfGoodStanding, certificateRegisteredOfficeAddressModel, directorDetailsModel, secretaryDetailsModel, companyObjects, amountPaid, paymentReference, paymentTime);
-    }
-
-    @Override
-    public String toString() {
-        return "CertificateOrderNotificationModel{" +
-                "orderReferenceNumber='" + orderReferenceNumber + '\'' +
-                ", companyName='" + companyName + '\'' +
-                ", companyNumber='" + companyNumber + '\'' +
-                ", certificateType='" + certificateType + '\'' +
-                ", statementOfGoodStanding=" + statementOfGoodStanding +
-                ", certificateRegisteredOfficeAddressModel=" + certificateRegisteredOfficeAddressModel +
-                ", directorDetailsModel=" + directorDetailsModel +
-                ", secretaryDetailsModel=" + secretaryDetailsModel +
-                ", companyObjects=" + companyObjects +
-                ", amountPaid='" + amountPaid + '\'' +
-                ", paymentReference='" + paymentReference + '\'' +
-                ", paymentTime='" + paymentTime + '\'' +
-                '}';
+        return Objects.hash(getCompanyName(), getCompanyNumber(), getCertificateType(), isStatementOfGoodStanding(), getCertificateRegisteredOfficeAddressModel(), getDirectorDetailsModel(), getSecretaryDetailsModel(), isCompanyObjects());
     }
 }

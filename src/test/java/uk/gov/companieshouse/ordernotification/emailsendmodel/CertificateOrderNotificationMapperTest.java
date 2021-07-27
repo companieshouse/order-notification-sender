@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
@@ -13,12 +15,13 @@ import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeDobTypeApi;
 import uk.gov.companieshouse.api.model.order.item.RegisteredOfficeAddressDetailsApi;
-import uk.gov.companieshouse.ordernotification.orders.model.CertificateType;
+import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CertificateOrderNotificationMapperTest {
@@ -32,32 +35,77 @@ public class CertificateOrderNotificationMapperTest {
     private final String CERTIFICATE_TYPE = "incorporation";
     private final String ADDRESS_TYPE = "current-previous-and-prior";
     private final String DOB_TYPE = "full";
-    private final String PAYMENT_TIME = "27 July 2021 - 15:20:10";
 
+    private final String MESSAGE_ID = "message_id";
+    private final String APPLICATION_ID = "application_id";
+    private final String MESSAGE_TYPE = "message_type";
 
     @Mock
     private DateGenerator dateGenerator;
 
     @BeforeEach
     void setup() {
-        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator, "dd MMMM yyyy", "noreply@companieshouse.gov.uk");
+        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator, "dd MMMM yyyy", "noreply@companieshouse.gov.uk", "dd MMMM yyyy - HH:mm:ss", MESSAGE_ID, APPLICATION_ID, MESSAGE_TYPE);
     }
 
     @Test
-    void testCertificateOrderNotificationMapperMapsSuccessfully() {
+    void testCertificateOrderNotificationMapperMapsSuccessfully() throws JsonProcessingException {
         // given
         OrdersApi order = getOrder();
+        when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
 
         // when
-        CertificateOrderNotificationModel result = certificateOrderNotificationMapper.generateEmailData(order);
+        EmailSend result = certificateOrderNotificationMapper.map(order);
 
         // then
-        assertEquals(getExpectedModel(), result);
+        assertEquals(getExpectedEmailSendModel(), result);
+    }
+
+    @Test
+    void testCertificateOrderNotificationMapperReturnsMessageId() {
+        //when
+        String actual = certificateOrderNotificationMapper.getMessageId();
+
+        //then
+        assertEquals(MESSAGE_ID, actual);
+    }
+
+    @Test
+    void testCertificateOrderNotificationMapperReturnsApplicationId() {
+        //when
+        String actual = certificateOrderNotificationMapper.getApplicationId();
+
+        //then
+        assertEquals(APPLICATION_ID, actual);
+    }
+
+    @Test
+    void testCertificateOrderNotificationMapperReturnsMessageType() {
+        //when
+        String actual = certificateOrderNotificationMapper.getMessageType();
+
+        //then
+        assertEquals(MESSAGE_TYPE, actual);
+    }
+
+    private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
+        EmailSend expected = new EmailSend();
+        expected.setAppId(APPLICATION_ID);
+        OrderModel model = getExpectedModel();
+        model.setOrderReferenceNumber(ORDER_REFERENCE_NUMBER);
+        model.setPaymentReference(PAYMENT_REFERENCE);
+        model.setPaymentTime("27 July 2021 - 15:20:10");
+        model.setTotalOrderCost(ORDER_COST);
+        expected.setData(new ObjectMapper().writeValueAsString(model));
+        expected.setCreatedAt("27 July 2021");
+        expected.setEmailAddress("noreply@companieshouse.gov.uk");
+        expected.setMessageId(MESSAGE_ID);
+        expected.setMessageType(MESSAGE_TYPE);
+        return expected;
     }
 
     private CertificateOrderNotificationModel getExpectedModel() {
         CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();
-        expected.setOrderReferenceNumber(ORDER_REFERENCE_NUMBER);
         expected.setCompanyName(COMPANY_NAME);
         expected.setCompanyNumber(COMPANY_NUMBER);
         expected.setCertificateType(CERTIFICATE_TYPE);
@@ -66,9 +114,6 @@ public class CertificateOrderNotificationMapperTest {
         expected.setDirectorDetailsModel(getAppointmentDetails());
         expected.setSecretaryDetailsModel(getAppointmentDetails());
         expected.setCompanyObjects(true);
-        expected.setAmountPaid(ORDER_COST);
-        expected.setPaymentReference(PAYMENT_REFERENCE);
-        expected.setPaymentTime(PAYMENT_TIME);
         return expected;
     }
 
