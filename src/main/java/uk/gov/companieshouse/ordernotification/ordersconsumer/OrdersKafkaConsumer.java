@@ -11,7 +11,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.orders.OrderReceived;
@@ -59,7 +58,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
             containerFactory = "kafkaListenerContainerFactory")
     public void processOrderReceived(org.springframework.messaging.Message<OrderReceived> message) {
-        handleMessage(new OrderReceivedDecorator(message));
+        handleMessage(new OrderReceivedFacade(message));
     }
 
     /**
@@ -73,7 +72,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             containerFactory = "kafkaListenerContainerFactory")
     public void processOrderReceivedRetry(
             org.springframework.messaging.Message<OrderReceivedNotificationRetry> message) {
-            handleMessage(new OrderReceivedNotificationRetryDecorator(message));
+            handleMessage(new OrderReceivedNotificationRetryFacade(message));
     }
 
     /**
@@ -94,7 +93,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             org.springframework.messaging.Message<OrderReceived> message) {
         long offset = Long.parseLong("" + message.getHeaders().get("kafka_offset"));
         if (offset <= errorRecoveryOffset) {
-            handleMessage(new OrderReceivedDecorator(message));
+            handleMessage(new OrderReceivedFacade(message));
         } else {
             Map<String, Object> logMap = loggingUtils.createLogMap();
             logMap.put(LoggingUtils.ORDER_RECEIVED_GROUP_ERROR, errorRecoveryOffset);
@@ -110,8 +109,8 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
      * 
      * @param message
      */
-    protected void handleMessage(TransformationDecorator<?> message) {
-        String orderReceivedUri = message.transform();
+    protected void handleMessage(MessageFacade<?> message) {
+        String orderReceivedUri = message.getOrderUri();
         logMessageReceived(message.getMessage(), orderReceivedUri);
 
         applicationEventPublisher.publishEvent(new SendOrderNotificationEvent(orderReceivedUri,

@@ -2,15 +2,15 @@ package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
 import org.springframework.messaging.Message;
 
-public abstract class TransformationDecorator<T> {
+public abstract class MessageFacade<T> {
 
-    private Message<T> message;
+    private final Message<T> message;
 
-    public TransformationDecorator(Message<T> message) {
+    public MessageFacade(Message<T> message) {
         this.message = message;
     }
 
-    public abstract String transform();
+    public abstract String getOrderUri();
 
     public abstract int getRetries();
 

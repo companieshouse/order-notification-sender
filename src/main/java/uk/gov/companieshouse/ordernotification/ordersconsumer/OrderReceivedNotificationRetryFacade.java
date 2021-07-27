@@ -3,14 +3,14 @@ package uk.gov.companieshouse.ordernotification.ordersconsumer;
 import org.springframework.messaging.Message;
 import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
-public class OrderReceivedNotificationRetryDecorator extends TransformationDecorator<OrderReceivedNotificationRetry> {
+public class OrderReceivedNotificationRetryFacade extends MessageFacade<OrderReceivedNotificationRetry> {
 
-    public OrderReceivedNotificationRetryDecorator(Message<OrderReceivedNotificationRetry> message) {
+    public OrderReceivedNotificationRetryFacade(Message<OrderReceivedNotificationRetry> message) {
         super(message);
     }
 
     @Override
-    public String transform() {
+    public String getOrderUri() {
         return getMessage().getPayload().getOrder().getOrderUri();
     }
 
