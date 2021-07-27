@@ -51,14 +51,14 @@ public class CertificateOrderNotificationMapperTest {
     @Test
     void testCertificateOrderNotificationMapperMapsSuccessfully() throws JsonProcessingException {
         // given
-        OrdersApi order = getOrder();
+        OrdersApi order = getOrder(getAppointmentApiDetails(IncludeDobTypeApi.FULL));
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
 
         // when
         EmailSend result = certificateOrderNotificationMapper.map(order);
 
         // then
-        assertEquals(getExpectedEmailSendModel(), result);
+        assertEquals(getExpectedEmailSendModel(getAppointmentDetails(DOB_TYPE)), result);
     }
 
     @Test
@@ -88,10 +88,23 @@ public class CertificateOrderNotificationMapperTest {
         assertEquals(MESSAGE_TYPE, actual);
     }
 
-    private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
+    @Test
+    void testMapperSkipsDobTypeIfNotProvided() throws JsonProcessingException {
+        //given
+        OrdersApi order = getOrder(getAppointmentApiDetails(null));
+        when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
+
+        //when
+        EmailSend result = certificateOrderNotificationMapper.map(order);
+
+        // then
+        assertEquals(getExpectedEmailSendModel(getAppointmentDetails(null)), result);
+    }
+
+    private EmailSend getExpectedEmailSendModel(CertificateAppointmentDetailsModel appointmentDetailsModel) throws JsonProcessingException {
         EmailSend expected = new EmailSend();
         expected.setAppId(APPLICATION_ID);
-        OrderModel model = getExpectedModel();
+        OrderModel model = getExpectedModel(appointmentDetailsModel);
         model.setOrderReferenceNumber(ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(PAYMENT_REFERENCE);
         model.setPaymentTime("27 July 2021 - 15:20:10");
@@ -104,31 +117,31 @@ public class CertificateOrderNotificationMapperTest {
         return expected;
     }
 
-    private CertificateOrderNotificationModel getExpectedModel() {
+    private CertificateOrderNotificationModel getExpectedModel(CertificateAppointmentDetailsModel appointmentDetailsModel) {
         CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();
         expected.setCompanyName(COMPANY_NAME);
         expected.setCompanyNumber(COMPANY_NUMBER);
         expected.setCertificateType(CERTIFICATE_TYPE);
         expected.setStatementOfGoodStanding(true);
         expected.setCertificateRegisteredOfficeAddressModel(new CertificateRegisteredOfficeAddressModel(ADDRESS_TYPE, true));
-        expected.setDirectorDetailsModel(getAppointmentDetails());
-        expected.setSecretaryDetailsModel(getAppointmentDetails());
+        expected.setDirectorDetailsModel(appointmentDetailsModel);
+        expected.setSecretaryDetailsModel(appointmentDetailsModel);
         expected.setCompanyObjects(true);
         return expected;
     }
 
-    private CertificateAppointmentDetailsModel getAppointmentDetails() {
+    private CertificateAppointmentDetailsModel getAppointmentDetails(String dobType) {
         CertificateAppointmentDetailsModel appointmentDetails = new CertificateAppointmentDetailsModel();
         appointmentDetails.setIncludeAddress(true);
         appointmentDetails.setIncludeAppointmentDate(true);
         appointmentDetails.setIncludeBasicInformation(true);
         appointmentDetails.setIncludeCountryOfResidence(true);
-        appointmentDetails.setIncludeDobType(DOB_TYPE);
+        appointmentDetails.setIncludeDobType(dobType);
         appointmentDetails.setIncludeNationality(true);
         appointmentDetails.setIncludeOccupation(true);
         return appointmentDetails;
     }
-    private OrdersApi getOrder() {
+    private OrdersApi getOrder(DirectorOrSecretaryDetailsApi appointmentDetails) {
         OrdersApi order = new OrdersApi();
         order.setReference(ORDER_REFERENCE_NUMBER);
 
@@ -148,8 +161,8 @@ public class CertificateOrderNotificationMapperTest {
         registeredOfficeAddressDetails.setIncludeDates(true);
 
         itemOptions.setRegisteredOfficeAddressDetails(registeredOfficeAddressDetails);
-        itemOptions.setDirectorDetails(getAppointmentApiDetails());
-        itemOptions.setSecretaryDetails(getAppointmentApiDetails());
+        itemOptions.setDirectorDetails(appointmentDetails);
+        itemOptions.setSecretaryDetails(appointmentDetails);
         itemOptions.setIncludeCompanyObjectsInformation(true);
         item.setItemOptions(itemOptions);
 
@@ -161,14 +174,13 @@ public class CertificateOrderNotificationMapperTest {
         return order;
     }
 
-    private DirectorOrSecretaryDetailsApi getAppointmentApiDetails() {
+    private DirectorOrSecretaryDetailsApi getAppointmentApiDetails(IncludeDobTypeApi dobType) {
         DirectorOrSecretaryDetailsApi appointmentDetails = new DirectorOrSecretaryDetailsApi();
         appointmentDetails.setIncludeAddress(true);
         appointmentDetails.setIncludeAppointmentDate(true);
         appointmentDetails.setIncludeBasicInformation(true);
         appointmentDetails.setIncludeCountryOfResidence(true);
-        IncludeDobTypeApi directorDobType = IncludeDobTypeApi.FULL;
-        appointmentDetails.setIncludeDobType(directorDobType);
+        appointmentDetails.setIncludeDobType(dobType);
         appointmentDetails.setIncludeNationality(true);
         appointmentDetails.setIncludeOccupation(true);
         return appointmentDetails;

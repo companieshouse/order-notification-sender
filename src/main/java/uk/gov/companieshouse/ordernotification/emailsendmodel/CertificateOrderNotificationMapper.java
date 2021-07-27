@@ -6,6 +6,8 @@ import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 
+import java.util.Optional;
+
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
     private final String messageId;
@@ -52,7 +54,7 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         result.setIncludeAppointmentDate(appointment.getIncludeAppointmentDate());
         result.setIncludeBasicInformation(appointment.getIncludeBasicInformation());
         result.setIncludeCountryOfResidence(appointment.getIncludeCountryOfResidence());
-        result.setIncludeDobType(appointment.getIncludeDobType().getJsonName());
+        Optional.ofNullable(appointment.getIncludeDobType()).ifPresent(dob -> result.setIncludeDobType(dob.getJsonName()));
         result.setIncludeNationality(appointment.getIncludeNationality());
         result.setIncludeOccupation(appointment.getIncludeOccupation());
         return result;
