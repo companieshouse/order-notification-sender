@@ -4,30 +4,12 @@ import java.util.Objects;
 
 public class CertificateOrderNotificationModel extends OrderModel {
 
-    private String companyName;
-    private String companyNumber;
     private String certificateType;
     private boolean statementOfGoodStanding;
     private CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel;
     private CertificateAppointmentDetailsModel directorDetailsModel;
     private CertificateAppointmentDetailsModel secretaryDetailsModel;
     private boolean companyObjects;
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getCompanyNumber() {
-        return companyNumber;
-    }
-
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
 
     public String getCertificateType() {
         return certificateType;
@@ -88,8 +70,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
         CertificateOrderNotificationModel that = (CertificateOrderNotificationModel) o;
         return isStatementOfGoodStanding() == that.isStatementOfGoodStanding() &&
                 isCompanyObjects() == that.isCompanyObjects() &&
-                Objects.equals(getCompanyName(), that.getCompanyName()) &&
-                Objects.equals(getCompanyNumber(), that.getCompanyNumber()) &&
                 Objects.equals(getCertificateType(), that.getCertificateType()) &&
                 Objects.equals(getCertificateRegisteredOfficeAddressModel(), that.getCertificateRegisteredOfficeAddressModel()) &&
                 Objects.equals(getDirectorDetailsModel(), that.getDirectorDetailsModel()) &&
@@ -98,6 +78,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCompanyName(), getCompanyNumber(), getCertificateType(), isStatementOfGoodStanding(), getCertificateRegisteredOfficeAddressModel(), getDirectorDetailsModel(), getSecretaryDetailsModel(), isCompanyObjects());
+        return Objects.hash(getCertificateType(), isStatementOfGoodStanding(), getCertificateRegisteredOfficeAddressModel(), getDirectorDetailsModel(), getSecretaryDetailsModel(), isCompanyObjects());
     }
 }

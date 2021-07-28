@@ -4,10 +4,28 @@ import java.util.Objects;
 
 public class OrderModel {
 
+    private String companyName;
+    private String companyNumber;
     private String orderReferenceNumber;
     private String totalOrderCost;
     private String paymentReference;
     private String paymentTime;
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyNumber() {
+        return companyNumber;
+    }
+
+    public void setCompanyNumber(String companyNumber) {
+        this.companyNumber = companyNumber;
+    }
 
     public String getOrderReferenceNumber() {
         return orderReferenceNumber;
@@ -46,18 +64,15 @@ public class OrderModel {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof OrderModel)) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         OrderModel that = (OrderModel) o;
-        return Objects.equals(getOrderReferenceNumber(), that.getOrderReferenceNumber()) &&
-                Objects.equals(getTotalOrderCost(), that.getTotalOrderCost()) &&
-                Objects.equals(getPaymentReference(), that.getPaymentReference()) &&
-                Objects.equals(getPaymentTime(), that.getPaymentTime());
+        return Objects.equals(companyName, that.companyName) && Objects.equals(companyNumber, that.companyNumber) && Objects.equals(orderReferenceNumber, that.orderReferenceNumber) && Objects.equals(totalOrderCost, that.totalOrderCost) && Objects.equals(paymentReference, that.paymentReference) && Objects.equals(paymentTime, that.paymentTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOrderReferenceNumber(), getTotalOrderCost(), getPaymentReference(), getPaymentTime());
+        return Objects.hash(companyName, companyNumber, orderReferenceNumber, totalOrderCost, paymentReference, paymentTime);
     }
 }

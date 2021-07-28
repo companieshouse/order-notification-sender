@@ -48,6 +48,8 @@ public abstract class OrdersApiMapper {
     abstract String getMessageType();
 
     private OrderModel addOrderMetadata(OrderModel model, OrdersApi order) {
+        model.setCompanyName(order.getItems().get(0).getCompanyName());
+        model.setCompanyNumber(order.getItems().get(0).getCompanyNumber());
         model.setOrderReferenceNumber(order.getReference());
         model.setTotalOrderCost(order.getTotalOrderCost());
         model.setPaymentReference(order.getPaymentReference());

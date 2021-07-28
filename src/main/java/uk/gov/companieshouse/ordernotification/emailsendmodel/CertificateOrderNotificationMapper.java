@@ -11,9 +11,7 @@ import java.util.Optional;
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
     private final String messageId;
-
     private final String applicationId;
-
     private final String messageType;
 
     @Autowired
@@ -31,8 +29,6 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi)item.getItemOptions();
-        model.setCompanyName(item.getCompanyName());
-        model.setCompanyNumber(item.getCompanyNumber());
         model.setCertificateType(itemOptions.getCertificateType().getJsonName());
         model.setStatementOfGoodStanding(itemOptions.getIncludeGoodStandingInformation());
 
