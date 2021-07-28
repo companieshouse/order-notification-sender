@@ -2,6 +2,8 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
+import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
+import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 
 public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
 
@@ -21,7 +23,17 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
 
     @Override
     OrderModel generateEmailData(BaseItemApi order) {
-        return null;
+
+        MissingImageOrderNotificationModel model = new MissingImageOrderNotificationModel();
+        MissingImageDeliveryItemOptionsApi itemOptions = (MissingImageDeliveryItemOptionsApi) order.getItemOptions();
+        FilingHistoryDetailsModel filingHistoryDetailsModel = new FilingHistoryDetailsModel();
+        filingHistoryDetailsModel.setFilingHistoryDate(itemOptions.getFilingHistoryDate());
+        filingHistoryDetailsModel.setFilingHistoryType(itemOptions.getFilingHistoryType());
+        filingHistoryDetailsModel.setFilingHistoryDescription(itemOptions.getFilingHistoryDescription());
+
+        model.setFilingHistoryDetails(filingHistoryDetailsModel);
+
+        return model;
     }
 
     @Override

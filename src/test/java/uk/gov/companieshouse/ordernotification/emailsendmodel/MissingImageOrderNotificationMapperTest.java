@@ -30,7 +30,7 @@ public class MissingImageOrderNotificationMapperTest {
     @BeforeEach
     void setup() {
         mapper = new MissingImageOrderNotificationMapper(dateGenerator, TestConstants.EMAIL_DATE_FORMAT,
-                TestConstants.PAYMENT_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.MESSAGE_ID,
+                TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,  TestConstants.MESSAGE_ID,
                 TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE);
     }
 
@@ -68,7 +68,6 @@ public class MissingImageOrderNotificationMapperTest {
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
         details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
         details.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
-        details.setFilingHistoryDescriptionValues(Collections.singletonMap("key", "value"));
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 
         MissingImageOrderNotificationModel expected = new MissingImageOrderNotificationModel();
@@ -94,7 +93,7 @@ public class MissingImageOrderNotificationMapperTest {
         MissingImageDeliveryItemOptionsApi itemOptions = new MissingImageDeliveryItemOptionsApi();
         itemOptions.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
         itemOptions.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
-        itemOptions.setFilingHistoryDescriptionValues(Collections.singletonMap("key", "value"));
+        itemOptions.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
         missingImageItem.setItemOptions(itemOptions);
         ordersApi.setItems(Collections.singletonList(missingImageItem));
         return ordersApi;
