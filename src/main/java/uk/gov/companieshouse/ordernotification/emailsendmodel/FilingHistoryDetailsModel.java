@@ -1,13 +1,11 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import java.util.Map;
 import java.util.Objects;
 
 public class FilingHistoryDetailsModel {
 
     private String filingHistoryDate;
     private String filingHistoryDescription;
-    private Map<String, Object> filingHistoryDescriptionValues;
     private String filingHistoryType;
     private String filingHistoryCost;
 
@@ -25,14 +23,6 @@ public class FilingHistoryDetailsModel {
 
     public void setFilingHistoryDescription(String filingHistoryDescription) {
         this.filingHistoryDescription = filingHistoryDescription;
-    }
-
-    public Map<String, Object> getFilingHistoryDescriptionValues() {
-        return filingHistoryDescriptionValues;
-    }
-
-    public void setFilingHistoryDescriptionValues(Map<String, Object> filingHistoryDescriptionValues) {
-        this.filingHistoryDescriptionValues = filingHistoryDescriptionValues;
     }
 
     public String getFilingHistoryType() {
@@ -56,11 +46,11 @@ public class FilingHistoryDetailsModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FilingHistoryDetailsModel that = (FilingHistoryDetailsModel) o;
-        return Objects.equals(filingHistoryDate, that.filingHistoryDate) && Objects.equals(filingHistoryDescription, that.filingHistoryDescription) && Objects.equals(filingHistoryDescriptionValues, that.filingHistoryDescriptionValues) && Objects.equals(filingHistoryType, that.filingHistoryType) && Objects.equals(filingHistoryCost, that.filingHistoryCost);
+        return Objects.equals(filingHistoryDate, that.filingHistoryDate) && Objects.equals(filingHistoryDescription, that.filingHistoryDescription) && Objects.equals(filingHistoryType, that.filingHistoryType) && Objects.equals(filingHistoryCost, that.filingHistoryCost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filingHistoryDate, filingHistoryDescription, filingHistoryDescriptionValues, filingHistoryType, filingHistoryCost);
+        return Objects.hash(filingHistoryDate, filingHistoryDescription, filingHistoryType, filingHistoryCost);
     }
 }

@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,12 +34,15 @@ public class DocumentOrderNotificationMapperTest {
     @Mock
     private DateGenerator dateGenerator;
 
+    @Mock
+    private FilingHistoryDescriptionProviderService providerService;
+
 
     @BeforeEach
     void setup() {
         documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE);
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, providerService);
     }
 
     @Test
@@ -44,12 +50,14 @@ public class DocumentOrderNotificationMapperTest {
         // given
         OrdersApi order = getOrder();
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
+        when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any())).thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
 
         // when
         EmailSend result = documentOrderNotificationMapper.map(order);
 
         // then
         assertEquals(getExpectedEmailSendModel(), result);
+        verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION, getFilingHistoryDescriptionValues());
     }
 
     private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
@@ -77,8 +85,7 @@ public class DocumentOrderNotificationMapperTest {
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
         details.setFilingHistoryCost(TestConstants.ORDER_COST);
         details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
-        details.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
-        details.setFilingHistoryDescriptionValues(getFilingHistoryDescriptionValues());
+        details.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 
         expected.setFilingHistoryDocuments(Collections.singletonList(details));

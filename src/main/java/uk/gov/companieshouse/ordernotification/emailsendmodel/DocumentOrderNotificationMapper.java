@@ -13,15 +13,17 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
     private final String messageId;
     private final String applicationId;
     private final String messageType;
+    private final FilingHistoryDescriptionProviderService providerService;
 
     public DocumentOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.date.format}") String dateFormat,
                                            @Value("${email.sender.address}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                            @Value("${email.document.messageId}") String messageId, @Value("${email.document.applicationId}") String applicationId,
-                                           @Value("${email.document.messageType}") String messageType) {
+                                           @Value("${email.document.messageType}") String messageType, FilingHistoryDescriptionProviderService providerService) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
+        this.providerService = providerService;
     }
 
     @Override
@@ -37,9 +39,13 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                     FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
                     details.setFilingHistoryDate(filingHistoryDocumentApi.getFilingHistoryDate());
                     details.setFilingHistoryCost(filingHistoryDocumentApi.getFilingHistoryCost());
-                    details.setFilingHistoryDescriptionValues(filingHistoryDocumentApi.getFilingHistoryDescriptionValues());
+                    details.setFilingHistoryDescription(
+                            this.providerService.mapFilingHistoryDescription(
+                                    filingHistoryDocumentApi.getFilingHistoryDescription(),
+                                    filingHistoryDocumentApi.getFilingHistoryDescriptionValues()
+                            )
+                    );
                     details.setFilingHistoryType(filingHistoryDocumentApi.getFilingHistoryType());
-                    details.setFilingHistoryDescription(filingHistoryDocumentApi.getFilingHistoryDescription());
                     return details;
                 }).collect(Collectors.toList());
 

@@ -22,6 +22,7 @@ public final class TestConstants {
     public static final String FILING_HISTORY_DATE = "2021-07-28";
     public static final String DELIVERY_METHOD = "postal";
     public static final String FILING_HISTORY_DESCRIPTION = "confirmation-statement-with-updates";
+    public static final String MAPPED_FILING_HISTORY_DESCRIPTION = "Mapped filing history description";
     public static final String MADE_UP_DATE = "2017-05-20";
     public static final String FILING_HISTORY_TYPE = "CS01";
     public static final String SENDER_EMAIL_ADDRESS = "noreply@companieshouse.gov.uk";

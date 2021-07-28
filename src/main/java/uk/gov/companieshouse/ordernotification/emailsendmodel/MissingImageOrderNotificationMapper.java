@@ -2,7 +2,6 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
-import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 
 public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
@@ -10,15 +9,17 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
     private final String messageId;
     private final String applicationId;
     private final String messageType;
+    private final FilingHistoryDescriptionProviderService providerService;
 
     public MissingImageOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.date.format}") String dateFormat,
                                                @Value("${email.sender.address}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                                @Value("${email.document.messageId}") String messageId, @Value("${email.document.applicationId}") String applicationId,
-                                               @Value("${email.document.messageType}") String messageType) {
+                                               @Value("${email.document.messageType}") String messageType, FilingHistoryDescriptionProviderService providerService) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
+        this.providerService = providerService;
     }
 
     @Override
@@ -29,7 +30,11 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
         FilingHistoryDetailsModel filingHistoryDetailsModel = new FilingHistoryDetailsModel();
         filingHistoryDetailsModel.setFilingHistoryDate(itemOptions.getFilingHistoryDate());
         filingHistoryDetailsModel.setFilingHistoryType(itemOptions.getFilingHistoryType());
-        filingHistoryDetailsModel.setFilingHistoryDescription(itemOptions.getFilingHistoryDescription());
+        filingHistoryDetailsModel.setFilingHistoryDescription(
+                providerService.mapFilingHistoryDescription(
+                        itemOptions.getFilingHistoryDescription(), itemOptions.getFilingHistoryDescriptionValues()
+                )
+        );
 
         model.setFilingHistoryDetails(filingHistoryDetailsModel);
 

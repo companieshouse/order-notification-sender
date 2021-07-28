@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,11 +30,14 @@ public class MissingImageOrderNotificationMapperTest {
     @Mock
     private DateGenerator dateGenerator;
 
+    @Mock
+    private FilingHistoryDescriptionProviderService providerService;
+
     @BeforeEach
     void setup() {
         mapper = new MissingImageOrderNotificationMapper(dateGenerator, TestConstants.EMAIL_DATE_FORMAT,
                 TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,  TestConstants.MESSAGE_ID,
-                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE);
+                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, providerService);
     }
 
     @Test
@@ -39,12 +45,16 @@ public class MissingImageOrderNotificationMapperTest {
         // given
         OrdersApi order = getOrder();
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
+        when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
+                .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
 
         // when
         EmailSend result = mapper.map(order);
 
         // then
         assertEquals(getExpectedEmailSendModel(), result);
+        verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION,
+                Collections.singletonMap("key", "value"));
     }
 
     private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
@@ -67,7 +77,7 @@ public class MissingImageOrderNotificationMapperTest {
 
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
         details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
-        details.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
+        details.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 
         MissingImageOrderNotificationModel expected = new MissingImageOrderNotificationModel();
@@ -94,6 +104,7 @@ public class MissingImageOrderNotificationMapperTest {
         itemOptions.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
         itemOptions.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
         itemOptions.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
+        itemOptions.setFilingHistoryDescriptionValues(Collections.singletonMap("key", "value"));
         missingImageItem.setItemOptions(itemOptions);
         ordersApi.setItems(Collections.singletonList(missingImageItem));
         return ordersApi;
