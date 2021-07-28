@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
+import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 
 import java.util.Optional;
 
@@ -29,11 +30,11 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi)item.getItemOptions();
-        model.setCertificateType(itemOptions.getCertificateType().getJsonName());
+        Optional.ofNullable(itemOptions.getCertificateType()).ifPresent(type -> model.setCertificateType(type.getJsonName()));
         model.setStatementOfGoodStanding(itemOptions.getIncludeGoodStandingInformation());
 
         CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel =
-                new CertificateRegisteredOfficeAddressModel(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType().getJsonName(),
+                new CertificateRegisteredOfficeAddressModel(Optional.ofNullable(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()).map(IncludeAddressRecordsTypeApi::getJsonName).orElse(null),
                         itemOptions.getRegisteredOfficeAddressDetails().getIncludeDates());
         model.setCertificateRegisteredOfficeAddressModel(certificateRegisteredOfficeAddressModel);
 

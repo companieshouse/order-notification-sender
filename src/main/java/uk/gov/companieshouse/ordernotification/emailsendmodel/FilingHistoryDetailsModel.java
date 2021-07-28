@@ -1,12 +1,13 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.Map;
 import java.util.Objects;
 
-public class DocumentOrderDocumentDetailsModel {
+public class FilingHistoryDetailsModel {
 
     private String filingHistoryDate;
     private String filingHistoryDescription;
-    private String madeUpDate;
+    private Map<String, Object> filingHistoryDescriptionValues;
     private String filingHistoryType;
     private String filingHistoryCost;
 
@@ -26,12 +27,12 @@ public class DocumentOrderDocumentDetailsModel {
         this.filingHistoryDescription = filingHistoryDescription;
     }
 
-    public String getMadeUpDate() {
-        return madeUpDate;
+    public Map<String, Object> getFilingHistoryDescriptionValues() {
+        return filingHistoryDescriptionValues;
     }
 
-    public void setMadeUpDate(String madeUpDate) {
-        this.madeUpDate = madeUpDate;
+    public void setFilingHistoryDescriptionValues(Map<String, Object> filingHistoryDescriptionValues) {
+        this.filingHistoryDescriptionValues = filingHistoryDescriptionValues;
     }
 
     public String getFilingHistoryType() {
@@ -54,12 +55,12 @@ public class DocumentOrderDocumentDetailsModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DocumentOrderDocumentDetailsModel that = (DocumentOrderDocumentDetailsModel) o;
-        return Objects.equals(filingHistoryDate, that.filingHistoryDate) && Objects.equals(filingHistoryDescription, that.filingHistoryDescription) && Objects.equals(madeUpDate, that.madeUpDate) && Objects.equals(filingHistoryType, that.filingHistoryType) && Objects.equals(filingHistoryCost, that.filingHistoryCost);
+        FilingHistoryDetailsModel that = (FilingHistoryDetailsModel) o;
+        return Objects.equals(filingHistoryDate, that.filingHistoryDate) && Objects.equals(filingHistoryDescription, that.filingHistoryDescription) && Objects.equals(filingHistoryDescriptionValues, that.filingHistoryDescriptionValues) && Objects.equals(filingHistoryType, that.filingHistoryType) && Objects.equals(filingHistoryCost, that.filingHistoryCost);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filingHistoryDate, filingHistoryDescription, madeUpDate, filingHistoryType, filingHistoryCost);
+        return Objects.hash(filingHistoryDate, filingHistoryDescription, filingHistoryDescriptionValues, filingHistoryType, filingHistoryCost);
     }
 }

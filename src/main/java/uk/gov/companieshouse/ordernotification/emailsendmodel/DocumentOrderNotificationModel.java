@@ -6,7 +6,7 @@ import java.util.Objects;
 public class DocumentOrderNotificationModel extends OrderModel {
 
     private String deliveryMethod;
-    private List<DocumentOrderDocumentDetailsModel> filingHistoryDocuments;
+    private List<FilingHistoryDetailsModel> filingHistoryDocuments;
 
     public String getDeliveryMethod() {
         return deliveryMethod;
@@ -16,11 +16,11 @@ public class DocumentOrderNotificationModel extends OrderModel {
         this.deliveryMethod = deliveryMethod;
     }
 
-    public List<DocumentOrderDocumentDetailsModel> getFilingHistoryDocuments() {
+    public List<FilingHistoryDetailsModel> getFilingHistoryDocuments() {
         return filingHistoryDocuments;
     }
 
-    public void setFilingHistoryDocuments(List<DocumentOrderDocumentDetailsModel> filingHistoryDocuments) {
+    public void setFilingHistoryDocuments(List<FilingHistoryDetailsModel> filingHistoryDocuments) {
         this.filingHistoryDocuments = filingHistoryDocuments;
     }
 

@@ -5,6 +5,7 @@ import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DocumentOrderNotificationMapper extends OrdersApiMapper {
@@ -15,8 +16,8 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
 
     public DocumentOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.date.format}") String dateFormat,
                                            @Value("${email.sender.address}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
-                                           @Value("${email.certificate.messageId}") String messageId, @Value("${email.certificate.applicationId}") String applicationId,
-                                           @Value("${email.certificate.messageType}") String messageType) {
+                                           @Value("${email.document.messageId}") String messageId, @Value("${email.document.applicationId}") String applicationId,
+                                           @Value("${email.document.messageType}") String messageType) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
         this.messageId = messageId;
         this.applicationId = applicationId;
@@ -28,15 +29,15 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
 
         CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getItemOptions();
-        model.setDeliveryMethod(itemOptions.getDeliveryMethod().getJsonName());
+        Optional.ofNullable(itemOptions.getDeliveryMethod()).ifPresent(method -> model.setDeliveryMethod(method.getJsonName()));
 
-        List<DocumentOrderDocumentDetailsModel> detailsModels = itemOptions.getFilingHistoryDocuments()
+        List<FilingHistoryDetailsModel> detailsModels = itemOptions.getFilingHistoryDocuments()
                 .stream()
                 .map(filingHistoryDocumentApi -> {
-                    DocumentOrderDocumentDetailsModel details = new DocumentOrderDocumentDetailsModel();
+                    FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
                     details.setFilingHistoryDate(filingHistoryDocumentApi.getFilingHistoryDate());
                     details.setFilingHistoryCost(filingHistoryDocumentApi.getFilingHistoryCost());
-                    details.setMadeUpDate(filingHistoryDocumentApi.getFilingHistoryDescriptionValues().get("made_up_date").toString());
+                    details.setFilingHistoryDescriptionValues(filingHistoryDocumentApi.getFilingHistoryDescriptionValues());
                     details.setFilingHistoryType(filingHistoryDocumentApi.getFilingHistoryType());
                     details.setFilingHistoryDescription(filingHistoryDocumentApi.getFilingHistoryDescription());
                     return details;

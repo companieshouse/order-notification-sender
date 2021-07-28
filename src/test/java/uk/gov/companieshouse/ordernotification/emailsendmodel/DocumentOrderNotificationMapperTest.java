@@ -13,30 +13,18 @@ import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DocumentOrderNotificationMapperTest {
-
-    private final String ORDER_REFERENCE_NUMBER = "87654321";
-    private final String COMPANY_NAME = "ACME LTD";
-    private final String COMPANY_NUMBER = "12345678";
-    private final String ORDER_COST = "15";
-    private final String PAYMENT_REFERENCE = "ABCD-EFGH-IJKL";
-    private final String FILING_HISTORY_DATE = "2021-07-28";
-    private final String DELIVERY_METHOD = "postal";
-    private final String FILING_HISTORY_DESCRIPTION = "confirmation-statement-with-updates";
-    private final String MADE_UP_DATE = "2017-05-20";
-    private final String FILING_HISTORY_TYPE = "CS01";
-
-    private final String MESSAGE_ID = "message_id";
-    private final String APPLICATION_ID = "application_id";
-    private final String MESSAGE_TYPE = "message_type";
 
     private DocumentOrderNotificationMapper documentOrderNotificationMapper;
 
@@ -46,7 +34,9 @@ public class DocumentOrderNotificationMapperTest {
 
     @BeforeEach
     void setup() {
-        documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator, "dd MMMM yyyy", "noreply@companieshouse.gov.uk", "dd MMMM yyyy - HH:mm:ss", MESSAGE_ID, APPLICATION_ID, MESSAGE_TYPE);
+        documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator,
+                TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE);
     }
 
     @Test
@@ -64,32 +54,32 @@ public class DocumentOrderNotificationMapperTest {
 
     private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
         EmailSend expected = new EmailSend();
-        expected.setAppId(APPLICATION_ID);
+        expected.setAppId(TestConstants.APPLICATION_ID);
         OrderModel model = getExpectedModel();
-        model.setOrderReferenceNumber(ORDER_REFERENCE_NUMBER);
-        model.setPaymentReference(PAYMENT_REFERENCE);
-        model.setPaymentTime("27 July 2021 - 15:20:10");
-        model.setTotalOrderCost(ORDER_COST);
+        model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
+        model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
+        model.setPaymentTime(TestConstants.PAYMENT_TIME);
+        model.setTotalOrderCost(TestConstants.ORDER_COST);
         expected.setData(new ObjectMapper().writeValueAsString(model));
         expected.setCreatedAt("27 July 2021");
-        expected.setEmailAddress("noreply@companieshouse.gov.uk");
-        expected.setMessageId(MESSAGE_ID);
-        expected.setMessageType(MESSAGE_TYPE);
+        expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
+        expected.setMessageId(TestConstants.MESSAGE_ID);
+        expected.setMessageType(TestConstants.MESSAGE_TYPE);
         return expected;
     }
 
     private DocumentOrderNotificationModel getExpectedModel() {
         DocumentOrderNotificationModel expected = new DocumentOrderNotificationModel();
-        expected.setCompanyName(COMPANY_NAME);
-        expected.setCompanyNumber(COMPANY_NUMBER);
-        expected.setDeliveryMethod(DELIVERY_METHOD);
+        expected.setCompanyName(TestConstants.COMPANY_NAME);
+        expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
+        expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
 
-        DocumentOrderDocumentDetailsModel details = new DocumentOrderDocumentDetailsModel();
-        details.setFilingHistoryCost(ORDER_COST);
-        details.setFilingHistoryDate(FILING_HISTORY_DATE);
-        details.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
-        details.setMadeUpDate(MADE_UP_DATE);
-        details.setFilingHistoryType(FILING_HISTORY_TYPE);
+        FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
+        details.setFilingHistoryCost(TestConstants.ORDER_COST);
+        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
+        details.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
+        details.setFilingHistoryDescriptionValues(getFilingHistoryDescriptionValues());
+        details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 
         expected.setFilingHistoryDocuments(Collections.singletonList(details));
 
@@ -98,29 +88,36 @@ public class DocumentOrderNotificationMapperTest {
 
     private OrdersApi getOrder() {
         OrdersApi order = new OrdersApi();
-        order.setReference(ORDER_REFERENCE_NUMBER);
+        order.setReference(TestConstants.ORDER_REFERENCE_NUMBER);
 
         CertifiedCopyApi item = new CertifiedCopyApi();
-        item.setCompanyName(COMPANY_NAME);
-        item.setCompanyNumber(COMPANY_NUMBER);
+        item.setCompanyName(TestConstants.COMPANY_NAME);
+        item.setCompanyNumber(TestConstants.COMPANY_NUMBER);
 
         CertifiedCopyItemOptionsApi itemOptions = new CertifiedCopyItemOptionsApi();
         itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
 
         FilingHistoryDocumentApi filingHistoryDocumentApi = new FilingHistoryDocumentApi();
-        filingHistoryDocumentApi.setFilingHistoryCost(ORDER_COST);
-        filingHistoryDocumentApi.setFilingHistoryDate(FILING_HISTORY_DATE);
-        filingHistoryDocumentApi.setFilingHistoryDescription(FILING_HISTORY_DESCRIPTION);
-        filingHistoryDocumentApi.setFilingHistoryDescriptionValues(Collections.singletonMap("made_up_date", MADE_UP_DATE));
-        filingHistoryDocumentApi.setFilingHistoryType(FILING_HISTORY_TYPE);
+        filingHistoryDocumentApi.setFilingHistoryCost(TestConstants.ORDER_COST);
+        filingHistoryDocumentApi.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
+        filingHistoryDocumentApi.setFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION);
+        filingHistoryDocumentApi.setFilingHistoryDescriptionValues(getFilingHistoryDescriptionValues());
+        filingHistoryDocumentApi.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
         itemOptions.setFilingHistoryDocuments(Collections.singletonList(filingHistoryDocumentApi));
         item.setItemOptions(itemOptions);
 
         order.setItems(Collections.singletonList(item));
-        order.setTotalOrderCost(ORDER_COST);
-        order.setPaymentReference(PAYMENT_REFERENCE);
+        order.setTotalOrderCost(TestConstants.ORDER_COST);
+        order.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         order.setOrderedAt(LocalDateTime.of(2021, 7, 27, 15,20,10));
 
         return order;
+    }
+
+    private Map<String, Object> getFilingHistoryDescriptionValues() {
+        Map<String, Object> filingHistoryDescriptionValues = new HashMap<>();
+        filingHistoryDescriptionValues.put("made_up_date", TestConstants.MADE_UP_DATE);
+        filingHistoryDescriptionValues.put("key", "value");
+        return filingHistoryDescriptionValues;
     }
 }
