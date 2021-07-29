@@ -16,12 +16,16 @@ public abstract class OrdersApiMapper {
     private final String senderEmail;
     private final ObjectMapper mapper;
 
-    public OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail) {
+    public OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail){
+        this(dateGenerator, dateFormat, paymentDateFormat, senderEmail, new ObjectMapper());
+    }
+
+    OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail, ObjectMapper mapper) {
         this.dateGenerator = dateGenerator;
         this.dateFormat = dateFormat;
         this.paymentDateFormat = paymentDateFormat;
         this.senderEmail = senderEmail;
-        this.mapper = new ObjectMapper();
+        this.mapper = mapper;
     }
 
     public EmailSend map(OrdersApi order) {
@@ -35,7 +39,7 @@ public abstract class OrdersApiMapper {
             emailSend.setCreatedAt(dateGenerator.generate().format(DateTimeFormatter.ofPattern(dateFormat)));
             return emailSend;
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new MappingException("Failed to map order: " + order.getReference(), e);
         }
     }
 

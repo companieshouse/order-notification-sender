@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
@@ -16,11 +17,17 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     private final String messageType;
 
     @Autowired
-    public CertificateOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.date.format}") String dateFormat,
-                                              @Value("${email.sender.address}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
-                                              @Value("${email.certificate.messageId}") String messageId, @Value("${email.certificate.applicationId}") String applicationId,
+    public CertificateOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
+                                              @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
+                                              @Value("${email.certificate.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
                                               @Value("${email.certificate.messageType}") String messageType) {
-        super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
+        this(dateGenerator, dateFormat, senderEmail, paymentDateFormat, messageId, applicationId, messageType, new ObjectMapper());
+    }
+
+    CertificateOrderNotificationMapper(DateGenerator dateGenerator, String dateFormat, String senderEmail,
+                                       String paymentDateFormat, String messageId, String applicationId,
+                                       String messageType, ObjectMapper mapper) {
+        super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
@@ -29,7 +36,7 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     @Override
     CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
-        CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi)item.getItemOptions();
+        CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) item.getItemOptions();
         Optional.ofNullable(itemOptions.getCertificateType()).ifPresent(type -> model.setCertificateType(type.getJsonName()));
         model.setStatementOfGoodStanding(itemOptions.getIncludeGoodStandingInformation());
 

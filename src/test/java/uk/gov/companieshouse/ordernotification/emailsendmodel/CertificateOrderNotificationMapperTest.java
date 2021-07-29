@@ -1,12 +1,13 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
@@ -22,8 +23,9 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
+import static org.mockito.Mockito.any;
 
 @ExtendWith(MockitoExtension.class)
 public class CertificateOrderNotificationMapperTest {
@@ -32,6 +34,9 @@ public class CertificateOrderNotificationMapperTest {
 
     @Mock
     private DateGenerator dateGenerator;
+
+    @Mock
+    private ObjectMapper mapper;
 
     @BeforeEach
     void setup() {
@@ -91,6 +96,23 @@ public class CertificateOrderNotificationMapperTest {
 
         // then
         assertEquals(getExpectedEmailSendModel(getAppointmentDetails(null)), result);
+    }
+
+    @Test
+    void testMapperThrowsMappingExceptionIfJsonProcessingExceptionThrownByMapper() throws com.fasterxml.jackson.core.JsonProcessingException {
+        //given
+        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
+                TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, mapper);
+        OrdersApi order = getOrder(getAppointmentApiDetails(null));
+        when(mapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
+
+        //when
+        Executable actual = () -> certificateOrderNotificationMapper.map(order);
+
+        //then
+        MappingException exception = assertThrows(MappingException.class, actual);
+        assertEquals("Failed to map order: " + TestConstants.ORDER_REFERENCE_NUMBER, exception.getMessage());
     }
 
     private EmailSend getExpectedEmailSendModel(CertificateAppointmentDetailsModel appointmentDetailsModel) throws JsonProcessingException {

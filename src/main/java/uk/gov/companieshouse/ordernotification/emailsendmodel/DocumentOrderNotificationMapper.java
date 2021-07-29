@@ -15,9 +15,9 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
     private final String messageType;
     private final FilingHistoryDescriptionProviderService providerService;
 
-    public DocumentOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.date.format}") String dateFormat,
-                                           @Value("${email.sender.address}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
-                                           @Value("${email.document.messageId}") String messageId, @Value("${email.document.applicationId}") String applicationId,
+    public DocumentOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
+                                           @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
+                                           @Value("${email.document.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
                                            @Value("${email.document.messageType}") String messageType, FilingHistoryDescriptionProviderService providerService) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
         this.messageId = messageId;

@@ -11,10 +11,10 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
     private final String messageType;
     private final FilingHistoryDescriptionProviderService providerService;
 
-    public MissingImageOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.date.format}") String dateFormat,
-                                               @Value("${email.sender.address}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
-                                               @Value("${email.document.messageId}") String messageId, @Value("${email.document.applicationId}") String applicationId,
-                                               @Value("${email.document.messageType}") String messageType, FilingHistoryDescriptionProviderService providerService) {
+    public MissingImageOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
+                                               @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
+                                               @Value("${email.missing-image.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
+                                               @Value("${email.missing-image.messageType}") String messageType, FilingHistoryDescriptionProviderService providerService) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail);
         this.messageId = messageId;
         this.applicationId = applicationId;

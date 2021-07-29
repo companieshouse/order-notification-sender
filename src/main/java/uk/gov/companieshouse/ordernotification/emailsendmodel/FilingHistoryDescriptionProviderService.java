@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
@@ -25,49 +26,17 @@ public class FilingHistoryDescriptionProviderService {
 
     private final LoggingUtils loggingUtils;
 
+    private final String dateFormat;
+
     @Autowired
-    public FilingHistoryDescriptionProviderService(LoggingUtils loggingUtils) {
-        this(FILING_HISTORY_DESCRIPTIONS_FILEPATH, loggingUtils);
+    public FilingHistoryDescriptionProviderService(LoggingUtils loggingUtils, @Value("${filingHistory.dateFormat}") String dateFormat) {
+        this(FILING_HISTORY_DESCRIPTIONS_FILEPATH, loggingUtils, dateFormat);
     }
 
-    public FilingHistoryDescriptionProviderService(final String filingHistoryDescriptionsFile, LoggingUtils loggingUtils) {
+    public FilingHistoryDescriptionProviderService(final String filingHistoryDescriptionsFile, LoggingUtils loggingUtils, String dateFormat) {
         this.loggingUtils = loggingUtils;
+        this.dateFormat = dateFormat;
         filingHistoryDescriptions = loadFilingHistoryDescriptionsFromClasspath(filingHistoryDescriptionsFile);
-    }
-
-    private Map<String, String> loadFilingHistoryDescriptionsFromClasspath(final String filingHistoryDescriptionKey) {
-        final InputStream resource = getClass().getClassLoader().getResourceAsStream(filingHistoryDescriptionKey);
-        if (resource == null) {
-            Map<String, Object> logMap = new HashMap<>();
-            logMap.put(LOG_MESSAGE_FILE_KEY, filingHistoryDescriptionKey);
-            loggingUtils.getLogger().error("Orders descriptions file not found", logMap);
-            return null;
-        }
-        Map<String, String> filingHistoryDescriptionsLocal = new HashMap<>();
-        try(final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filingHistoryDescriptionKey)) {
-            final Yaml yaml = new Yaml();
-            final Map<String, Object> filingHistoryDescriptionsRoot = yaml.load(inputStream);
-            Map<?, ?> out = (Map<?, ?>)filingHistoryDescriptionsRoot.get(FILING_HISTORY_DESCRIPTION_KEY);
-            if (out == null) {
-                Map<String, Object> logMap = new HashMap<>();
-                logMap.put(DESCRIPTION_LOG_KEY, FILING_HISTORY_DESCRIPTION_KEY);
-                loggingUtils.getLogger().error("Filing History descriptions file not found", logMap);
-                return null;
-            } else {
-                for(Map.Entry<?, ?> entry : out.entrySet()) {
-                    filingHistoryDescriptionsLocal.put((String)entry.getKey(), (String)entry.getValue());
-                }
-            }
-        } catch (IOException ioe) {
-            // This is very unlikely to happen here given File.exists() check above,
-            // and that it is not likely to encounter an error closing the stream either.
-            loggingUtils.getLogger().error(ioe);
-        }
-        return filingHistoryDescriptionsLocal;
-    }
-
-    private String getFilingHistoryDescriptionWithKey(String descriptionKey) {
-        return filingHistoryDescriptions.getOrDefault(descriptionKey, descriptionKey);
     }
 
     /**
@@ -102,14 +71,47 @@ public class FilingHistoryDescriptionProviderService {
         }
     }
 
+    private Map<String, String> loadFilingHistoryDescriptionsFromClasspath(final String filingHistoryDescriptionKey) {
+        final InputStream resource = getClass().getClassLoader().getResourceAsStream(filingHistoryDescriptionKey);
+        if (resource == null) {
+            Map<String, Object> logMap = new HashMap<>();
+            logMap.put(LOG_MESSAGE_FILE_KEY, filingHistoryDescriptionKey);
+            loggingUtils.getLogger().error("Orders descriptions file not found", logMap);
+            return null;
+        }
+        Map<String, String> filingHistoryDescriptionsLocal = new HashMap<>();
+        try(final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filingHistoryDescriptionKey)) {
+            final Yaml yaml = new Yaml();
+            final Map<String, Object> filingHistoryDescriptionsRoot = yaml.load(inputStream);
+            Map<?, ?> out = (Map<?, ?>)filingHistoryDescriptionsRoot.get(FILING_HISTORY_DESCRIPTION_KEY);
+            if (out == null) {
+                Map<String, Object> logMap = new HashMap<>();
+                logMap.put(DESCRIPTION_LOG_KEY, FILING_HISTORY_DESCRIPTION_KEY);
+                loggingUtils.getLogger().error("Filing History descriptions file not found", logMap);
+                return null;
+            } else {
+                for(Map.Entry<?, ?> entry : out.entrySet()) {
+                    filingHistoryDescriptionsLocal.put((String)entry.getKey(), (String)entry.getValue());
+                }
+            }
+        } catch (IOException ioe) {
+            loggingUtils.getLogger().error(ioe);
+        }
+        return filingHistoryDescriptionsLocal;
+    }
+
+    private String getFilingHistoryDescriptionWithKey(String descriptionKey) {
+        return filingHistoryDescriptions.getOrDefault(descriptionKey, descriptionKey);
+    }
+
     /**
      * Reformats an action date string such as "2009-08-23" as "23 August 2009".
      * @param actionDate the action date as reported from the filing history
      * @return the same date rendered for display purposes
      */
-    public static String reformatActionDate(final String actionDate) {
+    private String reformatActionDate(final String actionDate) {
         final LocalDate parsedDate = LocalDate.parse(actionDate);
-        return parsedDate.format(DateTimeFormatter.ofPattern("dd MMMM yyyy")); // TODO: could be made constant or application property
+        return parsedDate.format(DateTimeFormatter.ofPattern(dateFormat));
     }
 
     /**
@@ -118,7 +120,7 @@ public class FilingHistoryDescriptionProviderService {
      * @param from the String you want to replace
      * @param to the String you want it to be replaced by
      */
-    public static void replaceAll(StringBuilder builder, String from, String to) {
+    private void replaceAll(StringBuilder builder, String from, String to) {
         int index = builder.indexOf(from);
         while (index != -1) {
             builder.replace(index, index + from.length(), to);
@@ -126,5 +128,4 @@ public class FilingHistoryDescriptionProviderService {
             index = builder.indexOf(from, index);
         }
     }
-
 }
