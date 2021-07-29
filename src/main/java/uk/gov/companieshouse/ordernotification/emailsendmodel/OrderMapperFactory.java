@@ -4,36 +4,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
-import uk.gov.companieshouse.api.model.order.item.CertificateApi;
-import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
-import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
+
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class OrderMapperFactory {
 
-    private final CertificateOrderNotificationMapper certificateOrderNotificationMapper;
-    private final DocumentOrderNotificationMapper documentOrderNotificationMapper;
-    private final MissingImageOrderNotificationMapper missingImageOrderNotificationMapper;
+    private final Map<Class<? extends BaseItemApi>, OrdersApiMapper> ordersApiMappers;
 
     @Autowired
-    public OrderMapperFactory(CertificateOrderNotificationMapper certificateOrderNotificationMapper,
-                              DocumentOrderNotificationMapper documentOrderNotificationMapper,
-                              MissingImageOrderNotificationMapper missingImageOrderNotificationMapper) {
-        this.certificateOrderNotificationMapper = certificateOrderNotificationMapper;
-        this.documentOrderNotificationMapper = documentOrderNotificationMapper;
-        this.missingImageOrderNotificationMapper = missingImageOrderNotificationMapper;
+    public OrderMapperFactory(Map<Class<? extends BaseItemApi>, OrdersApiMapper> ordersApiMappers) {
+        this.ordersApiMappers = ordersApiMappers;
     }
 
     public OrdersApiMapper getOrderMapper(OrdersApi ordersApi) {
-        Class<? extends BaseItemApi> itemClass = ordersApi.getItems().get(0).getClass();
-        if (itemClass.equals(CertificateApi.class)) {
-            return certificateOrderNotificationMapper;
-        } else if (itemClass.equals(CertifiedCopyApi.class)){
-            return documentOrderNotificationMapper;
-        } else if (itemClass.equals(MissingImageDeliveryApi.class)){
-            return missingImageOrderNotificationMapper;
-        }  else {
-            throw new IllegalArgumentException("Unhandled item class");
-        }
+        return Optional.ofNullable(ordersApiMappers.get(ordersApi.getItems().get(0).getClass()))
+                .orElseThrow(() -> new IllegalArgumentException("Unhandled item class"));
     }
 }
