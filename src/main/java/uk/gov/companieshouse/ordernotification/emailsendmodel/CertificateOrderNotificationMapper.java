@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
@@ -10,6 +11,7 @@ import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 
 import java.util.Optional;
 
+@Component
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
     private final String messageId;
