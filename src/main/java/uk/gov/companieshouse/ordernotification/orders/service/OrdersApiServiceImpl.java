@@ -40,7 +40,7 @@ class OrdersApiServiceImpl implements OrdersApiService {
         } catch(URIValidationException e) {
             throw new OrdersServiceException("Unrecognised uri pattern for "+orderUri);
         } catch (ApiErrorResponseException e) {
-            throw new OrdersResponseException("Error returned by Orders API for order URL: " + orderUri, e);
+            throw new OrdersResponseException("Error returned by Orders API");
         }
     }
 }

@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -86,6 +85,6 @@ public class OrdersApiServiceImplTest {
         when(privateOrderResourceHandler.getOrder(anyString())).thenReturn(ordersGet);
         when(ordersGet.execute()).thenThrow(ApiErrorResponseException.class);
         OrdersResponseException exception = Assertions.assertThrows(OrdersResponseException.class, () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT));
-        assertEquals("Error returned by Orders API for order URL: " + ORDER_URL_INCORRECT, exception.getMessage());
+        assertEquals("Error returned by Orders API", exception.getMessage());
     }
 }

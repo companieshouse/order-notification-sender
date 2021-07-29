@@ -15,7 +15,6 @@ import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceOrderNoti
 import uk.gov.companieshouse.ordernotification.emailsender.KafkaMessagingException;
 import uk.gov.companieshouse.ordernotification.fixtures.TestUtils;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersServiceException;
 
@@ -57,7 +56,7 @@ class OrderResourceOrderEnricherIntegrationTest {
 
         // When and then
         assertThatExceptionOfType(OrdersServiceException.class).isThrownBy(() ->
-            orderResourceOrderEnricherUnderTest.enrich(new SendOrderNotificationEvent(TestUtils.ORDER_RECEIVED_URI, 0)))
+            orderResourceOrderEnricherUnderTest.enrich(TestUtils.ORDER_RECEIVED_URI))
             .withMessage("Order ORD-432118-793830 contains no items.")
             .withNoCause();
     }
@@ -73,7 +72,7 @@ class OrderResourceOrderEnricherIntegrationTest {
 
         // When and then
         assertThatExceptionOfType(KafkaMessagingException.class).isThrownBy(() ->
-            orderResourceOrderEnricherUnderTest.enrich(new SendOrderNotificationEvent(TestUtils.ORDER_RECEIVED_URI, 0)))
+            orderResourceOrderEnricherUnderTest.enrich(TestUtils.ORDER_RECEIVED_URI))
             .withMessage("Unable to create message for order ORD-432118-793830 item ID MID-242116-007650!")
             .withCause(new NullPointerException(
                     "null of string in field item_uri of uk.gov.companieshouse.orders.items.Item in field item of " +

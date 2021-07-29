@@ -1,13 +1,13 @@
 package uk.gov.companieshouse.ordernotification.emailmodel;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
-import uk.gov.companieshouse.ordernotification.orders.model.OrderData;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 import java.util.Map;
 
@@ -28,37 +28,33 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
 
     private final OrdersApiService ordersApiService;
     private final LoggingUtils loggingUtils;
+    private final OrderMapperFactory orderMapperFactory;
 
     @Autowired
-    public OrderResourceOrderNotificationEnricher(final OrdersApiService ordersApiService, LoggingUtils loggingUtils) {
+    public OrderResourceOrderNotificationEnricher(final OrdersApiService ordersApiService, OrderMapperFactory orderMapperFactory, LoggingUtils loggingUtils) {
         this.ordersApiService = ordersApiService;
+        this.orderMapperFactory = orderMapperFactory;
         this.loggingUtils = loggingUtils;
     }
 
     /**
      * Enriches an order received notification with an order resource fetched from the Orders API.
      *
-     * @param event the order responsible for triggering the notification
+     * @param orderUri the order responsible for triggering the notification
      */
-    @EventListener
-    public void enrich(final SendOrderNotificationEvent event) {
+    public EmailSend enrich(final String orderUri) throws OrdersResponseException {
         final OrdersApi order;
         Map<String, Object> logMap = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logMap, ORDER_URI, event.getOrderReference());
+        loggingUtils.logIfNotNull(logMap, ORDER_URI, orderUri);
         try {
-            order = ordersApiService.getOrderData(event.getOrderReference());
-        } catch (Exception ex) {
+            loggingUtils.getLogger().debug("Fetching resource for order", logMap);
+            order = ordersApiService.getOrderData(orderUri);
+        } catch (OrdersResponseException ex) {
             loggingUtils.getLogger().error("Exception caught getting order data.", ex, logMap);
-            throw new RuntimeException(ex);
-        }
-        loggingUtils.logIfNotNull(logMap, ORDER_REFERENCE_NUMBER, order.getReference());
-        loggingUtils.getLogger().info("Processing order received", logMap);
-        try {
-            //orderRouter.routeOrder(order); TODO: create new email sender
-        } catch (Exception ex) {
-            loggingUtils.getLogger().error("Exception caught routing order.", ex, logMap);
             throw ex;
         }
-
+        loggingUtils.logIfNotNull(logMap, ORDER_REFERENCE_NUMBER, order.getReference());
+        loggingUtils.getLogger().debug("Mapping order", logMap);
+        return orderMapperFactory.getOrderMapper(order).map(order);
     }
 }
