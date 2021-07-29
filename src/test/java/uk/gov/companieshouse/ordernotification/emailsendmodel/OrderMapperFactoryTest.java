@@ -2,21 +2,20 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.kafka.test.context.EmbeddedKafka;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
+import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 
-import javax.print.Doc;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,13 +30,14 @@ public class OrderMapperFactoryTest {
     @Mock
     DocumentOrderNotificationMapper documentOrderNotificationMapper;
 
+    @Mock
+    MissingImageOrderNotificationMapper missingImageOrderNotificationMapper;
+
     @Test
-    void returnCertificateMapperIfItemKindCertificate() {
+    void returnCertificateMapperIfClassCertificateApi() {
         // given
         OrdersApi ordersApi = new OrdersApi();
-        CertificateApi certificateApi = new CertificateApi();
-        certificateApi.setKind("item#certificate");
-        ordersApi.setItems(Collections.singletonList(certificateApi));
+        ordersApi.setItems(Collections.singletonList(new CertificateApi()));
 
         // when
         OrdersApiMapper ordersApiMapper = mapperFactory.getOrderMapper(ordersApi);
@@ -47,12 +47,10 @@ public class OrderMapperFactoryTest {
     }
 
     @Test
-    void returnDocumentOrderMapperIfItemKindCertificate() {
+    void returnDocumentOrderMapperIfClassCertifiedCopyApi() {
         // given
         OrdersApi ordersApi = new OrdersApi();
-        CertifiedCopyApi certifiedCopyApi = new CertifiedCopyApi();
-        certifiedCopyApi.setKind("item#certified-copy");
-        ordersApi.setItems(Collections.singletonList(certifiedCopyApi));
+        ordersApi.setItems(Collections.singletonList(new CertifiedCopyApi()));
 
         // when
         OrdersApiMapper ordersApiMapper = mapperFactory.getOrderMapper(ordersApi);
@@ -61,4 +59,29 @@ public class OrderMapperFactoryTest {
         assertTrue(ordersApiMapper instanceof DocumentOrderNotificationMapper);
     }
 
+    @Test
+    void returnMissingImageMapperIfClassMissingImageDeliveryApi() {
+        // given
+        OrdersApi ordersApi = new OrdersApi();
+        ordersApi.setItems(Collections.singletonList(new MissingImageDeliveryApi()));
+
+        // when
+        OrdersApiMapper ordersApiMapper = mapperFactory.getOrderMapper(ordersApi);
+
+        // then
+        assertTrue(ordersApiMapper instanceof MissingImageOrderNotificationMapper);
+    }
+
+    @Test
+    void throwsIllegalArgumentExceptionIfClassIsInvalid() {
+        // given
+        OrdersApi ordersApi = new OrdersApi();
+        ordersApi.setItems(Collections.singletonList(new BaseItemApi(){}));
+
+        // when
+        Executable actual = () -> mapperFactory.getOrderMapper(ordersApi);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
+        assertEquals("Unhandled item class", exception.getMessage());
+    }
 }
