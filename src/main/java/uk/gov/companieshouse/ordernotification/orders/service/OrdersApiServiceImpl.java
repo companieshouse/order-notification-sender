@@ -3,47 +3,44 @@ package uk.gov.companieshouse.ordernotification.orders.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.InternalApiClient;
+import uk.gov.companieshouse.api.error.ApiErrorResponseException;
+import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.order.PrivateOrderResourceHandler;
-import uk.gov.companieshouse.api.handler.order.request.PrivateOrderURIPattern;
-import uk.gov.companieshouse.api.handler.regex.URIValidator;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.orders.model.OrderData;
 
 import java.util.Map;
 
 @Service
-class OrdersServiceImpl implements OrdersService {
+class OrdersApiServiceImpl implements OrdersApiService {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingUtils.APPLICATION_NAMESPACE);
     
     private final ApiClient apiClient;
-    private final OrdersApiToOrderDataMapper ordersApiToOrderDataMapper;
     private final LoggingUtils loggingUtils;
 
     @Autowired
-    public OrdersServiceImpl(ApiClient apiClient, OrdersApiToOrderDataMapper ordersApiToOrderDataMapper, LoggingUtils loggingUtils) {
+    public OrdersApiServiceImpl(ApiClient apiClient, LoggingUtils loggingUtils) {
         this.apiClient = apiClient;
         this.loggingUtils = loggingUtils;
-        this.ordersApiToOrderDataMapper = ordersApiToOrderDataMapper;
     }
 
     @Override
-    public OrderData getOrderData(String orderUri) throws Exception {
+    public OrdersApi getOrderData(String orderUri) throws OrdersResponseException {
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
-        if (URIValidator.validate(PrivateOrderURIPattern.getOrdersPattern(), orderUri)) {
+        try {
             InternalApiClient internalApiClient = apiClient.getInternalApiClient();
             PrivateOrderResourceHandler privateOrderResourceHandler = internalApiClient.privateOrderResourceHandler();
             OrdersApi ordersApi = privateOrderResourceHandler.getOrder(orderUri).execute().getData();
-
             LOGGER.info("Order data returned from API Client", logMap);
-            return ordersApiToOrderDataMapper.ordersApiToOrderData(ordersApi);
-        } else {
-            LOGGER.error("Unrecognised uri pattern", logMap);
+            return ordersApi;
+        } catch(URIValidationException e) {
             throw new OrdersServiceException("Unrecognised uri pattern for "+orderUri);
+        } catch (ApiErrorResponseException e) {
+            throw new OrdersResponseException("Error returned by Orders API for order URL: " + orderUri, e);
         }
     }
 }

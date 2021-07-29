@@ -1,12 +1,13 @@
-package uk.gov.companieshouse.ordernotification.ordersprocessor;
+package uk.gov.companieshouse.ordernotification.emailmodel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.ordernotification.orders.model.OrderData;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersService;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
 
 import java.util.Map;
 
@@ -23,31 +24,32 @@ import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER
  * </ol>
  */
 @Service
-public class OrderProcessorService {
+public class OrderResourceOrderNotificationEnricher implements OrderNotificationEnrichable {
 
-    private final OrdersService ordersService;
+    private final OrdersApiService ordersApiService;
     private final LoggingUtils loggingUtils;
 
     @Autowired
-    public OrderProcessorService(final OrdersService ordersService, LoggingUtils loggingUtils) {
-        this.ordersService = ordersService;
+    public OrderResourceOrderNotificationEnricher(final OrdersApiService ordersApiService, LoggingUtils loggingUtils) {
+        this.ordersApiService = ordersApiService;
         this.loggingUtils = loggingUtils;
     }
 
     /**
-     * Implements all of the business logic required to process the notification of an order received.
-     * @param orderUri the URI representing the order received
+     * Enriches an order received notification with an order resource fetched from the Orders API.
+     *
+     * @param event the order responsible for triggering the notification
      */
     @EventListener
-    public void processOrderReceived(final SendOrderNotificationEvent event) throws Exception {
-        final OrderData order;
+    public void enrich(final SendOrderNotificationEvent event) {
+        final OrdersApi order;
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, ORDER_URI, event.getOrderReference());
         try {
-            order = ordersService.getOrderData(event.getOrderReference());
+            order = ordersApiService.getOrderData(event.getOrderReference());
         } catch (Exception ex) {
             loggingUtils.getLogger().error("Exception caught getting order data.", ex, logMap);
-            throw ex;
+            throw new RuntimeException(ex);
         }
         loggingUtils.logIfNotNull(logMap, ORDER_REFERENCE_NUMBER, order.getReference());
         loggingUtils.getLogger().info("Processing order received", logMap);
