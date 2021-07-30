@@ -46,7 +46,7 @@ public class ErrorHandlingService {
     public void handleEvent(EventSourceRetrievable event) {
         Map<String, Object> logArgs = loggingUtils.createLogMap();
         try {
-            loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_REFERENCE_NUMBER, event.getEventSource().getOrderURL());
+            loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_URI, event.getEventSource().getOrderURL());
             if(event.getEventSource().getRetryCount() < maxRetries) {
                 loggingUtils.getLogger().debug("Publishing message to retry topic", logArgs);
                 messageProducer.sendMessage(new OrderReceivedNotificationRetry(

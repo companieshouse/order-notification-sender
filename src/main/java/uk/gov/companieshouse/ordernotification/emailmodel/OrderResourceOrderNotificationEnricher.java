@@ -11,7 +11,6 @@ import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseExce
 
 import java.util.Map;
 
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_REFERENCE_NUMBER;
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_URI;
 
 /**
@@ -53,7 +52,7 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
             loggingUtils.getLogger().error("Exception caught getting order data.", ex, logMap);
             throw ex;
         }
-        loggingUtils.logIfNotNull(logMap, ORDER_REFERENCE_NUMBER, order.getReference());
+        loggingUtils.logIfNotNull(logMap, ORDER_URI, order.getReference());
         loggingUtils.getLogger().debug("Mapping order", logMap);
         return orderMapperFactory.getOrderMapper(order).map(order);
     }

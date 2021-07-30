@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_REFERENCE_NUMBER;
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_URI;
 
 @Service
 public class MessageProducer {
@@ -55,7 +55,7 @@ public class MessageProducer {
     void logOffsetFollowingSendIngOfMessage(final String orderReference,
                                             final RecordMetadata recordMetadata) {
         final Map<String, Object> logMapCallback =  loggingUtils.createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
-        loggingUtils.logIfNotNull(logMapCallback, ORDER_REFERENCE_NUMBER, orderReference);
+        loggingUtils.logIfNotNull(logMapCallback, ORDER_URI, orderReference);
         loggingUtils.getLogger().info("Message sent to Kafka topic", logMapCallback);
     }
 }

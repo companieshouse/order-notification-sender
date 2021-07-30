@@ -55,13 +55,13 @@ public class EmailSendServiceTest {
     void testHandleEventNoExceptionsThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         when(event.getEmailModel()).thenReturn(emailSendModel);
-        when(event.getOrderURL()).thenReturn(TestConstants.ORDER_REFERENCE_NUMBER);
+        when(event.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
 
         //when
         emailSendService.handleEvent(event);
 
         //then
-        verify(producer).sendMessage(emailSendModel, TestConstants.ORDER_REFERENCE_NUMBER, "email-send");
+        verify(producer).sendMessage(emailSendModel, TestConstants.ORDER_NOTIFICATION_REFERENCE, "email-send");
     }
 
     @Test

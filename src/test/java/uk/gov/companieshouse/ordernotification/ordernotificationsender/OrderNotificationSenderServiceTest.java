@@ -65,7 +65,7 @@ public class OrderNotificationSenderServiceTest {
         verify(eventPublisher).publishEvent(new SendEmailEvent(TestConstants.ORDER_NOTIFICATION_REFERENCE, 1, emailSend));
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).debug("Successfully enriched order; notifying email sender", data);
-        verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_REFERENCE_NUMBER, TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
     }
 
     @Test
@@ -85,6 +85,6 @@ public class OrderNotificationSenderServiceTest {
         verify(eventPublisher).publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).error(eq("Failed to enrich order; notifying error handler"), any(), same(data));
-        verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_REFERENCE_NUMBER, TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
     }
 }
