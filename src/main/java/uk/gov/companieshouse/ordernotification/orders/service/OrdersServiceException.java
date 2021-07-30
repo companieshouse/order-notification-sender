@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
+/**
+ * Raised if an unrecoverable error occurs when trying to fetch an order resource.
+ */
 public class OrdersServiceException extends RuntimeException {
 
     public OrdersServiceException(String message) {

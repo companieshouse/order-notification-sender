@@ -4,6 +4,9 @@ import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 import java.util.Objects;
 
+/**
+ * Raised when an order is ready to be processed.
+ */
 public class SendOrderNotificationEvent implements OrderIdentifiable {
 
     private final String orderReference;
@@ -15,7 +18,7 @@ public class SendOrderNotificationEvent implements OrderIdentifiable {
         this.retryCount = retryCount;
     }
 
-    public String getOrderReference() {
+    public String getOrderURL() {
         return orderReference;
     }
 

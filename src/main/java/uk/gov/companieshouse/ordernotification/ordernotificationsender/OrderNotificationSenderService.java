@@ -11,6 +11,9 @@ import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseExce
 
 import java.util.Map;
 
+/**
+ * Handles an order notification by enriching it with data fetched from the orders API.
+ */
 @Service
 public class OrderNotificationSenderService {
 
@@ -23,14 +26,20 @@ public class OrderNotificationSenderService {
         this.loggingUtils = loggingUtils;
     }
 
+    /**
+     * Handles an order notification by enriching it with data fetched from the orders API. If an error occurs when
+     * enriching the notification then a failure event will be published.
+     *
+     * @param sendOrderNotificationEvent The order that is being processed.
+     */
     @EventListener
     public void handleEvent(SendOrderNotificationEvent sendOrderNotificationEvent) {
         Map<String, Object> loggerArgs = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_REFERENCE_NUMBER, sendOrderNotificationEvent.getOrderReference());
+        loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, sendOrderNotificationEvent.getOrderURL());
         try {
-            EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderReference());
+            EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderURL());
             loggingUtils.getLogger().debug("Successfully enriched order; notifying email sender", loggerArgs);
-            eventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderReference(), sendOrderNotificationEvent.getRetryCount(), emailSend));
+            eventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderURL(), sendOrderNotificationEvent.getRetryCount(), emailSend));
         } catch (OrdersResponseException e) {
             loggingUtils.getLogger().error("Failed to enrich order; notifying error handler", e, loggerArgs);
             eventPublisher.publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));

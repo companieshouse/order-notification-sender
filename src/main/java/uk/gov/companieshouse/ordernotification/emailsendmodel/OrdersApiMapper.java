@@ -8,6 +8,9 @@ import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Map an {@link OrdersApi} object to an {@link EmailSend} object.
+ */
 public abstract class OrdersApiMapper {
 
     private final DateGenerator dateGenerator;
@@ -28,6 +31,12 @@ public abstract class OrdersApiMapper {
         this.mapper = mapper;
     }
 
+    /**
+     * Map an {@link OrdersApi} object to an {@link EmailSend} object.
+     *
+     * @param order An order resource returned by the orders API.
+     * @return An {@link EmailSend} object containing order data.
+     */
     public EmailSend map(OrdersApi order) {
         try {
             EmailSend emailSend = new EmailSend();

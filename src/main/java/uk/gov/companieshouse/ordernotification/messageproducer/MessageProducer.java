@@ -31,7 +31,7 @@ public class MessageProducer {
     /**
      * Sends a message to the Kafka producer.
      * @param record The record containing content that will be serialised
-     * @throws SerializationException should there be a failure to serialise the EmailSend object
+     * @throws SerializationException should there be a failure to serialise an object
      * @throws ExecutionException should the production of the message to the topic error for some reason
      * @throws InterruptedException should the execution thread be interrupted
      * @throws TimeoutException when the kafka producer timeout elapses

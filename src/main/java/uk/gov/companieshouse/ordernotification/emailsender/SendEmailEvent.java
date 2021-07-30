@@ -4,19 +4,23 @@ import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 import java.util.Objects;
 
-public class SendEmailEvent implements OrderIdentifiable  {
-    private final String orderReference;
+/**
+ * Raised when an enriched order notification is ready to be published.
+ */
+public class SendEmailEvent implements OrderIdentifiable {
+
+    private final String orderURL;
     private final int retryCount;
     private final EmailSend emailModel;
 
-    public SendEmailEvent(String orderReference, int retryCount, EmailSend emailModel) {
-        this.orderReference = orderReference;
+    public SendEmailEvent(String orderURL, int retryCount, EmailSend emailModel) {
+        this.orderURL = orderURL;
         this.retryCount = retryCount;
         this.emailModel = emailModel;
     }
 
-    public String getOrderReference() {
-        return orderReference;
+    public String getOrderURL() {
+        return orderURL;
     }
 
     public int getRetryCount() {
@@ -29,20 +33,14 @@ public class SendEmailEvent implements OrderIdentifiable  {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof SendEmailEvent)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         SendEmailEvent that = (SendEmailEvent) o;
-        return getRetryCount() == that.getRetryCount() &&
-                Objects.equals(getOrderReference(), that.getOrderReference()) &&
-                Objects.equals(getEmailModel(), that.getEmailModel());
+        return retryCount == that.retryCount && Objects.equals(orderURL, that.orderURL) && Objects.equals(emailModel, that.emailModel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getOrderReference(), getRetryCount(), getEmailModel());
+        return Objects.hash(orderURL, retryCount, emailModel);
     }
 }

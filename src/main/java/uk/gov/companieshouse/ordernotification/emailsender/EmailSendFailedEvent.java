@@ -5,6 +5,9 @@ import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 import java.util.Objects;
 
+/**
+ * Raised if an error occurs when publishing an email message.
+ */
 public class EmailSendFailedEvent implements EventSourceRetrievable {
 
     private final OrderIdentifiable eventSource;

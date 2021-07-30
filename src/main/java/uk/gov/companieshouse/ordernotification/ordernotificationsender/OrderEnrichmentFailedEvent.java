@@ -5,6 +5,9 @@ import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 import java.util.Objects;
 
+/**
+ * Raised if an error occurs when enriching an order with an order resource.
+ */
 public class OrderEnrichmentFailedEvent implements EventSourceRetrievable {
 
     private final OrderIdentifiable eventSource;

@@ -13,6 +13,9 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import java.util.Map;
 
+/**
+ * Retrieves order data using the provided order reference number.
+ */
 @Service
 class OrdersApiServiceImpl implements OrdersApiService {
     

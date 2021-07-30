@@ -51,7 +51,7 @@ public class OrderNotificationSenderServiceTest {
     void testPublishEmailSendEventWhenSendOrderNotificationEventHandled() throws OrdersResponseException {
         //given
         when(orderNotificationEnricher.enrich(any())).thenReturn(emailSend);
-        when(sendOrderNotificationEvent.getOrderReference()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(sendOrderNotificationEvent.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(sendOrderNotificationEvent.getRetryCount()).thenReturn(1);
         when(loggingUtils.getLogger()).thenReturn(logger);
         Map<String, Object> data = new HashMap<>();
@@ -72,7 +72,7 @@ public class OrderNotificationSenderServiceTest {
     void testPublishOrderEnrichmentFailedEventWhenOrdersResponseExceptionThrown() throws OrdersResponseException {
         //given
         when(orderNotificationEnricher.enrich(any())).thenThrow(OrdersResponseException.class);
-        when(sendOrderNotificationEvent.getOrderReference()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(sendOrderNotificationEvent.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(loggingUtils.getLogger()).thenReturn(logger);
         Map<String, Object> data = new HashMap<>();
         when(loggingUtils.createLogMap()).thenReturn(data);

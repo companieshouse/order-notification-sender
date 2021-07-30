@@ -12,6 +12,9 @@ import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+/**
+ * Handles an incoming {@link SendEmailEvent} by sending a message containing email data.
+ */
 @Service
 public class EmailSendService implements ApplicationEventPublisherAware {
 
@@ -27,10 +30,17 @@ public class EmailSendService implements ApplicationEventPublisherAware {
         this.loggingUtils = loggingUtils;
     }
 
+    /**
+     * Handles an incoming {@link SendEmailEvent} by sending a message containing email data. If an error
+     * occurs when publishing the message then the error handler will be notified.
+     *
+     * @param event A {@link SendEmailEvent} object containing email data
+     * @throws NonRetryableFailureException if a serialization error occurs or the producer is interrupted
+     */
     @EventListener
     public void handleEvent(SendEmailEvent event) {
         try {
-            producer.sendMessage(event.getEmailModel(), event.getOrderReference(), EMAIL_SEND_TOPIC);
+            producer.sendMessage(event.getEmailModel(), event.getOrderURL(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
             throw new NonRetryableFailureException("Failed to serialize email data as avro", e);
         } catch (ExecutionException | TimeoutException e) {
