@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
+import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
+
 import java.util.Objects;
 
-public class SendEmailEvent {
+public class SendEmailEvent implements OrderIdentifiable  {
     private final String orderReference;
     private final int retryCount;
     private final EmailSend emailModel;

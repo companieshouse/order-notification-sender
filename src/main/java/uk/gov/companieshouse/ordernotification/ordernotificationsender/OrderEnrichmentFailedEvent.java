@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
+import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
+
 import java.util.Objects;
 
 public class OrderEnrichmentFailedEvent {
-    private final Object eventSource;
+    private final OrderIdentifiable eventSource;
 
-    public OrderEnrichmentFailedEvent(Object eventSource) {
+    public OrderEnrichmentFailedEvent(OrderIdentifiable eventSource) {
         this.eventSource = eventSource;
     }
 
@@ -15,8 +17,12 @@ public class OrderEnrichmentFailedEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof OrderEnrichmentFailedEvent)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof OrderEnrichmentFailedEvent)) {
+            return false;
+        }
         OrderEnrichmentFailedEvent that = (OrderEnrichmentFailedEvent) o;
         return Objects.equals(getEventSource(), that.getEventSource());
     }

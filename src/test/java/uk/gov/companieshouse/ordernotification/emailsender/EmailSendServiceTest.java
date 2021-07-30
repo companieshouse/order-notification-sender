@@ -6,16 +6,22 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -37,6 +43,12 @@ public class EmailSendServiceTest {
 
     @Mock
     private EmailSend emailSendModel;
+
+    @Mock
+    private Logger logger;
+
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Test
     void testHandleEventNoExceptionsThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
@@ -64,6 +76,54 @@ public class EmailSendServiceTest {
         assertEquals("Failed to serialize email data as avro", exception.getMessage());
     }
 
-    
+    @Test
+    void testHandleEventExecutionException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+        //given
+        Map<String, Object> logMap = new HashMap<>();
 
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(loggingUtils.createLogMap()).thenReturn(logMap);
+        doThrow(ExecutionException.class).when(producer).sendMessage(any(), any());
+        emailSendService.setApplicationEventPublisher(applicationEventPublisher);
+
+        //when
+        Executable actual = () -> emailSendService.handleEvent(event);
+
+        //then
+        assertDoesNotThrow(actual);
+        verify(logger).error(eq("Error sending email data to Kafka"), any(), eq(logMap));
+        verify(applicationEventPublisher).publishEvent(new EmailSendFailedEvent(event));
+    }
+
+    @Test
+    void testHandleInterruptedExceptionThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+        //given
+        doThrow(InterruptedException.class).when(producer).sendMessage(any(), any());
+
+        //when
+        Executable actual = () -> emailSendService.handleEvent(event);
+
+        //then
+        NonRetryableFailureException exception = assertThrows(NonRetryableFailureException.class, actual);
+        assertEquals("Interrupted", exception.getMessage());
+    }
+
+    @Test
+    void testHandleTimeoutExceptionThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+        //given
+        Map<String, Object> logMap = new HashMap<>();
+
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(loggingUtils.createLogMap()).thenReturn(logMap);
+        doThrow(TimeoutException.class).when(producer).sendMessage(any(), any());
+        emailSendService.setApplicationEventPublisher(applicationEventPublisher);
+
+        //when
+        Executable actual = () -> emailSendService.handleEvent(event);
+
+        //then
+        assertDoesNotThrow(actual);
+        verify(logger).error(eq("Error sending email data to Kafka"), any(), eq(logMap));
+        verify(applicationEventPublisher).publishEvent(new EmailSendFailedEvent(event));
+    }
 }
