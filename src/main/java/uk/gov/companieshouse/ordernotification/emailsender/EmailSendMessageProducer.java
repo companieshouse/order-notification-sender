@@ -8,6 +8,7 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_REFERENCE_NUMBER;
 
@@ -32,9 +33,10 @@ public class EmailSendMessageProducer {
      * @throws SerializationException should there be a failure to serialize the EmailSend object
      * @throws ExecutionException should the production of the message to the topic error for some reason
      * @throws InterruptedException should the execution thread be interrupted
+     * @throws TimeoutException when the kafka producer timeout elapses
      */
     public void sendMessage(final EmailSend email, String orderReference)
-            throws SerializationException, ExecutionException, InterruptedException {
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         Map<String, Object> logMap =
                 loggingUtils.logWithOrderReference("Sending message to kafka producer", orderReference);
         final Message message = emailSendAvroSerializer.createMessage(email, orderReference);
