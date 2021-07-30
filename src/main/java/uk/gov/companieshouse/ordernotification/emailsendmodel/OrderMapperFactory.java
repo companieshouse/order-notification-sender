@@ -1,9 +1,9 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
-import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 
 import java.util.Map;
 import java.util.Optional;
@@ -14,10 +14,10 @@ import java.util.Optional;
 @Component
 public class OrderMapperFactory {
 
-    private final Map<Class<? extends BaseItemApi>, OrdersApiMapper> ordersApiMappers;
+    private final Map<String, OrdersApiMapper> ordersApiMappers;
 
     @Autowired
-    public OrderMapperFactory(Map<Class<? extends BaseItemApi>, OrdersApiMapper> ordersApiMappers) {
+    public OrderMapperFactory(@Qualifier("ordersApiMappers") Map<String, OrdersApiMapper> ordersApiMappers) {
         this.ordersApiMappers = ordersApiMappers;
     }
 
@@ -28,7 +28,7 @@ public class OrderMapperFactory {
      * @return An {@link OrdersApiMapper} instance for the item type of the order.
      */
     public OrdersApiMapper getOrderMapper(OrdersApi ordersApi) {
-        return Optional.ofNullable(ordersApiMappers.get(ordersApi.getItems().get(0).getClass()))
+        return Optional.ofNullable(ordersApiMappers.get(ordersApi.getItems().get(0).getKind()))
                 .orElseThrow(() -> new IllegalArgumentException("Unhandled item class"));
     }
 }

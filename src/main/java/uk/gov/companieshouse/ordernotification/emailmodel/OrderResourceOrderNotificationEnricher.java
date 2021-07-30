@@ -49,7 +49,6 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
             loggingUtils.getLogger().debug("Fetching resource for order", logMap);
             order = ordersApiService.getOrderData(orderReference);
         } catch (OrdersResponseException ex) {
-            loggingUtils.getLogger().error("Exception caught getting order data.", ex, logMap);
             throw ex;
         }
         loggingUtils.logIfNotNull(logMap, ORDER_URI, order.getReference());

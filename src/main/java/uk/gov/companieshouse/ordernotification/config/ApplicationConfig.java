@@ -7,10 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
-import uk.gov.companieshouse.api.model.order.item.CertificateApi;
-import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
-import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOrderNotificationMapper;
@@ -25,6 +21,11 @@ import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
+
+    private static final String CERTIFICATE = "item#certificate";
+    private static final String CERTIFIED_COPY = "item#certified-copy";
+    private static final String MISSING_IMAGE_DELIVERY = "item#missing-image-delivery";
+
     @Bean
     DeserializerFactory deserializerFactory() {
         return new DeserializerFactory();
@@ -46,13 +47,13 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Map<Class<? extends BaseItemApi>, OrdersApiMapper> ordersApiMappers(CertificateOrderNotificationMapper certificateMapper,
+    public Map<String, OrdersApiMapper> ordersApiMappers(CertificateOrderNotificationMapper certificateMapper,
                                                                                DocumentOrderNotificationMapper documentMapper,
                                                                                MissingImageOrderNotificationMapper missingImageMapper) {
-        Map<Class<? extends BaseItemApi>, OrdersApiMapper> mappers = new HashMap<>();
-        mappers.put(CertificateApi.class, certificateMapper);
-        mappers.put(CertifiedCopyApi.class, documentMapper);
-        mappers.put(MissingImageDeliveryApi.class, missingImageMapper);
+        Map<String, OrdersApiMapper> mappers = new HashMap<>();
+        mappers.put(CERTIFICATE, certificateMapper);
+        mappers.put(CERTIFIED_COPY, documentMapper);
+        mappers.put(MISSING_IMAGE_DELIVERY, missingImageMapper);
         return mappers;
     }
 }

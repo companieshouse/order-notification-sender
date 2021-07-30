@@ -29,8 +29,8 @@ import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.APPLI
 public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventPublisherAware {
 
     private static final String ORDER_RECEIVED_TOPIC = "order-received";
-    private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-retry";
-    private static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-error";
+    private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-notification-retry";
+    private static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-notification-error";
     private static final String ORDER_RECEIVED_GROUP =
             APPLICATION_NAMESPACE + "-" + ORDER_RECEIVED_TOPIC;
     private static final String ORDER_RECEIVED_GROUP_RETRY =
@@ -41,8 +41,10 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
+
     @Value("${uk.gov.companieshouse.item-handler.error-consumer}")
     private boolean errorConsumerEnabled;
+
     private final KafkaListenerEndpointRegistry registry;
     private ApplicationEventPublisher applicationEventPublisher;
     private final LoggingUtils loggingUtils;
@@ -62,7 +64,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     @KafkaListener(id = ORDER_RECEIVED_GROUP, groupId = ORDER_RECEIVED_GROUP,
             topics = ORDER_RECEIVED_TOPIC,
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
-            containerFactory = "kafkaListenerContainerFactory")
+            containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceived(org.springframework.messaging.Message<OrderReceived> message) {
         handleMessage(new OrderReceivedFacade(message));
     }
@@ -79,7 +81,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     @KafkaListener(id = ORDER_RECEIVED_GROUP_RETRY, groupId = ORDER_RECEIVED_GROUP_RETRY,
             topics = ORDER_RECEIVED_TOPIC_RETRY,
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
-            containerFactory = "kafkaListenerContainerFactory")
+            containerFactory = "kafkaOrderReceivedRetryListenerContainerFactory")
     public void processOrderReceivedRetry(
             org.springframework.messaging.Message<OrderReceivedNotificationRetry> message) {
             handleMessage(new OrderReceivedNotificationRetryFacade(message));
@@ -144,7 +146,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, OrderReceivedDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MessageDeserialiser.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, ORDER_RECEIVED_GROUP_ERROR);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 

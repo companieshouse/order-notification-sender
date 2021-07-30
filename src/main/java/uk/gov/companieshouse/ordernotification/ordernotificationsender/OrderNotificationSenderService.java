@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
@@ -15,11 +16,11 @@ import java.util.Map;
  * Handles an order notification by enriching it with data fetched from the orders API.
  */
 @Service
-public class OrderNotificationSenderService {
+public class OrderNotificationSenderService implements ApplicationEventPublisherAware {
 
     private final OrderNotificationEnrichable orderEnricher;
     private final LoggingUtils loggingUtils;
-    private ApplicationEventPublisher eventPublisher;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     public OrderNotificationSenderService(OrderNotificationEnrichable orderEnricher, LoggingUtils loggingUtils) {
         this.orderEnricher = orderEnricher;
@@ -39,14 +40,15 @@ public class OrderNotificationSenderService {
         try {
             EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderURL());
             loggingUtils.getLogger().debug("Successfully enriched order; notifying email sender", loggerArgs);
-            eventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderURL(), sendOrderNotificationEvent.getRetryCount(), emailSend));
+            applicationEventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderURL(), sendOrderNotificationEvent.getRetryCount(), emailSend));
         } catch (OrdersResponseException e) {
             loggingUtils.getLogger().error("Failed to enrich order; notifying error handler", e, loggerArgs);
-            eventPublisher.publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));
+            applicationEventPublisher.publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));
         }
     }
 
-    public void setEventPublisher(ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }

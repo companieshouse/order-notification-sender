@@ -56,7 +56,7 @@ public class OrderNotificationSenderServiceTest {
         when(loggingUtils.getLogger()).thenReturn(logger);
         Map<String, Object> data = new HashMap<>();
         when(loggingUtils.createLogMap()).thenReturn(data);
-        orderNotificationSenderService.setEventPublisher(eventPublisher);
+        orderNotificationSenderService.setApplicationEventPublisher(eventPublisher);
 
         //when
         orderNotificationSenderService.handleEvent(sendOrderNotificationEvent);
@@ -76,7 +76,7 @@ public class OrderNotificationSenderServiceTest {
         when(loggingUtils.getLogger()).thenReturn(logger);
         Map<String, Object> data = new HashMap<>();
         when(loggingUtils.createLogMap()).thenReturn(data);
-        orderNotificationSenderService.setEventPublisher(eventPublisher);
+        orderNotificationSenderService.setApplicationEventPublisher(eventPublisher);
 
         //when
         orderNotificationSenderService.handleEvent(sendOrderNotificationEvent);

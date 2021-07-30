@@ -28,13 +28,15 @@ public class OrderMapperFactoryTest {
 
     @BeforeEach
     void setup() {
-        this.mapperFactory = new OrderMapperFactory(Collections.singletonMap(BaseItemApi.class, orderMapper));
+        this.mapperFactory = new OrderMapperFactory(Collections.singletonMap("mapper", orderMapper));
     }
 
     @Test
     void returnCertificateMapperIfClassCertificateApi() {
         // given
         OrdersApi ordersApi = new OrdersApi();
+        BaseItemApi item = new BaseItemApi();
+        item.setKind("mapper");
         ordersApi.setItems(Collections.singletonList(item));
 
         // when

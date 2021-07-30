@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoggingUtils {
-    public static final String APPLICATION_NAMESPACE = "item-handler";
+    public static final String APPLICATION_NAMESPACE = "order-notification-sender";
     public static final String TOPIC = "topic";
     public static final String OFFSET = "offset";
     public static final String KEY = "key";
