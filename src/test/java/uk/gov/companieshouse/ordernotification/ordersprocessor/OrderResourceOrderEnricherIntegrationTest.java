@@ -12,7 +12,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceOrderNotificationEnricher;
-import uk.gov.companieshouse.ordernotification.fixtures.TestUtils;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersServiceException;
@@ -50,12 +50,12 @@ class OrderResourceOrderEnricherIntegrationTest {
 
         // Given we have an order that somehow contains no items (invalid input)
         final OrdersApi order = new OrdersApi();
-        order.setReference(TestUtils.ORDER_REFERENCE);
+        order.setReference(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(ordersApi.getOrderData(anyString())).thenReturn(order);
 
         // When and then
         assertThatExceptionOfType(OrdersServiceException.class).isThrownBy(() ->
-            orderResourceOrderEnricherUnderTest.enrich(TestUtils.ORDER_RECEIVED_URI))
+            orderResourceOrderEnricherUnderTest.enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE))
             .withMessage("Order ORD-432118-793830 contains no items.")
             .withNoCause();
     }

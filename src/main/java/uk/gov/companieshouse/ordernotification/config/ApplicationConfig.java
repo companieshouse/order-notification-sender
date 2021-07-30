@@ -16,7 +16,6 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOrderNotificationMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.DocumentOrderNotificationMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MissingImageOrderNotificationMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiMapper;
 
 import java.util.HashMap;

@@ -6,7 +6,6 @@ import org.springframework.messaging.MessageHeaders;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
-import uk.gov.companieshouse.orders.OrderReceived;
 
 import java.util.HashMap;
 import java.util.Map;

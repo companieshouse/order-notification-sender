@@ -40,15 +40,15 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
     /**
      * Enriches an order received notification with an order resource fetched from the Orders API.
      *
-     * @param orderUri the order responsible for triggering the notification
+     * @param orderReference the order responsible for triggering the notification
      */
-    public EmailSend enrich(final String orderUri) throws OrdersResponseException {
+    public EmailSend enrich(final String orderReference) throws OrdersResponseException {
         final OrdersApi order;
         Map<String, Object> logMap = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logMap, ORDER_URI, orderUri);
+        loggingUtils.logIfNotNull(logMap, ORDER_URI, orderReference);
         try {
             loggingUtils.getLogger().debug("Fetching resource for order", logMap);
-            order = ordersApiService.getOrderData(orderUri);
+            order = ordersApiService.getOrderData(orderReference);
         } catch (OrdersResponseException ex) {
             loggingUtils.getLogger().error("Exception caught getting order data.", ex, logMap);
             throw ex;
