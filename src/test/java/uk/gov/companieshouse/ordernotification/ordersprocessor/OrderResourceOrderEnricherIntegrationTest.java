@@ -12,7 +12,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceOrderNotificationEnricher;
-import uk.gov.companieshouse.ordernotification.emailsender.KafkaMessagingException;
 import uk.gov.companieshouse.ordernotification.fixtures.TestUtils;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
@@ -59,23 +58,5 @@ class OrderResourceOrderEnricherIntegrationTest {
             orderResourceOrderEnricherUnderTest.enrich(TestUtils.ORDER_RECEIVED_URI))
             .withMessage("Order ORD-432118-793830 contains no items.")
             .withNoCause();
-    }
-
-    @Test
-    @DisplayName("processOrderReceived() propagates non-retryable KafkaMessagingException so consumer can handle it accordingly")
-    void propagatesNonRetryableKafkaMessagingException() throws Exception {
-
-        // Given we have an order item that is missing a required field (invalid input - no item URI)
-        final OrdersApi order = new OrdersApi();
-        order.getItems().get(0).setItemUri(null);
-        when(ordersApi.getOrderData(anyString())).thenReturn(order);
-
-        // When and then
-        assertThatExceptionOfType(KafkaMessagingException.class).isThrownBy(() ->
-            orderResourceOrderEnricherUnderTest.enrich(TestUtils.ORDER_RECEIVED_URI))
-            .withMessage("Unable to create message for order ORD-432118-793830 item ID MID-242116-007650!")
-            .withCause(new NullPointerException(
-                    "null of string in field item_uri of uk.gov.companieshouse.orders.items.Item in field item of " +
-                            "uk.gov.companieshouse.orders.items.ChdItemOrdered"));
     }
 }

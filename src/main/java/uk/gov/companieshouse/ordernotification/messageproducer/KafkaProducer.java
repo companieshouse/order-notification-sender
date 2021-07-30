@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.emailsender;
+package uk.gov.companieshouse.ordernotification.messageproducer;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +15,13 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 @Service
-class EmailSendKafkaProducer {
+class KafkaProducer {
     private LoggingUtils loggingUtils;
     private CHKafkaProducer chKafkaProducer;
     private final Long timeout;
 
     @Autowired
-    public EmailSendKafkaProducer(LoggingUtils loggingUtils, CHKafkaProducer chKafkaProducer, @Value("${email.producerTimeout}") Long timeout) {
+    public KafkaProducer(LoggingUtils loggingUtils, CHKafkaProducer chKafkaProducer, @Value("${email.producerTimeout}") Long timeout) {
         this.loggingUtils = loggingUtils;
         this.chKafkaProducer = chKafkaProducer;
         this.timeout = timeout;

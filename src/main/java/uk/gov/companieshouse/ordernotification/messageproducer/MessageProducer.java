@@ -1,5 +1,6 @@
-package uk.gov.companieshouse.ordernotification.emailsender;
+package uk.gov.companieshouse.ordernotification.messageproducer;
 
+import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
@@ -13,35 +14,35 @@ import java.util.concurrent.TimeoutException;
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_REFERENCE_NUMBER;
 
 @Service
-public class EmailSendMessageProducer {
+public class MessageProducer {
 
-    private final EmailSendMessageFactory emailSendAvroSerializer;
-    private final EmailSendKafkaProducer emailSendKafkaProducer;
+    private final MessageFactory avroSerialiser;
+    private final KafkaProducer kafkaProducer;
     private final LoggingUtils loggingUtils;
 
-    public EmailSendMessageProducer(final EmailSendMessageFactory avroSerializer,
-                                    final EmailSendKafkaProducer kafkaMessageProducer,
-                                    final LoggingUtils loggingUtils) {
-        this.emailSendAvroSerializer = avroSerializer;
-        this.emailSendKafkaProducer = kafkaMessageProducer;
+    public MessageProducer(final MessageFactory avroSerialiser,
+                           final KafkaProducer kafkaMessageProducer,
+                           final LoggingUtils loggingUtils) {
+        this.avroSerialiser = avroSerialiser;
+        this.kafkaProducer = kafkaMessageProducer;
         this.loggingUtils = loggingUtils;
     }
 
     /**
-     * Sends an email-send message to the Kafka producer.
-     * @param email EmailSend object encapsulating the message content
+     * Sends a message to the Kafka producer.
+     * @param record The record containing content that will be serialised
      * @throws SerializationException should there be a failure to serialize the EmailSend object
      * @throws ExecutionException should the production of the message to the topic error for some reason
      * @throws InterruptedException should the execution thread be interrupted
      * @throws TimeoutException when the kafka producer timeout elapses
      */
-    public void sendMessage(final EmailSend email, String orderReference)
+    public void sendMessage(final GenericRecord record, String orderReference, String topic)
             throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         Map<String, Object> logMap =
                 loggingUtils.logWithOrderReference("Sending message to kafka producer", orderReference);
-        final Message message = emailSendAvroSerializer.createMessage(email, orderReference);
+        final Message message = avroSerialiser.createMessage(record, orderReference, topic);
         loggingUtils.logIfNotNull(logMap, LoggingUtils.TOPIC, message.getTopic());
-        emailSendKafkaProducer.sendMessage(message, orderReference,
+        kafkaProducer.sendMessage(message, orderReference,
                 recordMetadata ->
                     logOffsetFollowingSendIngOfMessage(orderReference, recordMetadata));
     }

@@ -9,6 +9,7 @@ public final class TestConstants {
     public static final String ORDER_COST = "15";
     public static final String PAYMENT_REFERENCE = "ABCD-EFGH-IJKL";
     public static final String ORDER_NOTIFICATION_REFERENCE = "/order/" + ORDER_REFERENCE_NUMBER;
+    public static final String KAFKA_TOPIC = "topic";
 
     //certificate order constants
     public static final String CERTIFICATE_TYPE = "incorporation";

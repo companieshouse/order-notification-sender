@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.emailsender;
+package uk.gov.companieshouse.ordernotification.messageproducer;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -11,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
+import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.message.Message;
@@ -21,7 +22,7 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 @DirtiesContext
 @EmbeddedKafka
 @TestPropertySource(locations = "classpath:application-stubbed-empty.properties")
-class EmailSendMessageFactoryTest {
+class MessageFactoryTest {
     @Autowired
     private SerializerFactory serializerFactory;
     @Autowired
@@ -56,10 +57,10 @@ class EmailSendMessageFactoryTest {
     @Test
     void createMessageSuccessfullyCreatesMessage() throws Exception {
         // Given
-        EmailSendMessageFactory messageFactory = new EmailSendMessageFactory(serializerFactory, loggingUtils);
+        MessageFactory messageFactory = new MessageFactory(serializerFactory, loggingUtils);
 
         // When
-        Message message = messageFactory.createMessage(createEmailSend(), ORDER_REF);
+        Message message = messageFactory.createMessage(createEmailSend(), ORDER_REF, TOPIC);
         String actualContent = new String(message.getValue());
 
         // Then

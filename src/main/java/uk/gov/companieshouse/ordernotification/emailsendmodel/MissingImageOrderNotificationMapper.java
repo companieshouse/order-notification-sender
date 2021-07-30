@@ -1,9 +1,11 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 
+@Component
 public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
 
     private final String messageId;

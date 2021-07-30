@@ -1,10 +1,11 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
+import uk.gov.companieshouse.ordernotification.eventmodel.EventSourceRetrievable;
 import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 import java.util.Objects;
 
-public class EmailSendFailedEvent {
+public class EmailSendFailedEvent implements EventSourceRetrievable {
 
     private final OrderIdentifiable eventSource;
 

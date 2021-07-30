@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.emailsender;
+package uk.gov.companieshouse.ordernotification.messageproducer;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.StructuredLogger;
+import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import java.util.Map;
@@ -25,21 +27,21 @@ import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.TOPIC
 
 
 /**
- * Unit tests the {@link EmailSendMessageProducer} class.
+ * Unit tests the {@link MessageProducer} class.
  */
 @ExtendWith(MockitoExtension.class)
-public class EmailSendMessageProducerTest {
+public class MessageProducerTest {
 
     private static final String TOPIC_NAME = "topic";
 
     @InjectMocks
-    private EmailSendMessageProducer messageProducerUnderTest;
+    private MessageProducer messageProducerUnderTest;
 
     @Mock
-    private EmailSendMessageFactory emailSendMessageFactory;
+    private MessageFactory messageFactory;
 
     @Mock
-    private EmailSendKafkaProducer emailSendKafkaProducer;
+    private KafkaProducer kafkaProducer;
 
     @Mock
     private Message message;
@@ -61,13 +63,13 @@ public class EmailSendMessageProducerTest {
     void sendMessageDelegatesMessageCreation() throws Exception {
 
         // Given
-        when(emailSendMessageFactory.createMessage(emailSend, ORDER_REFERENCE)).thenReturn(message);
+        when(messageFactory.createMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
 
         // When
-        messageProducerUnderTest.sendMessage(emailSend, ORDER_REFERENCE);
+        messageProducerUnderTest.sendMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC);
 
         // Then
-        verify(emailSendMessageFactory).createMessage(emailSend, ORDER_REFERENCE);
+        verify(messageFactory).createMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC);
     }
 
     @Test
@@ -75,23 +77,23 @@ public class EmailSendMessageProducerTest {
     void sendMessageDelegatesMessageSending() throws Exception {
 
         // Given
-        when(emailSendMessageFactory.createMessage(emailSend, ORDER_REFERENCE)).thenReturn(message);
+        when(messageFactory.createMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
 
         // When
-        messageProducerUnderTest.sendMessage(emailSend, ORDER_REFERENCE);
+        messageProducerUnderTest.sendMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC);
 
         // Then
-        verify(emailSendKafkaProducer).sendMessage(eq(message), eq(ORDER_REFERENCE), any(Consumer.class));
+        verify(kafkaProducer).sendMessage(eq(message), eq(ORDER_REFERENCE), any(Consumer.class));
     }
 
     @Test
     public void sendMessageMeetsLoggingRequirements() throws Exception {
         // Given
-        when(emailSendMessageFactory.createMessage(emailSend, ORDER_REFERENCE)).thenReturn(message);
+        when(messageFactory.createMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
         when(message.getTopic()).thenReturn(TOPIC_NAME);
 
         // When
-        messageProducerUnderTest.sendMessage(emailSend, ORDER_REFERENCE);
+        messageProducerUnderTest.sendMessage(emailSend, ORDER_REFERENCE, TestConstants.KAFKA_TOPIC);
 
         // Then
         verify(loggingUtils).logWithOrderReference(eq("Sending message to kafka producer"), eq(ORDER_REFERENCE));

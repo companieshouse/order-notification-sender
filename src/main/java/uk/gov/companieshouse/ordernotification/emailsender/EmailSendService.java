@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
-import org.sonarsource.scanner.api.internal.shaded.okio.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -8,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -15,12 +15,14 @@ import java.util.concurrent.TimeoutException;
 @Service
 public class EmailSendService implements ApplicationEventPublisherAware {
 
-    private final EmailSendMessageProducer producer;
+    private static final String EMAIL_SEND_TOPIC = "email-send";
+
+    private final MessageProducer producer;
     private final LoggingUtils loggingUtils;
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public EmailSendService(EmailSendMessageProducer producer, LoggingUtils loggingUtils) {
+    public EmailSendService(MessageProducer producer, LoggingUtils loggingUtils) {
         this.producer = producer;
         this.loggingUtils = loggingUtils;
     }
@@ -28,7 +30,7 @@ public class EmailSendService implements ApplicationEventPublisherAware {
     @EventListener
     public void handleEvent(SendEmailEvent event) {
         try {
-            producer.sendMessage(event.getEmailModel(), event.getOrderReference());
+            producer.sendMessage(event.getEmailModel(), event.getOrderReference(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
             throw new NonRetryableFailureException("Failed to serialize email data as avro", e);
         } catch (ExecutionException | TimeoutException e) {

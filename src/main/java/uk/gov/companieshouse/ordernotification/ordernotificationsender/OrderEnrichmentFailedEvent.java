@@ -1,17 +1,20 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
+import uk.gov.companieshouse.ordernotification.eventmodel.EventSourceRetrievable;
 import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 import java.util.Objects;
 
-public class OrderEnrichmentFailedEvent {
+public class OrderEnrichmentFailedEvent implements EventSourceRetrievable {
+
     private final OrderIdentifiable eventSource;
 
     public OrderEnrichmentFailedEvent(OrderIdentifiable eventSource) {
         this.eventSource = eventSource;
     }
 
-    public Object getEventSource() {
+    @Override
+    public OrderIdentifiable getEventSource() {
         return eventSource;
     }
 

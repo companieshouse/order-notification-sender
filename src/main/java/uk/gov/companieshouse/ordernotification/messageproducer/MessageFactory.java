@@ -1,6 +1,6 @@
-package uk.gov.companieshouse.ordernotification.emailsender;
+package uk.gov.companieshouse.ordernotification.messageproducer;
 
-
+import org.apache.avro.generic.GenericRecord;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.message.Message;
@@ -12,32 +12,31 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-class EmailSendMessageFactory {
+class MessageFactory {
 
 	private final SerializerFactory serializerFactory;
-	private static final String EMAIL_SEND_TOPIC = "email-send";
 	private LoggingUtils loggingUtils;
 
-	public EmailSendMessageFactory(SerializerFactory serializer, LoggingUtils loggingUtils) {
+	public MessageFactory(SerializerFactory serializer, LoggingUtils loggingUtils) {
 		serializerFactory = serializer;
 		this.loggingUtils = loggingUtils;
 	}
 
 	/**
 	 * Creates an email-send avro message.
-	 * @param emailSend email-send object
+	 * @param record record
 	 * @return email-send avro message
 	 * @throws SerializationException should there be a failure to serialize the EmailSend object
 	 */
-	public Message createMessage(final EmailSend emailSend, String orderReference) throws SerializationException {
+	public Message createMessage(final GenericRecord record, String orderReference, String topic) throws SerializationException {
         Map<String, Object> logMap = loggingUtils.createLogMapWithOrderReference(orderReference);
-	    logMap.put(LoggingUtils.TOPIC, EMAIL_SEND_TOPIC);
+	    logMap.put(LoggingUtils.TOPIC, topic);
 		loggingUtils.getLogger().info("Create kafka message", logMap);
-		final AvroSerializer<EmailSend> serializer =
-				serializerFactory.getGenericRecordSerializer(EmailSend.class);
+		final AvroSerializer<GenericRecord> serializer =
+				serializerFactory.getGenericRecordSerializer(GenericRecord.class);
 		final Message message = new Message();
-		message.setValue(serializer.toBinary(emailSend));
-		message.setTopic(EMAIL_SEND_TOPIC);
+		message.setValue(serializer.toBinary(record));
+		message.setTopic(topic);
 		message.setTimestamp(new Date().getTime());
 		loggingUtils.getLogger().info("Kafka message created", logMap);
 		return message;

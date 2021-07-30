@@ -11,6 +11,7 @@ import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class EmailSendServiceTest {
     private EmailSendService emailSendService;
 
     @Mock
-    private EmailSendMessageProducer producer;
+    private MessageProducer producer;
 
     @Mock
     private LoggingUtils loggingUtils;
@@ -60,13 +61,13 @@ public class EmailSendServiceTest {
         emailSendService.handleEvent(event);
 
         //then
-        verify(producer).sendMessage(emailSendModel, TestConstants.ORDER_REFERENCE_NUMBER);
+        verify(producer).sendMessage(emailSendModel, TestConstants.ORDER_REFERENCE_NUMBER, "email-send");
     }
 
     @Test
     void testHandleEventSerializationExceptionThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
-        doThrow(SerializationException.class).when(producer).sendMessage(any(), any());
+        doThrow(SerializationException.class).when(producer).sendMessage(any(), any(), any());
 
         //when
         Executable actual = () -> emailSendService.handleEvent(event);
@@ -83,7 +84,7 @@ public class EmailSendServiceTest {
 
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
-        doThrow(ExecutionException.class).when(producer).sendMessage(any(), any());
+        doThrow(ExecutionException.class).when(producer).sendMessage(any(), any(), any());
         emailSendService.setApplicationEventPublisher(applicationEventPublisher);
 
         //when
@@ -98,7 +99,7 @@ public class EmailSendServiceTest {
     @Test
     void testHandleInterruptedExceptionThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
-        doThrow(InterruptedException.class).when(producer).sendMessage(any(), any());
+        doThrow(InterruptedException.class).when(producer).sendMessage(any(), any(), any());
 
         //when
         Executable actual = () -> emailSendService.handleEvent(event);
@@ -115,7 +116,7 @@ public class EmailSendServiceTest {
 
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
-        doThrow(TimeoutException.class).when(producer).sendMessage(any(), any());
+        doThrow(TimeoutException.class).when(producer).sendMessage(any(), any(), any());
         emailSendService.setApplicationEventPublisher(applicationEventPublisher);
 
         //when
