@@ -19,15 +19,13 @@ import java.util.Map;
  * Retrieves order data using the provided order reference number.
  */
 @Service
-class OrdersApiServiceImpl implements OrdersApiService {
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingUtils.APPLICATION_NAMESPACE);
+class OrdersApiOrderRetriever implements OrderRetrievable {
     
     private final ApiClient apiClient;
     private final LoggingUtils loggingUtils;
 
     @Autowired
-    public OrdersApiServiceImpl(ApiClient apiClient, LoggingUtils loggingUtils) {
+    public OrdersApiOrderRetriever(ApiClient apiClient, LoggingUtils loggingUtils) {
         this.apiClient = apiClient;
         this.loggingUtils = loggingUtils;
     }

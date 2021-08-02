@@ -12,6 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.message.Message;
@@ -32,16 +33,6 @@ class MessageFactoryTest {
 
     private static KafkaContainer kafkaContainer;
 
-    private static final String APP_ID = "App Id";
-    private static final String EMAIL_DATA = "Message content";
-    private static final String EMAIL_ADDR = "someone@example.com";
-    private static final String MSG_ID = "Message Id";
-    private static final String MSG_TYPE = "Message type";
-    private static final String ORDER_REF = "ORD-ABC-123";
-    private static final String CREATED_AT = "2020-08-25T09:27:09.519+01:00";
-
-    private static final String TOPIC = "email-send";
-
     @BeforeAll
     static void before() {
         kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.4.3"));
@@ -60,24 +51,24 @@ class MessageFactoryTest {
         MessageFactory messageFactory = new MessageFactory(serializerFactory, loggingUtils);
 
         // When
-        Message message = messageFactory.createMessage(createEmailSend(), ORDER_REF, TOPIC);
+        Message message = messageFactory.createMessage(createEmailSend(), TestConstants.ORDER_REFERENCE_NUMBER, TestConstants.TOPIC);
         String actualContent = new String(message.getValue());
 
         // Then
         AvroSerializer<EmailSend> serializer = serializerFactory.getGenericRecordSerializer(EmailSend.class);
         String expectedContent = new String(serializer.toBinary(createEmailSend()));
         Assertions.assertEquals(expectedContent, actualContent);
-        Assertions.assertEquals(TOPIC, message.getTopic());
+        Assertions.assertEquals(TestConstants.TOPIC, message.getTopic());
     }
 
     private EmailSend createEmailSend() {
         EmailSend emailSend = new EmailSend();
-        emailSend.setAppId(APP_ID);
-        emailSend.setData(EMAIL_DATA);
-        emailSend.setEmailAddress(EMAIL_ADDR);
-        emailSend.setMessageId(MSG_ID);
-        emailSend.setMessageType(MSG_TYPE);
-        emailSend.setCreatedAt(CREATED_AT);
+        emailSend.setAppId(TestConstants.APPLICATION_ID);
+        emailSend.setData(TestConstants.EMAIL_DATA);
+        emailSend.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
+        emailSend.setMessageId(TestConstants.MESSAGE_ID);
+        emailSend.setMessageType(TestConstants.MESSAGE_TYPE);
+        emailSend.setCreatedAt(TestConstants.CREATED_AT);
 
         return emailSend;
     }

@@ -14,7 +14,7 @@ import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiMapper;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
+import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 import java.util.Collections;
@@ -46,7 +46,7 @@ public class OrderResourceOrderNotificationEnricherTest {
     private OrdersApiMapper mapper;
 
     @Mock
-    private OrdersApiService ordersApiService;
+    private OrderRetrievable orderRetrievable;
 
     @Mock
     private EmailSend emailSend;
@@ -60,7 +60,7 @@ public class OrderResourceOrderNotificationEnricherTest {
     @Test
     void testEnrichOrderNotificationWithOrderResource() throws OrdersResponseException {
         //given
-        when(ordersApiService.getOrderData(anyString())).thenReturn(ordersApi);
+        when(orderRetrievable.getOrderData(anyString())).thenReturn(ordersApi);
         when(ordersApi.getItems()).thenReturn(Collections.singletonList(item));
         when(item.getKind()).thenReturn("kind");
         when(factory.getOrderMapper(any())).thenReturn(mapper);
@@ -72,7 +72,7 @@ public class OrderResourceOrderNotificationEnricherTest {
 
         //then
         assertEquals(emailSend, actual);
-        verify(ordersApiService).getOrderData(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        verify(orderRetrievable).getOrderData(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(factory).getOrderMapper("kind");
         verify(mapper).map(ordersApi);
     }
@@ -80,7 +80,7 @@ public class OrderResourceOrderNotificationEnricherTest {
     @Test
     void testThrowExceptionIfOrdersApiErrors() throws OrdersResponseException {
         //given
-        when(ordersApiService.getOrderData(anyString())).thenThrow(OrdersResponseException.class);
+        when(orderRetrievable.getOrderData(anyString())).thenThrow(OrdersResponseException.class);
         when(loggingUtils.getLogger()).thenReturn(logger);
 
         //when
@@ -88,7 +88,7 @@ public class OrderResourceOrderNotificationEnricherTest {
 
         //then
         assertThrows(OrdersResponseException.class, actual);
-        verify(ordersApiService).getOrderData(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        verify(orderRetrievable).getOrderData(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verifyNoInteractions(factory);
     }
 }

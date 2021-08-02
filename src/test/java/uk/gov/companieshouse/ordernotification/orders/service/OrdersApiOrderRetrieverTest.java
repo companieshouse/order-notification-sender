@@ -31,12 +31,12 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class OrdersApiServiceImplTest {
+public class OrdersApiOrderRetrieverTest {
     private static final String ORDER_URL = "/orders/1234";
     private static final String ORDER_URL_INCORRECT = "/bad-orders/url";
 
     @InjectMocks
-    OrdersApiServiceImpl serviceUnderTest;
+    OrdersApiOrderRetriever serviceUnderTest;
 
     @Mock
     ApiResponse<OrdersApi> ordersResponse;

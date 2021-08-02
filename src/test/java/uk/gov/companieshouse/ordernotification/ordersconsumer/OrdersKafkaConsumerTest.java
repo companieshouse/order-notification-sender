@@ -14,6 +14,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.GenericMessage;
 
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.orders.OrderReceived;
@@ -33,11 +34,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrdersKafkaConsumerTest {
-    private static final String ORDER_RECEIVED_URI = "/order/ORDER-12345";
-    private static final String ORDER_RECEIVED_TOPIC = "order-received";
-    private static final String ORDER_RECEIVED_KEY = "order-received";
-    private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-notification-retry";
-    private static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-notification-error";
 
     @InjectMocks
     private OrdersKafkaConsumer ordersKafkaConsumer;
@@ -60,7 +56,7 @@ class OrdersKafkaConsumerTest {
     @Test
     void testHandlesOrderReceivedMessage() {
         // Given
-        org.springframework.messaging.Message<OrderReceived> actualMessage = createTestMessage(ORDER_RECEIVED_TOPIC, 0);
+        org.springframework.messaging.Message<OrderReceived> actualMessage = createTestMessage(TestConstants.ORDER_RECEIVED_TOPIC, 0);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.getMessageHeadersAsMap(any())).thenReturn(Collections.singletonMap("key", "value"));
 
@@ -68,8 +64,8 @@ class OrdersKafkaConsumerTest {
         ordersKafkaConsumer.processOrderReceived(actualMessage);
 
         // Then
-        verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(ORDER_RECEIVED_URI, 0));
-        verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, ORDER_RECEIVED_URI);
+        verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(TestConstants.ORDER_NOTIFICATION_REFERENCE, 0));
+        verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).info("'order-received' message received", Collections.singletonMap("key", "value"));
         verify(logger).info("Order received message processing completed", Collections.singletonMap("key", "value"));
     }
@@ -85,8 +81,8 @@ class OrdersKafkaConsumerTest {
         ordersKafkaConsumer.processOrderReceivedRetry(actualMessage);
 
         // Then
-        verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(ORDER_RECEIVED_URI, 2));
-        verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, ORDER_RECEIVED_URI);
+        verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(TestConstants.ORDER_NOTIFICATION_REFERENCE, 2));
+        verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).info("'order-received-notification-retry' message received", Collections.singletonMap("key", "value"));
         verify(logger).info("Order received message processing completed", Collections.singletonMap("key", "value"));
     }
@@ -94,7 +90,7 @@ class OrdersKafkaConsumerTest {
     @Test
     void testHandlesOrderReceivedErrorMessage() {
         // Given
-        org.springframework.messaging.Message<OrderReceived> actualMessage = createTestMessage(ORDER_RECEIVED_TOPIC_ERROR, 0);
+        org.springframework.messaging.Message<OrderReceived> actualMessage = createTestMessage(TestConstants.ORDER_RECEIVED_TOPIC_ERROR, 0);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.getMessageHeadersAsMap(any())).thenReturn(Collections.singletonMap("key", "value"));
 
@@ -102,8 +98,8 @@ class OrdersKafkaConsumerTest {
         ordersKafkaConsumer.processOrderReceivedError(actualMessage);
 
         // Then
-        verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(ORDER_RECEIVED_URI, 0));
-        verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, ORDER_RECEIVED_URI);
+        verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(TestConstants.ORDER_NOTIFICATION_REFERENCE, 0));
+        verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).info("'order-received-notification-error' message received", Collections.singletonMap("key", "value"));
         verify(logger).info("Order received message processing completed", Collections.singletonMap("key", "value"));
     }
@@ -111,7 +107,7 @@ class OrdersKafkaConsumerTest {
     @Test
     void stopProcessingErrorOffsetsIfRecoveryOffsetExceeded() {
         // Given
-        org.springframework.messaging.Message<OrderReceived> actualMessage = createTestMessage(ORDER_RECEIVED_TOPIC_ERROR, 1);
+        org.springframework.messaging.Message<OrderReceived> actualMessage = createTestMessage(TestConstants.ORDER_RECEIVED_TOPIC_ERROR, 1);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(registry.getListenerContainer(anyString())).thenReturn(listenerContainer);
 
@@ -140,7 +136,7 @@ class OrdersKafkaConsumerTest {
 
     private static OrderReceived getOrderReceived() {
         OrderReceived orderReceived = new OrderReceived();
-        orderReceived.setOrderUri(ORDER_RECEIVED_URI);
+        orderReceived.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         return orderReceived;
     }
 
@@ -148,7 +144,7 @@ class OrdersKafkaConsumerTest {
         Map<String, Object> headerItems = new HashMap<>();
         headerItems.put("kafka_receivedTopic", receivedTopic);
         headerItems.put("kafka_offset", offset);
-        headerItems.put("kafka_receivedMessageKey", ORDER_RECEIVED_KEY);
+        headerItems.put("kafka_receivedMessageKey", TestConstants.ORDER_RECEIVED_KEY);
         headerItems.put("kafka_receivedPartitionId", 0);
         return new MessageHeaders(headerItems);
     }
@@ -157,6 +153,6 @@ class OrdersKafkaConsumerTest {
         OrderReceivedNotificationRetry orderReceivedNotificationRetry = new OrderReceivedNotificationRetry();
         orderReceivedNotificationRetry.setOrder(getOrderReceived());
         orderReceivedNotificationRetry.setAttempt(2);
-        return new GenericMessage<>(orderReceivedNotificationRetry, getHeaders(ORDER_RECEIVED_TOPIC_RETRY, 0));
+        return new GenericMessage<>(orderReceivedNotificationRetry, getHeaders(TestConstants.ORDER_RECEIVED_TOPIC_RETRY, 0));
     }
 }

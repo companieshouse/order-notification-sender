@@ -6,7 +6,7 @@ import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
+import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 import java.util.Map;
@@ -25,13 +25,13 @@ import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER
 @Service
 public class OrderResourceOrderNotificationEnricher implements OrderNotificationEnrichable {
 
-    private final OrdersApiService ordersApiService;
+    private final OrderRetrievable orderRetrievable;
     private final LoggingUtils loggingUtils;
     private final OrderMapperFactory orderMapperFactory;
 
     @Autowired
-    public OrderResourceOrderNotificationEnricher(final OrdersApiService ordersApiService, OrderMapperFactory orderMapperFactory, LoggingUtils loggingUtils) {
-        this.ordersApiService = ordersApiService;
+    public OrderResourceOrderNotificationEnricher(final OrderRetrievable orderRetrievable, OrderMapperFactory orderMapperFactory, LoggingUtils loggingUtils) {
+        this.orderRetrievable = orderRetrievable;
         this.orderMapperFactory = orderMapperFactory;
         this.loggingUtils = loggingUtils;
     }
@@ -42,11 +42,10 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
      * @param orderReference the order responsible for triggering the notification
      */
     public EmailSend enrich(final String orderReference) throws OrdersResponseException {
-        final OrdersApi order;
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, ORDER_URI, orderReference);
         loggingUtils.getLogger().debug("Fetching resource for order", logMap);
-        order = ordersApiService.getOrderData(orderReference);
+        OrdersApi order = orderRetrievable.getOrderData(orderReference);
         loggingUtils.logIfNotNull(logMap, ORDER_URI, order.getReference());
         loggingUtils.getLogger().debug("Mapping order", logMap);
         return orderMapperFactory.getOrderMapper(order.getItems().get(0).getKind()).map(order);
