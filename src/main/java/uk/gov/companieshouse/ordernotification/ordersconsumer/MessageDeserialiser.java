@@ -13,7 +13,7 @@ import org.apache.kafka.common.serialization.Deserializer;
  */
 public class MessageDeserialiser<T extends IndexedRecord> implements Deserializer<T> {
 
-    private Class<T> requiredType;
+    private final Class<T> requiredType;
 
     public MessageDeserialiser(Class<T> requiredType) {
         this.requiredType = requiredType;

@@ -49,7 +49,7 @@ class OrdersApiServiceImpl implements OrdersApiService {
             }
         } catch(URIValidationException e) {
             loggingUtils.getLogger().error("Unrecognised URI pattern", e, logMap);
-            throw new OrdersServiceException("Unrecognised uri pattern: "+orderUri);
+            throw new OrdersServiceException("Unrecognised uri pattern: "+orderUri, e);
         } catch (ApiErrorResponseException e) {
             throw new OrdersResponseException("Error fetching data from Orders API", e);
         }
