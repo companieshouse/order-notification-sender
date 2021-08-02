@@ -17,7 +17,6 @@
         <spring-boot-dependencies.version>2.4.4</spring-boot-dependencies.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-        <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <ch-kafka.version>1.4.2</ch-kafka.version>
         <kafka-models.version>1.0.24</kafka-models.version>
         <structured-logging.version>1.9.7</structured-logging.version>
@@ -80,13 +79,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit-jupiter-engine-version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${org.mapstruct.version}</version>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -191,28 +183,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <fork>true</fork>
-                    <meminitial>128m</meminitial>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <maxmem>512m</maxmem>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${org.mapstruct.version}</version>
-                        </path>
-                        <!-- other annotation processors -->
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-
         </plugins>
     </build>
 
