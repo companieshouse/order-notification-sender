@@ -63,14 +63,14 @@ public class MissingImageOrderNotificationMapperTest {
         EmailSend expected = new EmailSend();
         expected.setAppId(TestConstants.APPLICATION_ID);
         OrderModel model = getExpectedModel();
-        model.setTo("user@companieshouse.gov.uk");
+        model.setTo(TestConstants.EMAIL_RECIPIENT);
         model.setSubject(MessageFormat.format(TestConstants.CONFIRMATION_MESSAGE, TestConstants.ORDER_REFERENCE_NUMBER));
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
         model.setTotalOrderCost(TestConstants.ORDER_COST);
         expected.setData(new ObjectMapper().writeValueAsString(model));
-        expected.setCreatedAt("27 July 2021");
+        expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
         expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
         expected.setMessageId(TestConstants.MESSAGE_ID);
         expected.setMessageType(TestConstants.MESSAGE_TYPE);
@@ -100,7 +100,7 @@ public class MissingImageOrderNotificationMapperTest {
         ordersApi.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         ordersApi.setOrderedAt(LocalDateTime.of(2021, 7, 27, 15,20,10));
         ActionedByApi orderedBy = new ActionedByApi();
-        orderedBy.setEmail("user@companieshouse.gov.uk");
+        orderedBy.setEmail(TestConstants.EMAIL_RECIPIENT);
         ordersApi.setOrderedBy(orderedBy);
 
         MissingImageDeliveryApi missingImageItem = new MissingImageDeliveryApi();

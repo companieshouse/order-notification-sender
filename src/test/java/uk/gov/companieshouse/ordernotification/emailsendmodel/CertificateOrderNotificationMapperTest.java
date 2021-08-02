@@ -121,15 +121,15 @@ public class CertificateOrderNotificationMapperTest {
         EmailSend expected = new EmailSend();
         expected.setAppId(TestConstants.APPLICATION_ID);
         OrderModel model = getExpectedModel(appointmentDetailsModel);
-        model.setTo("user@companieshouse.gov.uk");
+        model.setTo(TestConstants.EMAIL_RECIPIENT);
         model.setSubject(MessageFormat.format(TestConstants.CONFIRMATION_MESSAGE, TestConstants.ORDER_REFERENCE_NUMBER));
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
-        model.setPaymentTime("27 July 2021 - 15:20:10");
+        model.setPaymentTime(TestConstants.PAYMENT_TIME);
         model.setTotalOrderCost(TestConstants.ORDER_COST);
         expected.setData(new ObjectMapper().writeValueAsString(model));
-        expected.setCreatedAt("27 July 2021");
-        expected.setEmailAddress("noreply@companieshouse.gov.uk");
+        expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
+        expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
         expected.setMessageId(TestConstants.MESSAGE_ID);
         expected.setMessageType(TestConstants.MESSAGE_TYPE);
         return expected;
@@ -162,7 +162,7 @@ public class CertificateOrderNotificationMapperTest {
     private OrdersApi getOrder(DirectorOrSecretaryDetailsApi appointmentDetails) {
         OrdersApi order = new OrdersApi();
         ActionedByApi actionedByApi = new ActionedByApi();
-        actionedByApi.setEmail("user@companieshouse.gov.uk");
+        actionedByApi.setEmail(TestConstants.EMAIL_RECIPIENT);
         order.setReference(TestConstants.ORDER_REFERENCE_NUMBER);
         order.setOrderedBy(actionedByApi);
 

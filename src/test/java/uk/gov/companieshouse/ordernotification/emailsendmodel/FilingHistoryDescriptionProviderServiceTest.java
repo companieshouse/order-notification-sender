@@ -14,22 +14,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 
 public class FilingHistoryDescriptionProviderServiceTest {
-    private static final String DESCRIPTION_FILE = "filing-history-test.yaml";
-
-    private static final String DESCRIPTION_KEY = "appoint-person-director-company-with-name-date";
     private static final Map<String, Object> DESCRIPTION_VALUES;
-    private static final String EXPECTED_DESCRIPTION = "Appointment of The Appointee as a director on 12 February 2010";
-
-    private static final String DESCRIPTION_KEY_LEGACY = "legacy";
     private static final Map<String, Object> DESCRIPTION_VALUES_LEGACY;
-    private static final String EXPECTED_DESCRIPTION_LEGACY = "This is the description";
-
-    private static final String DESCRIPTION_KEY_ARRAY = "capital-allotment-shares";
     private static final Map<String, Object> DESCRIPTION_VALUES_ARRAY;
-    private static final String EXPECTED_DESCRIPTION_ARRAY = "Statement of capital following an allotment of shares on 10 November 2019";
-
-    private static final String DESCRIPTION_KEY_NULL = "incorporation-company";
-    private static final String EXPECTED_DESCRIPTION_NULL = "Incorporation";
 
     static {
         DESCRIPTION_VALUES = new HashMap<>();
@@ -50,42 +37,42 @@ public class FilingHistoryDescriptionProviderServiceTest {
     @Test
     @DisplayName("Replace the values in the description with the values in the descriptionValues, format date and remove any asterisks")
     void mapFilingHistoryDescriptionGetsDescriptionAndReplacesVariables() {
-        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(DESCRIPTION_KEY, DESCRIPTION_VALUES), is(EXPECTED_DESCRIPTION));
+        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(TestConstants.DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
+        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES), is(TestConstants.EXPECTED_DESCRIPTION));
     }
 
     @Test
     @DisplayName("Return the description in the descriptionValues if it is present")
     void mapFilingHistoryDescriptionGetsDescriptionAndReturnsDescriptionInDescriptionValue() {
-        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(DESCRIPTION_KEY_LEGACY, DESCRIPTION_VALUES_LEGACY), is(EXPECTED_DESCRIPTION_LEGACY));
+        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(TestConstants.DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
+        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY_LEGACY, DESCRIPTION_VALUES_LEGACY), is(TestConstants.EXPECTED_DESCRIPTION_LEGACY));
     }
 
     @Test
     @DisplayName("Ignore description value if it is not a String")
     void mapFilingHistoryDescriptionIgnoresDescriptionValuesThatAreNotStrings() {
-        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(DESCRIPTION_KEY_ARRAY, DESCRIPTION_VALUES_ARRAY), is(EXPECTED_DESCRIPTION_ARRAY));
+        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(TestConstants.DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
+        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY_ARRAY, DESCRIPTION_VALUES_ARRAY), is(TestConstants.EXPECTED_DESCRIPTION_ARRAY));
     }
 
     @Test
     @DisplayName("Return the description if no descriptionValues are present")
     void mapFilingHistoryDescriptionReturnsDescriptionIfNoDescriptionValuesPresent() {
-        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(DESCRIPTION_KEY_NULL, null), is(EXPECTED_DESCRIPTION_NULL));
+        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(TestConstants.DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
+        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY_NULL, null), is(TestConstants.EXPECTED_DESCRIPTION_NULL));
     }
 
     @Test
     @DisplayName("Return the description key if no description is present")
     void mapFilingHistoryDescriptionReturnsDescriptionKeyIfNoDescriptionPresent() {
-        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
+        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(TestConstants.DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
         assertThat(provider.mapFilingHistoryDescription("test-key", null), is("test-key"));
     }
 
     @Test
     @DisplayName("Return null if descriptionKey is null")
     void mapFilingHistoryDescriptionReturnsNullIfDescriptionKeyIsNull() {
-        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
+        final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService(TestConstants.DESCRIPTION_FILE, new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
         assertNull(provider.mapFilingHistoryDescription(null, null));
     }
 
@@ -93,14 +80,14 @@ public class FilingHistoryDescriptionProviderServiceTest {
     @DisplayName("Returns null when filing history description file not found")
     void mapFilingHistoryDescriptionFileNotFoundReturnsNull() {
         final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService("notfound.yaml", new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(DESCRIPTION_KEY, DESCRIPTION_VALUES), is(nullValue()));
+        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES), is(nullValue()));
     }
 
     @Test
     @DisplayName("Returns null if root property absent from file")
     void mapFilingHistoryDescriptionFileAbsentPropertyReturnsNull() {
         final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService("missing-key.yaml", new LoggingUtils(), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(DESCRIPTION_KEY, DESCRIPTION_VALUES), is(nullValue()));
+        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES), is(nullValue()));
     }
 
 }

@@ -17,6 +17,10 @@ public final class TestConstants {
     public static final String ORDER_RECEIVED_KEY = "order-received";
     public static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-notification-retry";
     public static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-notification-error";
+    public static final String EMAIL_RECIPIENT = "user@companieshouse.gov.uk";
+    public static final String PAYMENT_TIME = "27 July 2021 - 15:20:10";
+    public static final String SENDER_EMAIL_ADDRESS = "noreply@companieshouse.gov.uk";
+    public static final String ORDER_CREATED_AT = "27 July 2021";
 
     //certificate order constants
     public static final String CERTIFICATE_TYPE = "incorporation";
@@ -34,13 +38,22 @@ public final class TestConstants {
     public static final String MAPPED_FILING_HISTORY_DESCRIPTION = "Mapped filing history description";
     public static final String MADE_UP_DATE = "2017-05-20";
     public static final String FILING_HISTORY_TYPE = "CS01";
-    public static final String SENDER_EMAIL_ADDRESS = "noreply@companieshouse.gov.uk";
-    public static final String PAYMENT_TIME = "27 July 2021 - 15:20:10";
     public static final String EMAIL_DATE_FORMAT = "dd MMMM yyyy";
     public static final String PAYMENT_DATE_FORMAT = "dd MMMM yyyy - HH:mm:ss";
     public static final String CONFIRMATION_MESSAGE = "Confirmation of your order number {0}";
 
     //missing image order constants
+
+    //filing history description constants
+    public static final String DESCRIPTION_FILE = "filing-history-test.yaml";
+    public static final String DESCRIPTION_KEY = "appoint-person-director-company-with-name-date";
+    public static final String EXPECTED_DESCRIPTION = "Appointment of The Appointee as a director on 12 February 2010";
+    public static final String DESCRIPTION_KEY_LEGACY = "legacy";
+    public static final String EXPECTED_DESCRIPTION_LEGACY = "This is the description";
+    public static final String DESCRIPTION_KEY_ARRAY = "capital-allotment-shares";
+    public static final String EXPECTED_DESCRIPTION_ARRAY = "Statement of capital following an allotment of shares on 10 November 2019";
+    public static final String DESCRIPTION_KEY_NULL = "incorporation-company";
+    public static final String EXPECTED_DESCRIPTION_NULL = "Incorporation";
 
     private TestConstants(){
     }
