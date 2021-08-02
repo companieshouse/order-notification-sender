@@ -6,6 +6,7 @@ import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 
+import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -19,11 +20,7 @@ public abstract class OrdersApiMapper {
     private final String senderEmail;
     private final ObjectMapper mapper;
 
-    public OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail){
-        this(dateGenerator, dateFormat, paymentDateFormat, senderEmail, new ObjectMapper());
-    }
-
-    OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail, ObjectMapper mapper) {
+    public OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail, ObjectMapper mapper) {
         this.dateGenerator = dateGenerator;
         this.dateFormat = dateFormat;
         this.paymentDateFormat = paymentDateFormat;
@@ -60,7 +57,11 @@ public abstract class OrdersApiMapper {
 
     abstract String getMessageType();
 
+    abstract String getMessageSubject();
+
     private OrderModel addOrderMetadata(OrderModel model, OrdersApi order) {
+        model.setTo(order.getOrderedBy().getEmail());
+        model.setSubject(MessageFormat.format(getMessageSubject(), order.getReference()));
         model.setCompanyName(order.getItems().get(0).getCompanyName());
         model.setCompanyNumber(order.getItems().get(0).getCompanyNumber());
         model.setOrderReferenceNumber(order.getReference());

@@ -17,22 +17,18 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     private final String messageId;
     private final String applicationId;
     private final String messageType;
+    private final String confirmationMessage;
 
     @Autowired
     public CertificateOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
                                               @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                               @Value("${email.certificate.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
-                                              @Value("${email.certificate.messageType}") String messageType) {
-        this(dateGenerator, dateFormat, senderEmail, paymentDateFormat, messageId, applicationId, messageType, new ObjectMapper());
-    }
-
-    CertificateOrderNotificationMapper(DateGenerator dateGenerator, String dateFormat, String senderEmail,
-                                       String paymentDateFormat, String messageId, String applicationId,
-                                       String messageType, ObjectMapper mapper) {
+                                              @Value("${email.certificate.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage, ObjectMapper mapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
+        this.confirmationMessage = confirmationMessage;
     }
 
     @Override
@@ -79,5 +75,10 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     @Override
     String getMessageType() {
         return messageType;
+    }
+
+    @Override
+    String getMessageSubject() {
+        return confirmationMessage;
     }
 }

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.api.model.order.ActionedByApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
@@ -19,6 +20,7 @@ import uk.gov.companieshouse.api.model.order.item.RegisteredOfficeAddressDetails
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -42,7 +44,7 @@ public class CertificateOrderNotificationMapperTest {
     void setup() {
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE);
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE, new ObjectMapper());
     }
 
     @Test
@@ -103,7 +105,7 @@ public class CertificateOrderNotificationMapperTest {
         //given
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, mapper);
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE, mapper);
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(mapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
@@ -119,6 +121,8 @@ public class CertificateOrderNotificationMapperTest {
         EmailSend expected = new EmailSend();
         expected.setAppId(TestConstants.APPLICATION_ID);
         OrderModel model = getExpectedModel(appointmentDetailsModel);
+        model.setTo("user@companieshouse.gov.uk");
+        model.setSubject(MessageFormat.format(TestConstants.CONFIRMATION_MESSAGE, TestConstants.ORDER_REFERENCE_NUMBER));
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime("27 July 2021 - 15:20:10");
@@ -157,7 +161,10 @@ public class CertificateOrderNotificationMapperTest {
     }
     private OrdersApi getOrder(DirectorOrSecretaryDetailsApi appointmentDetails) {
         OrdersApi order = new OrdersApi();
+        ActionedByApi actionedByApi = new ActionedByApi();
+        actionedByApi.setEmail("user@companieshouse.gov.uk");
         order.setReference(TestConstants.ORDER_REFERENCE_NUMBER);
+        order.setOrderedBy(actionedByApi);
 
         CertificateApi item = new CertificateApi();
         item.setCompanyName(TestConstants.COMPANY_NAME);

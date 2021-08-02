@@ -3,13 +3,30 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class OrderModel {
-
+    private String to;
+    private String subject;
     private String companyName;
     private String companyNumber;
     private String orderReferenceNumber;
     private String totalOrderCost;
     private String paymentReference;
     private String paymentTime;
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
     public String getCompanyName() {
         return companyName;
@@ -64,15 +81,22 @@ public class OrderModel {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof OrderModel)) {
             return false;
         }
         OrderModel that = (OrderModel) o;
-        return Objects.equals(companyName, that.companyName) && Objects.equals(companyNumber, that.companyNumber) && Objects.equals(orderReferenceNumber, that.orderReferenceNumber) && Objects.equals(totalOrderCost, that.totalOrderCost) && Objects.equals(paymentReference, that.paymentReference) && Objects.equals(paymentTime, that.paymentTime);
+        return Objects.equals(getTo(), that.getTo()) &&
+                Objects.equals(getSubject(), that.getSubject()) &&
+                Objects.equals(getCompanyName(), that.getCompanyName()) &&
+                Objects.equals(getCompanyNumber(), that.getCompanyNumber()) &&
+                Objects.equals(getOrderReferenceNumber(), that.getOrderReferenceNumber()) &&
+                Objects.equals(getTotalOrderCost(), that.getTotalOrderCost()) &&
+                Objects.equals(getPaymentReference(), that.getPaymentReference()) &&
+                Objects.equals(getPaymentTime(), that.getPaymentTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(companyName, companyNumber, orderReferenceNumber, totalOrderCost, paymentReference, paymentTime);
+        return Objects.hash(getTo(), getSubject(), getCompanyName(), getCompanyNumber(), getOrderReferenceNumber(), getTotalOrderCost(), getPaymentReference(), getPaymentTime());
     }
 }

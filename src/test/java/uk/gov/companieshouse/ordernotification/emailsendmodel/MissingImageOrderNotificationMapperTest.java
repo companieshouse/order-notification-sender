@@ -1,18 +1,20 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import uk.gov.companieshouse.api.model.order.ActionedByApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
+import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
@@ -37,7 +39,7 @@ public class MissingImageOrderNotificationMapperTest {
     void setup() {
         mapper = new MissingImageOrderNotificationMapper(dateGenerator, TestConstants.EMAIL_DATE_FORMAT,
                 TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,  TestConstants.MESSAGE_ID,
-                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, providerService);
+                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE, providerService, new ObjectMapper());
     }
 
     @Test
@@ -61,6 +63,8 @@ public class MissingImageOrderNotificationMapperTest {
         EmailSend expected = new EmailSend();
         expected.setAppId(TestConstants.APPLICATION_ID);
         OrderModel model = getExpectedModel();
+        model.setTo("user@companieshouse.gov.uk");
+        model.setSubject(MessageFormat.format(TestConstants.CONFIRMATION_MESSAGE, TestConstants.ORDER_REFERENCE_NUMBER));
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
@@ -95,6 +99,9 @@ public class MissingImageOrderNotificationMapperTest {
         ordersApi.setTotalOrderCost(TestConstants.ORDER_COST);
         ordersApi.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         ordersApi.setOrderedAt(LocalDateTime.of(2021, 7, 27, 15,20,10));
+        ActionedByApi orderedBy = new ActionedByApi();
+        orderedBy.setEmail("user@companieshouse.gov.uk");
+        ordersApi.setOrderedBy(orderedBy);
 
         MissingImageDeliveryApi missingImageItem = new MissingImageDeliveryApi();
         missingImageItem.setCompanyName(TestConstants.COMPANY_NAME);
