@@ -38,10 +38,11 @@ public class MessageProducer {
      */
     public void sendMessage(final GenericRecord record, String orderReference, String topic)
             throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
-        Map<String, Object> logMap =
-                loggingUtils.logWithOrderReference("Sending message to kafka producer", orderReference);
+        Map<String, Object> logArgs = loggingUtils.createLogMap();
+        loggingUtils.logIfNotNull(logArgs, ORDER_URI, orderReference);
+        loggingUtils.getLogger().debug("Sending message to kafka producer", logArgs);
         final Message message = avroSerialiser.createMessage(record, orderReference, topic);
-        loggingUtils.logIfNotNull(logMap, LoggingUtils.TOPIC, message.getTopic());
+        loggingUtils.logIfNotNull(logArgs, LoggingUtils.TOPIC, message.getTopic());
         kafkaProducer.sendMessage(message, orderReference,
                 recordMetadata ->
                     logOffsetFollowingSendIngOfMessage(orderReference, recordMetadata));
@@ -56,6 +57,6 @@ public class MessageProducer {
                                             final RecordMetadata recordMetadata) {
         final Map<String, Object> logMapCallback =  loggingUtils.createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
         loggingUtils.logIfNotNull(logMapCallback, ORDER_URI, orderReference);
-        loggingUtils.getLogger().info("Message sent to Kafka topic", logMapCallback);
+        loggingUtils.getLogger().debug("Message sent to Kafka topic", logMapCallback);
     }
 }

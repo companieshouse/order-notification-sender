@@ -31,14 +31,14 @@ class MessageFactory {
 	public Message createMessage(final GenericRecord record, String orderReference, String topic) throws SerializationException {
         Map<String, Object> logMap = loggingUtils.createLogMapWithOrderReference(orderReference);
 	    logMap.put(LoggingUtils.TOPIC, topic);
-		loggingUtils.getLogger().info("Create kafka message", logMap);
+		loggingUtils.getLogger().debug("Create kafka message", logMap);
 		final AvroSerializer<GenericRecord> serializer =
 				serializerFactory.getGenericRecordSerializer(GenericRecord.class);
 		final Message message = new Message();
 		message.setValue(serializer.toBinary(record));
 		message.setTopic(topic);
 		message.setTimestamp(new Date().getTime());
-		loggingUtils.getLogger().info("Kafka message created", logMap);
+		loggingUtils.getLogger().debug("Kafka message created", logMap);
 		return message;
 	}
 }

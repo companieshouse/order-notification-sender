@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.exception.URIValidationException;
 import uk.gov.companieshouse.api.handler.order.PrivateOrderResourceHandler;
+import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
@@ -37,13 +39,19 @@ class OrdersApiServiceImpl implements OrdersApiService {
         try {
             InternalApiClient internalApiClient = apiClient.getInternalApiClient();
             PrivateOrderResourceHandler privateOrderResourceHandler = internalApiClient.privateOrderResourceHandler();
-            OrdersApi ordersApi = privateOrderResourceHandler.getOrder(orderUri).execute().getData();
-            LOGGER.info("Order data returned from API Client", logMap);
-            return ordersApi;
+            ApiResponse<OrdersApi> response = privateOrderResourceHandler.getOrder(orderUri).execute();
+            if(response.getStatusCode() != HttpStatus.SC_OK) {
+                throw new OrdersResponseException("Orders API returned status code " + response.getStatusCode());
+            } else {
+                OrdersApi ordersApi = privateOrderResourceHandler.getOrder(orderUri).execute().getData();
+                loggingUtils.getLogger().debug("Order data returned from API client", logMap);
+                return ordersApi;
+            }
         } catch(URIValidationException e) {
-            throw new OrdersServiceException("Unrecognised uri pattern for "+orderUri);
+            loggingUtils.getLogger().error("Unrecognised URI pattern", e, logMap);
+            throw new OrdersServiceException("Unrecognised uri pattern: "+orderUri);
         } catch (ApiErrorResponseException e) {
-            throw new OrdersResponseException("Error returned by Orders API");
+            throw new OrdersResponseException("Error fetching data from Orders API", e);
         }
     }
 }

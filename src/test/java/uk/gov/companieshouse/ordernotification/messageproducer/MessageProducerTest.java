@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.ordernotification.messageproducer;
 
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,8 +12,8 @@ import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -51,51 +50,28 @@ public class MessageProducerTest {
     private EmailSend emailSend;
 
     @Test
-    @DisplayName("sendMessage delegates message creation to EmailSendMessageFactory")
-    void sendMessageDelegatesMessageCreation() throws Exception {
+    void testSendMessageMarshalsEntityIntoAvroAndProducesKafkaMessage() throws Exception {
 
         // Given
+        Map<String, Object> logArgs = new HashMap<>();
         when(messageFactory.createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
+        when(message.getTopic()).thenReturn(TestConstants.KAFKA_TOPIC);
+        when(loggingUtils.createLogMap()).thenReturn(logArgs);
+        when(loggingUtils.getLogger()).thenReturn(structuredLogger);
 
         // When
         messageProducerUnderTest.sendMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);
 
         // Then
         verify(messageFactory).createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);
-    }
-
-    @Test
-    @DisplayName("sendMessage delegates message sending to EmailSendKafkaProducer")
-    void sendMessageDelegatesMessageSending() throws Exception {
-
-        // Given
-        when(messageFactory.createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
-
-        // When
-        messageProducerUnderTest.sendMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);
-
-        // Then
-        verify(kafkaProducer).sendMessage(eq(message), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE), any(Consumer.class));
-    }
-
-    @Test
-    public void sendMessageMeetsLoggingRequirements() throws Exception {
-        // Given
-        when(messageFactory.createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
-        when(message.getTopic()).thenReturn(TestConstants.KAFKA_TOPIC);
-
-        // When
-        messageProducerUnderTest.sendMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);
-
-        // Then
-        verify(loggingUtils).logWithOrderReference(eq("Sending message to kafka producer"), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE));
+        verify(kafkaProducer).sendMessage(eq(message), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE), any());
         verify(loggingUtils).logIfNotNull(any(), eq(TOPIC), eq(TestConstants.KAFKA_TOPIC));
+        verify(loggingUtils).logIfNotNull(any(), eq(LoggingUtils.ORDER_URI), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE));
+        verify(structuredLogger).debug(eq("Sending message to kafka producer"), eq(logArgs));
     }
-
 
     @Test
     public void logOffsetFollowingSendIngOfMessageMeetsLoggingRequirements() {
-
         // Given
         when(loggingUtils.getLogger()).thenReturn(structuredLogger);
 
@@ -104,7 +80,7 @@ public class MessageProducerTest {
 
         // Then
         verify(loggingUtils, times(1)).createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
-        verify(loggingUtils).logIfNotNull(any(Map.class), eq(LoggingUtils.ORDER_URI), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE));
-        verify(loggingUtils.getLogger()).info(eq("Message sent to Kafka topic"), any(Map.class));
-   }
+        verify(loggingUtils).logIfNotNull(any(), eq(LoggingUtils.ORDER_URI), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE));
+        verify(structuredLogger).debug(eq("Message sent to Kafka topic"), any());
+    }
 }

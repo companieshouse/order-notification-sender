@@ -36,8 +36,8 @@ class OrdersKafkaConsumerTest {
     private static final String ORDER_RECEIVED_URI = "/order/ORDER-12345";
     private static final String ORDER_RECEIVED_TOPIC = "order-received";
     private static final String ORDER_RECEIVED_KEY = "order-received";
-    private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-retry";
-    private static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-error";
+    private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-notification-retry";
+    private static final String ORDER_RECEIVED_TOPIC_ERROR = "order-received-notification-error";
 
     @InjectMocks
     private OrdersKafkaConsumer ordersKafkaConsumer;
@@ -87,7 +87,7 @@ class OrdersKafkaConsumerTest {
         // Then
         verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(ORDER_RECEIVED_URI, 2));
         verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, ORDER_RECEIVED_URI);
-        verify(logger).info("'order-received-retry' message received", Collections.singletonMap("key", "value"));
+        verify(logger).info("'order-received-notification-retry' message received", Collections.singletonMap("key", "value"));
         verify(logger).info("Order received message processing completed", Collections.singletonMap("key", "value"));
     }
 
@@ -104,7 +104,7 @@ class OrdersKafkaConsumerTest {
         // Then
         verify(applicationEventPublisher).publishEvent(new SendOrderNotificationEvent(ORDER_RECEIVED_URI, 0));
         verify(loggingUtils, times(2)).logIfNotNull(Collections.singletonMap("key", "value"), LoggingUtils.ORDER_URI, ORDER_RECEIVED_URI);
-        verify(logger).info("'order-received-error' message received", Collections.singletonMap("key", "value"));
+        verify(logger).info("'order-received-notification-error' message received", Collections.singletonMap("key", "value"));
         verify(logger).info("Order received message processing completed", Collections.singletonMap("key", "value"));
     }
 

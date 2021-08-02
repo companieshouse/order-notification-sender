@@ -56,7 +56,7 @@ public class ErrorHandlingServiceTest {
     void testRepublishOrderNotificationToRetryTopicIfRetryCountNotExceeded() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
-        when(orderIdentifiable.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(orderIdentifiable.getRetryCount()).thenReturn(0);
         when(eventSourceRetrievable.getEventSource()).thenReturn(orderIdentifiable);
         when(loggingUtils.createLogMap()).thenReturn(logArgs);
@@ -74,7 +74,7 @@ public class ErrorHandlingServiceTest {
     void testPublishOrderNotificationToErrorTopicIfRetryCountExceeded() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
-        when(orderIdentifiable.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(orderIdentifiable.getRetryCount()).thenReturn(3);
         when(eventSourceRetrievable.getEventSource()).thenReturn(orderIdentifiable);
         when(loggingUtils.createLogMap()).thenReturn(logArgs);
@@ -92,7 +92,7 @@ public class ErrorHandlingServiceTest {
     void testThrowRuntimeExceptionIfSerializationException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
-        when(orderIdentifiable.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(orderIdentifiable.getRetryCount()).thenReturn(3);
         when(eventSourceRetrievable.getEventSource()).thenReturn(orderIdentifiable);
         when(loggingUtils.createLogMap()).thenReturn(logArgs);
@@ -111,7 +111,7 @@ public class ErrorHandlingServiceTest {
     void testThrowRuntimeExceptionIfExecutionException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
-        when(orderIdentifiable.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(orderIdentifiable.getRetryCount()).thenReturn(3);
         when(eventSourceRetrievable.getEventSource()).thenReturn(orderIdentifiable);
         when(loggingUtils.createLogMap()).thenReturn(logArgs);
@@ -130,7 +130,7 @@ public class ErrorHandlingServiceTest {
     void testThrowRuntimeExceptionIfInterruptedException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
-        when(orderIdentifiable.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(orderIdentifiable.getRetryCount()).thenReturn(3);
         when(eventSourceRetrievable.getEventSource()).thenReturn(orderIdentifiable);
         when(loggingUtils.createLogMap()).thenReturn(logArgs);
@@ -149,7 +149,7 @@ public class ErrorHandlingServiceTest {
     void testThrowRuntimeExceptionIfTimeoutException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
-        when(orderIdentifiable.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(orderIdentifiable.getRetryCount()).thenReturn(3);
         when(eventSourceRetrievable.getEventSource()).thenReturn(orderIdentifiable);
         when(loggingUtils.createLogMap()).thenReturn(logArgs);

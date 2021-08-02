@@ -5,10 +5,7 @@ import org.apache.avro.io.DatumReader;
 import org.apache.avro.io.Decoder;
 import org.apache.avro.io.DecoderFactory;
 import org.apache.avro.reflect.ReflectDatumReader;
-import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
-
-import java.util.Arrays;
 
 /**
  * OrderReceivedNotificationRetry deserializer based on apache kafka Deserializer interface
@@ -29,8 +26,7 @@ public class MessageDeserialiser<T extends IndexedRecord> implements Deserialize
             DatumReader<T> reader = new ReflectDatumReader<>(requiredType);
             return reader.read(null, decoder);
         } catch (Exception e) {
-            throw new SerializationException(
-                    "Message data [" + Arrays.toString(data) + "] from topic [" + topic + "] cannot be deserialized", e);
+            return null;
         }
     }
 }

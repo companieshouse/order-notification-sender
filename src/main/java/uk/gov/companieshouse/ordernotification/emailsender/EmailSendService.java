@@ -9,6 +9,7 @@ import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -39,15 +40,19 @@ public class EmailSendService implements ApplicationEventPublisherAware {
      */
     @EventListener
     public void handleEvent(SendEmailEvent event) {
+        Map<String, Object> logArgs = loggingUtils.createLogMap();
+        loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_URI, event.getOrderURI());
         try {
-            producer.sendMessage(event.getEmailModel(), event.getOrderURL(), EMAIL_SEND_TOPIC);
+            producer.sendMessage(event.getEmailModel(), event.getOrderURI(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
-            throw new NonRetryableFailureException("Failed to serialize email data as avro", e);
+            loggingUtils.getLogger().error("Failed to serialise email data as avro", e, logArgs);
+            throw new NonRetryableFailureException("Failed to serialise email data as avro", e);
         } catch (ExecutionException | TimeoutException e) {
             loggingUtils.getLogger().error("Error sending email data to Kafka", e, loggingUtils.createLogMap());
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            loggingUtils.getLogger().error("Interrupted", e, logArgs);
             throw new NonRetryableFailureException("Interrupted", e);
         }
     }

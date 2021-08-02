@@ -36,11 +36,11 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
     @EventListener
     public void handleEvent(SendOrderNotificationEvent sendOrderNotificationEvent) {
         Map<String, Object> loggerArgs = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, sendOrderNotificationEvent.getOrderURL());
+        loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, sendOrderNotificationEvent.getOrderURI());
         try {
-            EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderURL());
+            EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderURI());
             loggingUtils.getLogger().debug("Successfully enriched order; notifying email sender", loggerArgs);
-            applicationEventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderURL(), sendOrderNotificationEvent.getRetryCount(), emailSend));
+            applicationEventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderURI(), sendOrderNotificationEvent.getRetryCount(), emailSend));
         } catch (OrdersResponseException e) {
             loggingUtils.getLogger().error("Failed to enrich order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));

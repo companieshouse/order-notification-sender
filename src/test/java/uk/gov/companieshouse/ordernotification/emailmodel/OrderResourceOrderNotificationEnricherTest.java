@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory;
@@ -15,6 +16,8 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiService;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
+
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,10 +54,15 @@ public class OrderResourceOrderNotificationEnricherTest {
     @Mock
     private OrdersApi ordersApi;
 
+    @Mock
+    private BaseItemApi item;
+
     @Test
     void testEnrichOrderNotificationWithOrderResource() throws OrdersResponseException {
         //given
         when(ordersApiService.getOrderData(anyString())).thenReturn(ordersApi);
+        when(ordersApi.getItems()).thenReturn(Collections.singletonList(item));
+        when(item.getKind()).thenReturn("kind");
         when(factory.getOrderMapper(any())).thenReturn(mapper);
         when(mapper.map(any())).thenReturn(emailSend);
         when(loggingUtils.getLogger()).thenReturn(logger);
@@ -65,7 +73,7 @@ public class OrderResourceOrderNotificationEnricherTest {
         //then
         assertEquals(emailSend, actual);
         verify(ordersApiService).getOrderData(TestConstants.ORDER_NOTIFICATION_REFERENCE);
-        verify(factory).getOrderMapper(ordersApi);
+        verify(factory).getOrderMapper("kind");
         verify(mapper).map(ordersApi);
     }
 

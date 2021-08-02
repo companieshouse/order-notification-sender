@@ -45,14 +45,10 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
         final OrdersApi order;
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, ORDER_URI, orderReference);
-        try {
-            loggingUtils.getLogger().debug("Fetching resource for order", logMap);
-            order = ordersApiService.getOrderData(orderReference);
-        } catch (OrdersResponseException ex) {
-            throw ex;
-        }
+        loggingUtils.getLogger().debug("Fetching resource for order", logMap);
+        order = ordersApiService.getOrderData(orderReference);
         loggingUtils.logIfNotNull(logMap, ORDER_URI, order.getReference());
         loggingUtils.getLogger().debug("Mapping order", logMap);
-        return orderMapperFactory.getOrderMapper(order).map(order);
+        return orderMapperFactory.getOrderMapper(order.getItems().get(0).getKind()).map(order);
     }
 }

@@ -18,7 +18,7 @@ public class SendOrderNotificationEvent implements OrderIdentifiable {
         this.retryCount = retryCount;
     }
 
-    public String getOrderURL() {
+    public String getOrderURI() {
         return orderReference;
     }
 

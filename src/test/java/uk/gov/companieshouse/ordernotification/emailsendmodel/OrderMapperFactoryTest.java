@@ -6,7 +6,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 
 import java.util.Collections;
@@ -33,14 +32,8 @@ public class OrderMapperFactoryTest {
 
     @Test
     void returnCertificateMapperIfClassCertificateApi() {
-        // given
-        OrdersApi ordersApi = new OrdersApi();
-        BaseItemApi item = new BaseItemApi();
-        item.setKind("mapper");
-        ordersApi.setItems(Collections.singletonList(item));
-
         // when
-        OrdersApiMapper ordersApiMapper = mapperFactory.getOrderMapper(ordersApi);
+        OrdersApiMapper ordersApiMapper = mapperFactory.getOrderMapper("mapper");
 
         // then
         assertNotNull(ordersApiMapper);
@@ -48,14 +41,10 @@ public class OrderMapperFactoryTest {
 
     @Test
     void throwsIllegalArgumentExceptionIfClassIsInvalid() {
-        // given
-        OrdersApi ordersApi = new OrdersApi();
-        ordersApi.setItems(Collections.singletonList(new BaseItemApi(){}));
-
         // when
-        Executable actual = () -> mapperFactory.getOrderMapper(ordersApi);
+        Executable actual = () -> mapperFactory.getOrderMapper("not_mapper");
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
-        assertEquals("Unhandled item class", exception.getMessage());
+        assertEquals("Unhandled item kind", exception.getMessage());
     }
 }

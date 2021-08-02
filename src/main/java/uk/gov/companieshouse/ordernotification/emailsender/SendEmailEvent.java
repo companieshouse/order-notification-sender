@@ -9,18 +9,18 @@ import java.util.Objects;
  */
 public class SendEmailEvent implements OrderIdentifiable {
 
-    private final String orderURL;
+    private final String orderURI;
     private final int retryCount;
     private final EmailSend emailModel;
 
-    public SendEmailEvent(String orderURL, int retryCount, EmailSend emailModel) {
-        this.orderURL = orderURL;
+    public SendEmailEvent(String orderURI, int retryCount, EmailSend emailModel) {
+        this.orderURI = orderURI;
         this.retryCount = retryCount;
         this.emailModel = emailModel;
     }
 
-    public String getOrderURL() {
-        return orderURL;
+    public String getOrderURI() {
+        return orderURI;
     }
 
     public int getRetryCount() {
@@ -36,11 +36,11 @@ public class SendEmailEvent implements OrderIdentifiable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SendEmailEvent that = (SendEmailEvent) o;
-        return retryCount == that.retryCount && Objects.equals(orderURL, that.orderURL) && Objects.equals(emailModel, that.emailModel);
+        return retryCount == that.retryCount && Objects.equals(orderURI, that.orderURI) && Objects.equals(emailModel, that.emailModel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderURL, retryCount, emailModel);
+        return Objects.hash(orderURI, retryCount, emailModel);
     }
 }

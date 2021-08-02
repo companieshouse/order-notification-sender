@@ -55,7 +55,7 @@ public class EmailSendServiceTest {
     void testHandleEventNoExceptionsThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         when(event.getEmailModel()).thenReturn(emailSendModel);
-        when(event.getOrderURL()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(event.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
 
         //when
         emailSendService.handleEvent(event);
@@ -67,6 +67,10 @@ public class EmailSendServiceTest {
     @Test
     void testHandleEventSerializationExceptionThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
+        Map<String, Object> logArgs = new HashMap<>();
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(loggingUtils.createLogMap()).thenReturn(logArgs);
+
         doThrow(SerializationException.class).when(producer).sendMessage(any(), any(), any());
 
         //when
@@ -74,14 +78,14 @@ public class EmailSendServiceTest {
 
         //then
         NonRetryableFailureException exception = assertThrows(NonRetryableFailureException.class, actual);
-        assertEquals("Failed to serialize email data as avro", exception.getMessage());
+        assertEquals("Failed to serialise email data as avro", exception.getMessage());
+        verify(logger).error(eq("Failed to serialise email data as avro"), any(), eq(logArgs));
     }
 
     @Test
     void testHandleEventExecutionException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logMap = new HashMap<>();
-
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
         doThrow(ExecutionException.class).when(producer).sendMessage(any(), any(), any());
@@ -99,6 +103,9 @@ public class EmailSendServiceTest {
     @Test
     void testHandleInterruptedExceptionThrown() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
+        Map<String, Object> logMap = new HashMap<>();
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(loggingUtils.createLogMap()).thenReturn(logMap);
         doThrow(InterruptedException.class).when(producer).sendMessage(any(), any(), any());
 
         //when
@@ -107,6 +114,7 @@ public class EmailSendServiceTest {
         //then
         NonRetryableFailureException exception = assertThrows(NonRetryableFailureException.class, actual);
         assertEquals("Interrupted", exception.getMessage());
+        verify(logger).error(eq("Interrupted"), any(), eq(logMap));
     }
 
     @Test

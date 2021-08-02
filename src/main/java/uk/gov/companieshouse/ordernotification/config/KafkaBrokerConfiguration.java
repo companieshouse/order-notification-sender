@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
+import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
@@ -49,6 +51,7 @@ public class KafkaBrokerConfiguration {
     public ConcurrentKafkaListenerContainerFactory<String, OrderReceived> kafkaOrderReceivedListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, OrderReceived> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderReceivedConsumerFactory());
+        factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(0, 0)));
         return factory;
     }
 
@@ -56,6 +59,7 @@ public class KafkaBrokerConfiguration {
     public ConcurrentKafkaListenerContainerFactory<String, OrderReceivedNotificationRetry> kafkaOrderReceivedRetryListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, OrderReceivedNotificationRetry> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderReceivedRetryConsumerFactory());
+        factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(0, 0)));
         return factory;
     }
 
