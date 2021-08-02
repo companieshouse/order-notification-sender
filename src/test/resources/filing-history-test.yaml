@@ -1,0 +1,5 @@
+---
+description:
+  'appoint-person-director-company-with-name-date': "**Appointment** of {officer_name} as a director on {appointment_date}"
+  'capital-allotment-shares' : "**Statement of capital following an allotment of shares** on {date}"
+  'incorporation-company': "Incorporation"
