@@ -16,7 +16,8 @@
         <java.version>1.8</java.version>
         <spring-boot-dependencies.version>2.4.4</spring-boot-dependencies.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <ch-kafka.version>1.4.2</ch-kafka.version>
         <kafka-models.version>1.0.24</kafka-models.version>
         <structured-logging.version>1.9.7</structured-logging.version>
