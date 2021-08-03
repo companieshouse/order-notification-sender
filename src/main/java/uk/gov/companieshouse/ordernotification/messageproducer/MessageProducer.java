@@ -36,27 +36,24 @@ public class MessageProducer {
      * @throws InterruptedException should the execution thread be interrupted
      * @throws TimeoutException when the kafka producer timeout elapses
      */
-    public void sendMessage(final GenericRecord record, String orderReference, String topic)
+    public void sendMessage(final GenericRecord record, String orderUri, String topic)
             throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
-        Map<String, Object> logArgs = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logArgs, ORDER_URI, orderReference);
-        loggingUtils.getLogger().debug("Sending message to kafka producer", logArgs);
-        final Message message = avroSerialiser.createMessage(record, orderReference, topic);
-        loggingUtils.logIfNotNull(logArgs, LoggingUtils.TOPIC, message.getTopic());
-        kafkaProducer.sendMessage(message, orderReference,
+        loggingUtils.logWithOrderUri("Sending message to kafka producer", orderUri);
+        final Message message = avroSerialiser.createMessage(record, orderUri, topic);
+        kafkaProducer.sendMessage(message, orderUri,
                 recordMetadata ->
-                    logOffsetFollowingSendIngOfMessage(orderReference, recordMetadata));
+                    logOffsetFollowingSendIngOfMessage(orderUri, recordMetadata));
     }
 
     /**
      * Logs the order reference, topic, partition and offset for the item message produced to a Kafka topic.
-     * @param orderReference the order reference
+     * @param orderUri the order uri
      * @param recordMetadata the metadata for a record that has been acknowledged by the server for the message produced
      */
-    void logOffsetFollowingSendIngOfMessage(final String orderReference,
+    void logOffsetFollowingSendIngOfMessage(final String orderUri,
                                             final RecordMetadata recordMetadata) {
         final Map<String, Object> logMapCallback =  loggingUtils.createLogMapWithAcknowledgedKafkaMessage(recordMetadata);
-        loggingUtils.logIfNotNull(logMapCallback, ORDER_URI, orderReference);
+        loggingUtils.logIfNotNull(logMapCallback, ORDER_URI, orderUri);
         loggingUtils.getLogger().debug("Message sent to Kafka topic", logMapCallback);
     }
 }

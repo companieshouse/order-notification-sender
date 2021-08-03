@@ -41,7 +41,7 @@ class KafkaProducer {
                             final String orderReference,
                             final Consumer<RecordMetadata> asyncResponseLogger)
             throws ExecutionException, InterruptedException, TimeoutException {
-        loggingUtils.logMessageWithOrderReference(message, "Sending message to Kafka", orderReference);
+        loggingUtils.logMessageWithOrderUri(message, "Sending message to Kafka", orderReference);
 
         final Future<RecordMetadata> recordMetadataFuture = chKafkaProducer.sendAndReturnFuture(message);
         asyncResponseLogger.accept(recordMetadataFuture.get(timeout, TimeUnit.SECONDS));

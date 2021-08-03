@@ -39,31 +39,35 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) item.getItemOptions();
         model.setCertificateType(certificateTypeMapper.mapCertificateType(itemOptions.getCertificateType()));
-        model.setStatementOfGoodStanding(itemOptions.getIncludeGoodStandingInformation());
+        model.setStatementOfGoodStanding(mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
         Optional.ofNullable(itemOptions.getDeliveryMethod()).ifPresent(method -> model.setDeliveryMethod(method.getJsonName()));
 
         CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel =
                 new CertificateRegisteredOfficeAddressModel(Optional.ofNullable(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()).map(IncludeAddressRecordsTypeApi::getJsonName).orElse(null),
-                        itemOptions.getRegisteredOfficeAddressDetails().getIncludeDates());
+                        mapBoolean(itemOptions.getRegisteredOfficeAddressDetails().getIncludeDates()));
         model.setCertificateRegisteredOfficeAddressModel(certificateRegisteredOfficeAddressModel);
 
         model.setDirectorDetailsModel(mapAppointmentDetails(itemOptions.getDirectorDetails()));
         model.setSecretaryDetailsModel(mapAppointmentDetails(itemOptions.getSecretaryDetails()));
 
-        model.setCompanyObjects(itemOptions.getIncludeCompanyObjectsInformation());
+        model.setCompanyObjects(mapBoolean(itemOptions.getIncludeCompanyObjectsInformation()));
         return model;
     }
 
     private CertificateAppointmentDetailsModel mapAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
         CertificateAppointmentDetailsModel result = new CertificateAppointmentDetailsModel();
-        result.setIncludeAddress(appointment.getIncludeAddress());
-        result.setIncludeAppointmentDate(appointment.getIncludeAppointmentDate());
-        result.setIncludeBasicInformation(appointment.getIncludeBasicInformation());
-        result.setIncludeCountryOfResidence(appointment.getIncludeCountryOfResidence());
+        result.setIncludeAddress(mapBoolean(appointment.getIncludeAddress()));
+        result.setIncludeAppointmentDate(mapBoolean(appointment.getIncludeAppointmentDate()));
+        result.setIncludeBasicInformation(mapBoolean(appointment.getIncludeBasicInformation()));
+        result.setIncludeCountryOfResidence(mapBoolean(appointment.getIncludeCountryOfResidence()));
         Optional.ofNullable(appointment.getIncludeDobType()).ifPresent(dob -> result.setIncludeDobType(dob.getJsonName()));
-        result.setIncludeNationality(appointment.getIncludeNationality());
-        result.setIncludeOccupation(appointment.getIncludeOccupation());
+        result.setIncludeNationality(mapBoolean(appointment.getIncludeNationality()));
+        result.setIncludeOccupation(mapBoolean(appointment.getIncludeOccupation()));
         return result;
+    }
+
+    private boolean mapBoolean(Boolean bool) {
+        return Optional.ofNullable(bool).orElse(false);
     }
 
     @Override

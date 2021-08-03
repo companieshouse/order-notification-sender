@@ -29,7 +29,7 @@ class MessageFactory {
 	 * @throws SerializationException should there be a failure to serialize the EmailSend object
 	 */
 	public Message createMessage(final GenericRecord record, String orderReference, String topic) throws SerializationException {
-        Map<String, Object> logMap = loggingUtils.createLogMapWithOrderReference(orderReference);
+        Map<String, Object> logMap = loggingUtils.createLogMapWithOrderUri(orderReference);
 	    logMap.put(LoggingUtils.TOPIC, topic);
 		loggingUtils.getLogger().debug("Create kafka message", logMap);
 		final AvroSerializer<GenericRecord> serializer =

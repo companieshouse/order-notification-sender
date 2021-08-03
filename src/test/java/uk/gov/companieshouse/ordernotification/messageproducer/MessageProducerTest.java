@@ -51,13 +51,8 @@ public class MessageProducerTest {
 
     @Test
     void testSendMessageMarshalsEntityIntoAvroAndProducesKafkaMessage() throws Exception {
-
         // Given
-        Map<String, Object> logArgs = new HashMap<>();
         when(messageFactory.createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
-        when(message.getTopic()).thenReturn(TestConstants.KAFKA_TOPIC);
-        when(loggingUtils.createLogMap()).thenReturn(logArgs);
-        when(loggingUtils.getLogger()).thenReturn(structuredLogger);
 
         // When
         messageProducerUnderTest.sendMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);
@@ -65,9 +60,7 @@ public class MessageProducerTest {
         // Then
         verify(messageFactory).createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);
         verify(kafkaProducer).sendMessage(eq(message), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE), any());
-        verify(loggingUtils).logIfNotNull(any(), eq(TOPIC), eq(TestConstants.KAFKA_TOPIC));
-        verify(loggingUtils).logIfNotNull(any(), eq(LoggingUtils.ORDER_URI), eq(TestConstants.ORDER_NOTIFICATION_REFERENCE));
-        verify(structuredLogger).debug(eq("Sending message to kafka producer"), eq(logArgs));
+        verify(loggingUtils).logWithOrderUri("Sending message to kafka producer", TestConstants.ORDER_NOTIFICATION_REFERENCE);
     }
 
     @Test
