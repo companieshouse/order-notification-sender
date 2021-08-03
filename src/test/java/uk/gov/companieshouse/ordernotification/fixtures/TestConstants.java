@@ -23,7 +23,7 @@ public final class TestConstants {
     public static final String ORDER_CREATED_AT = "27 July 2021";
 
     //certificate order constants
-    public static final String CERTIFICATE_TYPE = "incorporation";
+    public static final String CERTIFICATE_TYPE = "Incorporation";
     public static final String ADDRESS_TYPE = "current-previous-and-prior";
     public static final String DOB_TYPE = "full";
 

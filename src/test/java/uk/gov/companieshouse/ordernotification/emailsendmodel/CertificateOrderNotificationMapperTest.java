@@ -13,6 +13,7 @@ import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeDobTypeApi;
@@ -35,6 +36,9 @@ public class CertificateOrderNotificationMapperTest {
     private CertificateOrderNotificationMapper certificateOrderNotificationMapper;
 
     @Mock
+    private CertificateTypeMapper certificateTypeMapper;
+
+    @Mock
     private DateGenerator dateGenerator;
 
     @Mock
@@ -44,7 +48,8 @@ public class CertificateOrderNotificationMapperTest {
     void setup() {
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE, new ObjectMapper());
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
+                new ObjectMapper(), certificateTypeMapper);
     }
 
     @Test
@@ -52,6 +57,7 @@ public class CertificateOrderNotificationMapperTest {
         // given
         OrdersApi order = getOrder(getAppointmentApiDetails(IncludeDobTypeApi.FULL));
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
+        when(certificateTypeMapper.mapCertificateType(CertificateTypeApi.INCORPORATION)).thenReturn("Incorporation");
 
         // when
         EmailSend result = certificateOrderNotificationMapper.map(order);
@@ -92,6 +98,7 @@ public class CertificateOrderNotificationMapperTest {
         //given
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
+        when(certificateTypeMapper.mapCertificateType(CertificateTypeApi.INCORPORATION)).thenReturn("Incorporation");
 
         //when
         EmailSend result = certificateOrderNotificationMapper.map(order);
@@ -105,7 +112,8 @@ public class CertificateOrderNotificationMapperTest {
         //given
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE, mapper);
+                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
+                mapper, certificateTypeMapper);
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(mapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
@@ -141,6 +149,7 @@ public class CertificateOrderNotificationMapperTest {
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
         expected.setStatementOfGoodStanding(true);
+        expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
         expected.setCertificateRegisteredOfficeAddressModel(new CertificateRegisteredOfficeAddressModel(TestConstants.ADDRESS_TYPE, true));
         expected.setDirectorDetailsModel(appointmentDetailsModel);
         expected.setSecretaryDetailsModel(appointmentDetailsModel);
@@ -175,6 +184,7 @@ public class CertificateOrderNotificationMapperTest {
         CertificateTypeApi certificateType = CertificateTypeApi.INCORPORATION;
         itemOptions.setCertificateType(certificateType);
         itemOptions.setIncludeGoodStandingInformation(true);
+        itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
 
         RegisteredOfficeAddressDetailsApi registeredOfficeAddressDetails = new RegisteredOfficeAddressDetailsApi();
         IncludeAddressRecordsTypeApi addressRecord = IncludeAddressRecordsTypeApi.CURRENT_PREVIOUS_AND_PRIOR;

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOrderNotificationMapper;
@@ -55,5 +56,15 @@ public class ApplicationConfig implements WebMvcConfigurer {
         mappers.put(CERTIFIED_COPY, documentMapper);
         mappers.put(MISSING_IMAGE_DELIVERY, missingImageMapper);
         return mappers;
+    }
+
+    @Bean
+    public Map<CertificateTypeApi, String> certificateTypeMappings() {
+        Map<CertificateTypeApi, String> mappings = new HashMap<>();
+        mappings.put(CertificateTypeApi.INCORPORATION, "Incorporation");
+        mappings.put(CertificateTypeApi.DISSOLUTION, "Dissolution with all company name changes");
+        mappings.put(CertificateTypeApi.INCORPORATION_WITH_ALL_NAME_CHANGES, "Incorporation with all company name changes");
+        mappings.put(CertificateTypeApi.INCORPORATION_WITH_LAST_NAME_CHANGES, "Incorporation with last name changes");
+        return mappings;
     }
 }

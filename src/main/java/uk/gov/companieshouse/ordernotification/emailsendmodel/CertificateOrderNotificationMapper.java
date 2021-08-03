@@ -18,25 +18,29 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     private final String applicationId;
     private final String messageType;
     private final String confirmationMessage;
+    private final CertificateTypeMapper certificateTypeMapper;
 
     @Autowired
     public CertificateOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
                                               @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                               @Value("${email.certificate.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
-                                              @Value("${email.certificate.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage, ObjectMapper mapper) {
+                                              @Value("${email.certificate.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
+                                              ObjectMapper mapper, CertificateTypeMapper certificateTypeMapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
         this.confirmationMessage = confirmationMessage;
+        this.certificateTypeMapper = certificateTypeMapper;
     }
 
     @Override
     CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) item.getItemOptions();
-        Optional.ofNullable(itemOptions.getCertificateType()).ifPresent(type -> model.setCertificateType(type.getJsonName()));
+        model.setCertificateType(certificateTypeMapper.mapCertificateType(itemOptions.getCertificateType()));
         model.setStatementOfGoodStanding(itemOptions.getIncludeGoodStandingInformation());
+        Optional.ofNullable(itemOptions.getDeliveryMethod()).ifPresent(method -> model.setDeliveryMethod(method.getJsonName()));
 
         CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel =
                 new CertificateRegisteredOfficeAddressModel(Optional.ofNullable(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()).map(IncludeAddressRecordsTypeApi::getJsonName).orElse(null),
