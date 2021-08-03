@@ -45,8 +45,8 @@ public class ErrorHandlingService {
     @EventListener
     public void handleEvent(EventSourceRetrievable event) {
         Map<String, Object> logArgs = loggingUtils.createLogMap();
+        loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_URI, event.getEventSource().getOrderURI());
         try {
-            loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_URI, event.getEventSource().getOrderURI());
             if(event.getEventSource().getRetryCount() < maxRetries) {
                 loggingUtils.getLogger().debug("Publishing message to retry topic", logArgs);
                 messageProducer.sendMessage(new OrderReceivedNotificationRetry(
@@ -60,7 +60,7 @@ public class ErrorHandlingService {
                         event.getEventSource().getOrderURI(), ERROR_TOPIC);
             }
         } catch (SerializationException | ExecutionException | InterruptedException | TimeoutException e) {
-            loggingUtils.getLogger().error("Failed to handle error", logArgs);
+            loggingUtils.getLogger().error("Failed to handle error", e, logArgs);
             throw new ErrorHandlerFailureException("Failed to handle error", e);
         }
     }

@@ -23,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -104,7 +105,7 @@ public class ErrorHandlingServiceTest {
 
         //then
         assertThrows(ErrorHandlerFailureException.class, actual);
-        verify(logger).error("Failed to handle error", logArgs);
+        verify(logger).error(eq("Failed to handle error"), any(), eq(logArgs));
     }
 
     @Test
@@ -123,7 +124,7 @@ public class ErrorHandlingServiceTest {
 
         //then
         assertThrows(ErrorHandlerFailureException.class, actual);
-        verify(logger).error("Failed to handle error", logArgs);
+        verify(logger).error(eq("Failed to handle error"), any(), eq(logArgs));
     }
 
     @Test
@@ -142,7 +143,7 @@ public class ErrorHandlingServiceTest {
 
         //then
         assertThrows(ErrorHandlerFailureException.class, actual);
-        verify(logger).error("Failed to handle error", logArgs);
+        verify(logger).error(eq("Failed to handle error"), any(), eq(logArgs));
     }
 
     @Test
@@ -161,6 +162,6 @@ public class ErrorHandlingServiceTest {
 
         //then
         assertThrows(ErrorHandlerFailureException.class, actual);
-        verify(logger).error("Failed to handle error", logArgs);
+        verify(logger).error(eq("Failed to handle error"), any(), eq(logArgs));
     }
 }

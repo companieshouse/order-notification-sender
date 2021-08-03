@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.MappingException;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 import java.util.Map;
-
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ORDER_URI;
 
 /**
  * This service does the following:
@@ -39,15 +38,17 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
     /**
      * Enriches an order received notification with an order resource fetched from the Orders API.
      *
-     * @param orderReference the order responsible for triggering the notification
+     * @param orderUri the order responsible for triggering the notification
      */
-    public EmailSend enrich(final String orderReference) throws OrdersResponseException {
-        Map<String, Object> logMap = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logMap, ORDER_URI, orderReference);
-        loggingUtils.getLogger().debug("Fetching resource for order", logMap);
-        OrdersApi order = orderRetrievable.getOrderData(orderReference);
-        loggingUtils.logIfNotNull(logMap, ORDER_URI, order.getReference());
-        loggingUtils.getLogger().debug("Mapping order", logMap);
-        return orderMapperFactory.getOrderMapper(order.getItems().get(0).getKind()).map(order);
+    public EmailSend enrich(final String orderUri) throws OrdersResponseException {
+        Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order", orderUri);
+        OrdersApi order = orderRetrievable.getOrderData(orderUri);
+        loggingUtils.getLogger().debug("Mapping order", logArgs);
+        try {
+            return orderMapperFactory.getOrderMapper(order.getItems().get(0).getKind()).map(order);
+        } catch (IllegalArgumentException | MappingException e) {
+            loggingUtils.getLogger().error("Failed to map order resource", e, logArgs);
+            throw e;
+        }
     }
 }
