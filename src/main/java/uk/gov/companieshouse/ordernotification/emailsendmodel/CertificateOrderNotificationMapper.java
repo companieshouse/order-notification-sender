@@ -2,14 +2,17 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
-import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
 
 @Component
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
@@ -19,19 +22,25 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     private final String messageType;
     private final String confirmationMessage;
     private final CertificateTypeMapper certificateTypeMapper;
+    private final AddressRecordTypeMapper addressRecordTypeMapper;
+    private final DeliveryMethodMapper deliveryMethodMapper;
 
     @Autowired
     public CertificateOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
                                               @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                               @Value("${email.certificate.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
                                               @Value("${email.certificate.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
-                                              ObjectMapper mapper, CertificateTypeMapper certificateTypeMapper) {
+                                              ObjectMapper mapper, @Qualifier("certificateTypeMapper") CertificateTypeMapper certificateTypeMapper,
+                                              @Qualifier("addressRecordTypeMapper") AddressRecordTypeMapper addressRecordTypeMapper,
+                                              @Qualifier("deliveryMethodMapper") DeliveryMethodMapper deliveryMethodMapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
         this.confirmationMessage = confirmationMessage;
         this.certificateTypeMapper = certificateTypeMapper;
+        this.addressRecordTypeMapper = addressRecordTypeMapper;
+        this.deliveryMethodMapper = deliveryMethodMapper;
     }
 
     @Override
@@ -40,12 +49,9 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) item.getItemOptions();
         model.setCertificateType(certificateTypeMapper.mapCertificateType(itemOptions.getCertificateType()));
         model.setStatementOfGoodStanding(mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
-        Optional.ofNullable(itemOptions.getDeliveryMethod()).ifPresent(method -> model.setDeliveryMethod(method.getJsonName()));
+        model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod()));
 
-        CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel =
-                new CertificateRegisteredOfficeAddressModel(Optional.ofNullable(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()).map(IncludeAddressRecordsTypeApi::getJsonName).orElse(null),
-                        mapBoolean(itemOptions.getRegisteredOfficeAddressDetails().getIncludeDates()));
-        model.setCertificateRegisteredOfficeAddressModel(certificateRegisteredOfficeAddressModel);
+        model.setRegisteredOfficeAddressDetails(addressRecordTypeMapper.mapAddressRecordType(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
 
         model.setDirectorDetailsModel(mapAppointmentDetails(itemOptions.getDirectorDetails()));
         model.setSecretaryDetailsModel(mapAppointmentDetails(itemOptions.getSecretaryDetails()));
@@ -55,19 +61,54 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
     }
 
     private CertificateAppointmentDetailsModel mapAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
-        CertificateAppointmentDetailsModel result = new CertificateAppointmentDetailsModel();
-        result.setIncludeAddress(mapBoolean(appointment.getIncludeAddress()));
-        result.setIncludeAppointmentDate(mapBoolean(appointment.getIncludeAppointmentDate()));
-        result.setIncludeBasicInformation(mapBoolean(appointment.getIncludeBasicInformation()));
-        result.setIncludeCountryOfResidence(mapBoolean(appointment.getIncludeCountryOfResidence()));
-        Optional.ofNullable(appointment.getIncludeDobType()).ifPresent(dob -> result.setIncludeDobType(dob.getJsonName()));
-        result.setIncludeNationality(mapBoolean(appointment.getIncludeNationality()));
-        result.setIncludeOccupation(mapBoolean(appointment.getIncludeOccupation()));
-        return result;
+        if(noAppointmentDetails(appointment)) {
+            return new CertificateAppointmentDetailsModel(false, Collections.singletonList("No"));
+        } else if(basicAppointmentDetails(appointment)) {
+            return new CertificateAppointmentDetailsModel(false, Collections.singletonList("Yes"));
+        } else {
+            List<String> results = new ArrayList<>();
+            if(booleanWrapperToBoolean(appointment.getIncludeAddress())){
+                results.add("Correspondence address");
+            }
+            if(booleanWrapperToBoolean(appointment.getIncludeAppointmentDate())){
+                results.add("Appointment date");
+            }
+            if(booleanWrapperToBoolean(appointment.getIncludeCountryOfResidence())){
+                results.add("Country of residence");
+            }
+            if(booleanWrapperToBoolean(appointment.getIncludeNationality())){
+                results.add("Nationality");
+            }
+            if(booleanWrapperToBoolean(appointment.getIncludeOccupation())){
+                results.add("Occupation");
+            }
+            if(appointment.getIncludeDobType() != null) {
+                results.add("Date of birth (month and year)");
+            }
+            return new CertificateAppointmentDetailsModel(true, results);
+        }
     }
 
-    private boolean mapBoolean(Boolean bool) {
-        return Optional.ofNullable(bool).orElse(false);
+    private boolean noAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
+        return !booleanWrapperToBoolean(appointment.getIncludeBasicInformation());
+    }
+
+    private boolean basicAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
+        return booleanWrapperToBoolean(appointment.getIncludeBasicInformation()) &&
+                !booleanWrapperToBoolean(appointment.getIncludeAddress()) &&
+                !booleanWrapperToBoolean(appointment.getIncludeAppointmentDate()) &&
+                !booleanWrapperToBoolean(appointment.getIncludeCountryOfResidence()) &&
+                !booleanWrapperToBoolean(appointment.getIncludeNationality()) &&
+                !booleanWrapperToBoolean(appointment.getIncludeOccupation()) &&
+                appointment.getIncludeDobType() == null;
+    }
+
+    private String mapBoolean(Boolean bool) {
+        return booleanWrapperToBoolean(bool) ? "Yes" : "No";
+    }
+
+    private boolean booleanWrapperToBoolean(Boolean bool) {
+        return bool != null && bool;
     }
 
     @Override

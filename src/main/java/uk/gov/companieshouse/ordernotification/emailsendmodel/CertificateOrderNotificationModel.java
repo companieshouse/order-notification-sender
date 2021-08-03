@@ -5,12 +5,12 @@ import java.util.Objects;
 public class CertificateOrderNotificationModel extends OrderModel {
 
     private String certificateType;
-    private boolean statementOfGoodStanding;
+    private String statementOfGoodStanding;
     private String deliveryMethod;
-    private CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel;
+    private String registeredOfficeAddressDetails;
     private CertificateAppointmentDetailsModel directorDetailsModel;
     private CertificateAppointmentDetailsModel secretaryDetailsModel;
-    private boolean companyObjects;
+    private String companyObjects;
 
     public String getCertificateType() {
         return certificateType;
@@ -20,11 +20,11 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.certificateType = certificateType;
     }
 
-    public boolean isStatementOfGoodStanding() {
+    public String getStatementOfGoodStanding() {
         return statementOfGoodStanding;
     }
 
-    public void setStatementOfGoodStanding(boolean statementOfGoodStanding) {
+    public void setStatementOfGoodStanding(String statementOfGoodStanding) {
         this.statementOfGoodStanding = statementOfGoodStanding;
     }
 
@@ -36,12 +36,12 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.deliveryMethod = deliveryMethod;
     }
 
-    public CertificateRegisteredOfficeAddressModel getCertificateRegisteredOfficeAddressModel() {
-        return certificateRegisteredOfficeAddressModel;
+    public String getRegisteredOfficeAddressDetails() {
+        return registeredOfficeAddressDetails;
     }
 
-    public void setCertificateRegisteredOfficeAddressModel(CertificateRegisteredOfficeAddressModel certificateRegisteredOfficeAddressModel) {
-        this.certificateRegisteredOfficeAddressModel = certificateRegisteredOfficeAddressModel;
+    public void setRegisteredOfficeAddressDetails(String registeredOfficeAddressDetails) {
+        this.registeredOfficeAddressDetails = registeredOfficeAddressDetails;
     }
 
     public CertificateAppointmentDetailsModel getDirectorDetailsModel() {
@@ -60,11 +60,11 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.secretaryDetailsModel = secretaryDetailsModel;
     }
 
-    public boolean isCompanyObjects() {
+    public String getCompanyObjects() {
         return companyObjects;
     }
 
-    public void setCompanyObjects(boolean companyObjects) {
+    public void setCompanyObjects(String companyObjects) {
         this.companyObjects = companyObjects;
     }
 
@@ -72,23 +72,25 @@ public class CertificateOrderNotificationModel extends OrderModel {
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        } if (o == null || getClass() != o.getClass()) {
+        }
+        if (!(o instanceof CertificateOrderNotificationModel)) {
             return false;
-        } if (!super.equals(o)) {
+        }
+        if (!super.equals(o)) {
             return false;
         }
         CertificateOrderNotificationModel that = (CertificateOrderNotificationModel) o;
-        return statementOfGoodStanding == that.statementOfGoodStanding &&
-                companyObjects == that.companyObjects &&
-                Objects.equals(certificateType, that.certificateType) &&
-                Objects.equals(deliveryMethod, that.deliveryMethod) &&
-                Objects.equals(certificateRegisteredOfficeAddressModel, that.certificateRegisteredOfficeAddressModel) &&
-                Objects.equals(directorDetailsModel, that.directorDetailsModel) &&
-                Objects.equals(secretaryDetailsModel, that.secretaryDetailsModel);
+        return Objects.equals(getCertificateType(), that.getCertificateType()) &&
+                Objects.equals(getStatementOfGoodStanding(), that.getStatementOfGoodStanding()) &&
+                Objects.equals(getDeliveryMethod(), that.getDeliveryMethod()) &&
+                Objects.equals(getRegisteredOfficeAddressDetails(), that.getRegisteredOfficeAddressDetails()) &&
+                Objects.equals(getDirectorDetailsModel(), that.getDirectorDetailsModel()) &&
+                Objects.equals(getSecretaryDetailsModel(), that.getSecretaryDetailsModel()) &&
+                Objects.equals(getCompanyObjects(), that.getCompanyObjects());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), certificateType, statementOfGoodStanding, deliveryMethod, certificateRegisteredOfficeAddressModel, directorDetailsModel, secretaryDetailsModel, companyObjects);
+        return Objects.hash(super.hashCode(), getCertificateType(), getStatementOfGoodStanding(), getDeliveryMethod(), getRegisteredOfficeAddressDetails(), getDirectorDetailsModel(), getSecretaryDetailsModel(), getCompanyObjects());
     }
 }

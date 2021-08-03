@@ -1,71 +1,35 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.List;
 import java.util.Objects;
 
 public class CertificateAppointmentDetailsModel {
 
-    private boolean includeAddress;
-    private boolean includeAppointmentDate;
-    private boolean includeBasicInformation;
-    private boolean includeCountryOfResidence;
-    private String includeDobType;
-    private boolean includeNationality;
-    private boolean includeOccupation;
+    private boolean specificDetails;
+    private List<String> details;
 
-    public boolean isIncludeAddress() {
-        return includeAddress;
+    public CertificateAppointmentDetailsModel() {
     }
 
-    public void setIncludeAddress(boolean includeAddress) {
-        this.includeAddress = includeAddress;
+    public CertificateAppointmentDetailsModel(boolean specificDetails, List<String> details) {
+        this.specificDetails = specificDetails;
+        this.details = details;
     }
 
-    public boolean isIncludeAppointmentDate() {
-        return includeAppointmentDate;
+    public boolean isSpecificDetails() {
+        return specificDetails;
     }
 
-    public void setIncludeAppointmentDate(boolean includeAppointmentDate) {
-        this.includeAppointmentDate = includeAppointmentDate;
+    public void setSpecificDetails(boolean specificDetails) {
+        this.specificDetails = specificDetails;
     }
 
-    public boolean isIncludeBasicInformation() {
-        return includeBasicInformation;
+    public List<String> getDetails() {
+        return details;
     }
 
-    public void setIncludeBasicInformation(boolean includeBasicInformation) {
-        this.includeBasicInformation = includeBasicInformation;
-    }
-
-    public boolean isIncludeCountryOfResidence() {
-        return includeCountryOfResidence;
-    }
-
-    public void setIncludeCountryOfResidence(boolean includeCountryOfResidence) {
-        this.includeCountryOfResidence = includeCountryOfResidence;
-    }
-
-    public String getIncludeDobType() {
-        return includeDobType;
-    }
-
-    public void setIncludeDobType(String includeDobType) {
-        this.includeDobType = includeDobType;
-    }
-
-    public boolean isIncludeNationality() {
-        return includeNationality;
-    }
-
-    public void setIncludeNationality(boolean includeNationality) {
-        this.includeNationality = includeNationality;
-    }
-
-    public boolean isIncludeOccupation() {
-        return includeOccupation;
-    }
-
-    public void setIncludeOccupation(boolean includeOccupation) {
-        this.includeOccupation = includeOccupation;
+    public void setDetails(List<String> details) {
+        this.details = details;
     }
 
     @Override
@@ -73,21 +37,16 @@ public class CertificateAppointmentDetailsModel {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof CertificateAppointmentDetailsModel)) {
             return false;
         }
         CertificateAppointmentDetailsModel that = (CertificateAppointmentDetailsModel) o;
-        return includeAddress == that.includeAddress &&
-                includeAppointmentDate == that.includeAppointmentDate &&
-                includeBasicInformation == that.includeBasicInformation &&
-                includeCountryOfResidence == that.includeCountryOfResidence &&
-                includeNationality == that.includeNationality &&
-                includeOccupation == that.includeOccupation &&
-                Objects.equals(includeDobType, that.includeDobType);
+        return isSpecificDetails() == that.isSpecificDetails() &&
+                Objects.equals(getDetails(), that.getDetails());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(includeAddress, includeAppointmentDate, includeBasicInformation, includeCountryOfResidence, includeDobType, includeNationality, includeOccupation);
+        return Objects.hash(isSpecificDetails(), getDetails());
     }
 }

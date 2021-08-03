@@ -23,6 +23,7 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,6 +40,12 @@ public class CertificateOrderNotificationMapperTest {
     private CertificateTypeMapper certificateTypeMapper;
 
     @Mock
+    private AddressRecordTypeMapper roaTypeMapper;
+
+    @Mock
+    private DeliveryMethodMapper deliveryMethodMapper;
+
+    @Mock
     private DateGenerator dateGenerator;
 
     @Mock
@@ -49,7 +56,7 @@ public class CertificateOrderNotificationMapperTest {
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
                 TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
-                new ObjectMapper(), certificateTypeMapper);
+                new ObjectMapper(), certificateTypeMapper, roaTypeMapper, deliveryMethodMapper);
     }
 
     @Test
@@ -57,13 +64,15 @@ public class CertificateOrderNotificationMapperTest {
         // given
         OrdersApi order = getOrder(getAppointmentApiDetails(IncludeDobTypeApi.FULL));
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
-        when(certificateTypeMapper.mapCertificateType(CertificateTypeApi.INCORPORATION)).thenReturn("Incorporation");
+        when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
+        when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
+        when(deliveryMethodMapper.mapDeliveryMethod(any())).thenReturn(TestConstants.DELIVERY_METHOD);
 
         // when
         EmailSend result = certificateOrderNotificationMapper.map(order);
 
         // then
-        assertEquals(getExpectedEmailSendModel(getAppointmentDetails(TestConstants.DOB_TYPE)), result);
+        assertEquals(getExpectedEmailSendModel(), result);
     }
 
     @Test
@@ -94,27 +103,16 @@ public class CertificateOrderNotificationMapperTest {
     }
 
     @Test
-    void testMapperSkipsDobTypeIfNotProvided() throws JsonProcessingException {
-        //given
-        OrdersApi order = getOrder(getAppointmentApiDetails(null));
-        when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
-        when(certificateTypeMapper.mapCertificateType(CertificateTypeApi.INCORPORATION)).thenReturn("Incorporation");
-
-        //when
-        EmailSend result = certificateOrderNotificationMapper.map(order);
-
-        // then
-        assertEquals(getExpectedEmailSendModel(getAppointmentDetails(null)), result);
-    }
-
-    @Test
     void testMapperThrowsMappingExceptionIfJsonProcessingExceptionThrownByMapper() throws com.fasterxml.jackson.core.JsonProcessingException {
         //given
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
                 TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
-                mapper, certificateTypeMapper);
+                mapper, certificateTypeMapper, roaTypeMapper, deliveryMethodMapper);
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
+        when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
+        when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
+        when(deliveryMethodMapper.mapDeliveryMethod(any())).thenReturn(TestConstants.DELIVERY_METHOD);
         when(mapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
         //when
@@ -125,16 +123,16 @@ public class CertificateOrderNotificationMapperTest {
         assertEquals("Failed to map order: " + TestConstants.ORDER_REFERENCE_NUMBER, exception.getMessage());
     }
 
-    private EmailSend getExpectedEmailSendModel(CertificateAppointmentDetailsModel appointmentDetailsModel) throws JsonProcessingException {
+    private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
         EmailSend expected = new EmailSend();
         expected.setAppId(TestConstants.APPLICATION_ID);
-        OrderModel model = getExpectedModel(appointmentDetailsModel);
+        OrderModel model = getExpectedModel();
         model.setTo(TestConstants.EMAIL_RECIPIENT);
         model.setSubject(MessageFormat.format(TestConstants.CONFIRMATION_MESSAGE, TestConstants.ORDER_REFERENCE_NUMBER));
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
-        model.setTotalOrderCost(TestConstants.ORDER_COST);
+        model.setAmountPaid(TestConstants.ORDER_COST);
         expected.setData(new ObjectMapper().writeValueAsString(model));
         expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
         expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
@@ -143,30 +141,24 @@ public class CertificateOrderNotificationMapperTest {
         return expected;
     }
 
-    private CertificateOrderNotificationModel getExpectedModel(CertificateAppointmentDetailsModel appointmentDetailsModel) {
+    private CertificateOrderNotificationModel getExpectedModel() {
         CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();
         expected.setCompanyName(TestConstants.COMPANY_NAME);
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
-        expected.setStatementOfGoodStanding(true);
+        expected.setStatementOfGoodStanding(TestConstants.READABLE_TRUE);
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
-        expected.setCertificateRegisteredOfficeAddressModel(new CertificateRegisteredOfficeAddressModel(TestConstants.ADDRESS_TYPE, true));
-        expected.setDirectorDetailsModel(appointmentDetailsModel);
-        expected.setSecretaryDetailsModel(appointmentDetailsModel);
-        expected.setCompanyObjects(true);
+        expected.setRegisteredOfficeAddressDetails(TestConstants.EXPECTED_ADDRESS_TYPE);
+        expected.setDirectorDetailsModel(getAppointmentDetails());
+        expected.setSecretaryDetailsModel(getAppointmentDetails());
+        expected.setCompanyObjects(TestConstants.READABLE_FALSE);
         return expected;
     }
 
-    private CertificateAppointmentDetailsModel getAppointmentDetails(String dobType) {
-        CertificateAppointmentDetailsModel appointmentDetails = new CertificateAppointmentDetailsModel();
-        appointmentDetails.setIncludeAddress(true);
-        appointmentDetails.setIncludeAppointmentDate(true);
-        appointmentDetails.setIncludeBasicInformation(true);
-        appointmentDetails.setIncludeCountryOfResidence(true);
-        appointmentDetails.setIncludeDobType(dobType);
-        appointmentDetails.setIncludeNationality(false);
-        appointmentDetails.setIncludeOccupation(false);
-        return appointmentDetails;
+    private CertificateAppointmentDetailsModel getAppointmentDetails() {
+        return new CertificateAppointmentDetailsModel(true, Arrays.asList(
+                "Correspondence address", "Appointment date", "Country of residence", "Date of birth (month and year)"
+        ));
     }
     private OrdersApi getOrder(DirectorOrSecretaryDetailsApi appointmentDetails) {
         OrdersApi order = new OrdersApi();
@@ -194,7 +186,7 @@ public class CertificateOrderNotificationMapperTest {
         itemOptions.setRegisteredOfficeAddressDetails(registeredOfficeAddressDetails);
         itemOptions.setDirectorDetails(appointmentDetails);
         itemOptions.setSecretaryDetails(appointmentDetails);
-        itemOptions.setIncludeCompanyObjectsInformation(true);
+        itemOptions.setIncludeCompanyObjectsInformation(false);
         item.setItemOptions(itemOptions);
 
         order.setItems(Collections.singletonList(item));
@@ -216,5 +208,4 @@ public class CertificateOrderNotificationMapperTest {
         appointmentDetails.setIncludeOccupation(false);
         return appointmentDetails;
     }
-
 }

@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
+import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOrderNotificationMapper;
@@ -65,6 +67,24 @@ public class ApplicationConfig implements WebMvcConfigurer {
         mappings.put(CertificateTypeApi.DISSOLUTION, "Dissolution with all company name changes");
         mappings.put(CertificateTypeApi.INCORPORATION_WITH_ALL_NAME_CHANGES, "Incorporation with all company name changes");
         mappings.put(CertificateTypeApi.INCORPORATION_WITH_LAST_NAME_CHANGES, "Incorporation with last name changes");
+        return mappings;
+    }
+
+    @Bean
+    public Map<IncludeAddressRecordsTypeApi, String> incorporationAddressMappings() {
+        Map<IncludeAddressRecordsTypeApi, String> mappings = new HashMap<>();
+        mappings.put(IncludeAddressRecordsTypeApi.CURRENT, "Current address");
+        mappings.put(IncludeAddressRecordsTypeApi.CURRENT_AND_PREVIOUS, "Current address and the one previous");
+        mappings.put(IncludeAddressRecordsTypeApi.CURRENT_PREVIOUS_AND_PRIOR, "Current address and the two previous");
+        mappings.put(IncludeAddressRecordsTypeApi.ALL, "All current and previous addresses");
+        return mappings;
+    }
+
+    @Bean
+    public Map<DeliveryMethodApi, String> deliveryMethodMappings() {
+        Map<DeliveryMethodApi, String> mappings = new HashMap<>();
+        mappings.put(DeliveryMethodApi.POSTAL, "Postal");
+        mappings.put(DeliveryMethodApi.COLLECTION, "Collection");
         return mappings;
     }
 }

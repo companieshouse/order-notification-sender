@@ -2,13 +2,13 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -19,20 +19,22 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
     private final String messageType;
     private final String confirmationMessage;
     private final FilingHistoryDescriptionProviderService providerService;
+    private final DeliveryMethodMapper deliveryMethodMapper;
 
     @Autowired
     public DocumentOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
                                            @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                            @Value("${email.document.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
                                            @Value("${email.document.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
-                                           FilingHistoryDescriptionProviderService providerService,
-                                           ObjectMapper mapper) {
+                                           FilingHistoryDescriptionProviderService providerService, ObjectMapper mapper,
+                                           @Qualifier("deliveryMethodMapper") DeliveryMethodMapper deliveryMethodMapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
         this.messageType = messageType;
         this.confirmationMessage = confirmationMessage;
         this.providerService = providerService;
+        this.deliveryMethodMapper = deliveryMethodMapper;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
 
         CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getItemOptions();
-        Optional.ofNullable(itemOptions.getDeliveryMethod()).ifPresent(method -> model.setDeliveryMethod(method.getJsonName()));
+        model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod()));
 
         List<FilingHistoryDetailsModel> detailsModels = itemOptions.getFilingHistoryDocuments()
                 .stream()

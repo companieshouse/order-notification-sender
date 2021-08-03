@@ -7,7 +7,7 @@ import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 
 import java.util.Map;
 
-@Component
+@Component("certificateTypeMapper")
 public class CertificateTypeMapper {
     private Map<CertificateTypeApi, String> certificateTypeMappings;
 
