@@ -155,8 +155,8 @@ public class CertificateOrderNotificationMapperTest {
         appointmentDetails.setIncludeBasicInformation(true);
         appointmentDetails.setIncludeCountryOfResidence(true);
         appointmentDetails.setIncludeDobType(dobType);
-        appointmentDetails.setIncludeNationality(true);
-        appointmentDetails.setIncludeOccupation(true);
+        appointmentDetails.setIncludeNationality(false);
+        appointmentDetails.setIncludeOccupation(false);
         return appointmentDetails;
     }
     private OrdersApi getOrder(DirectorOrSecretaryDetailsApi appointmentDetails) {
@@ -202,8 +202,8 @@ public class CertificateOrderNotificationMapperTest {
         appointmentDetails.setIncludeBasicInformation(true);
         appointmentDetails.setIncludeCountryOfResidence(true);
         appointmentDetails.setIncludeDobType(dobType);
-        appointmentDetails.setIncludeNationality(true);
-        appointmentDetails.setIncludeOccupation(true);
+        appointmentDetails.setIncludeNationality(null);
+        appointmentDetails.setIncludeOccupation(false);
         return appointmentDetails;
     }
 

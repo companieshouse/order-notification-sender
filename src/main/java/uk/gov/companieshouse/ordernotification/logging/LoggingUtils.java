@@ -58,9 +58,9 @@ public class LoggingUtils {
         return logMap;
     }
 
-    public Map<String, Object> createLogMapWithOrderReference(String orderReference) {
+    public Map<String, Object> createLogMapWithOrderUri(String orderReference) {
         Map<String, Object> logMap = createLogMap();
-        logIfNotNull(logMap, ORDER_REFERENCE_NUMBER, orderReference);
+        logIfNotNull(logMap, ORDER_URI, orderReference);
         return logMap;
     }
 
@@ -70,18 +70,18 @@ public class LoggingUtils {
         }
     }
 
-    public Map<String, Object> logWithOrderReference(String logMessage,
-            String orderReference) {
-        Map<String, Object> logMap = createLogMapWithOrderReference(orderReference);
-        LOGGER.info(logMessage, logMap);
+    public Map<String, Object> logWithOrderUri(String logMessage,
+                                               String orderUri) {
+        Map<String, Object> logMap = createLogMapWithOrderUri(orderUri);
+        LOGGER.debug(logMessage, logMap);
         return logMap;
     }
 
-    public Map<String, Object> logMessageWithOrderReference(Message message,
-            String logMessage, String orderReference) {
+    public Map<String, Object> logMessageWithOrderUri(Message message,
+                                                      String logMessage, String orderUri) {
         Map<String, Object> logMap = createLogMapWithKafkaMessage(message);
-        logIfNotNull(logMap, ORDER_REFERENCE_NUMBER, orderReference);
-        LOGGER.info(logMessage, logMap);
+        logIfNotNull(logMap, ORDER_URI, orderUri);
+        LOGGER.debug(logMessage, logMap);
         return logMap;
     }
 

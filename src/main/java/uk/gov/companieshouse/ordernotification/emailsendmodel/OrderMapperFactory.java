@@ -25,6 +25,8 @@ public class OrderMapperFactory {
      *
      * @param kind The kind of order that has been fetched from orders API.
      * @return An {@link OrdersApiMapper} instance for the item type of the order.
+     *
+     * @throws IllegalArgumentException If the item kind is unhandled.
      */
     public OrdersApiMapper getOrderMapper(String kind) {
         return Optional.ofNullable(ordersApiMappers.get(kind))

@@ -33,6 +33,8 @@ public abstract class OrdersApiMapper {
      *
      * @param order An order resource returned by the orders API.
      * @return An {@link EmailSend} object containing order data.
+     *
+     * @throws MappingException If an error occurs when serialising email data.
      */
     public EmailSend map(OrdersApi order) {
         try {
