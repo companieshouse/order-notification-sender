@@ -7,7 +7,10 @@ import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 
 import java.util.Map;
 
-@Component("certificateTypeMapper")
+/**
+ * Maps {@link CertificateTypeApi} objects to human readable strings.
+ */
+@Component
 public class CertificateTypeMapper {
     private Map<CertificateTypeApi, String> certificateTypeMappings;
 
@@ -16,6 +19,12 @@ public class CertificateTypeMapper {
         this.certificateTypeMappings = certificateTypeMappings;
     }
 
+    /**
+     * Maps {@link CertificateTypeApi} objects to human readable strings.
+     *
+     * @param certificateType An enum of certificate types
+     * @return A string representation of the type
+     */
     public String mapCertificateType(CertificateTypeApi certificateType){
         return certificateTypeMappings.get(certificateType);
     }

@@ -6,7 +6,10 @@ import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 
 import java.util.Map;
 
-@Component("addressRecordTypeMapper")
+/**
+ * Maps {@link IncludeAddressRecordsTypeApi} objects to human readable strings.
+ */
+@Component
 public class AddressRecordTypeMapper {
 
     private Map<IncludeAddressRecordsTypeApi, String> mappings;
@@ -15,6 +18,12 @@ public class AddressRecordTypeMapper {
         this.mappings = mappings;
     }
 
+    /**
+     * Maps {@link IncludeAddressRecordsTypeApi} objects to human readable strings.
+     *
+     * @param roaType An enum of registered office address types
+     * @return A string representation of the type
+     */
     public String mapAddressRecordType(IncludeAddressRecordsTypeApi roaType) {
         return mappings.get(roaType);
     }

@@ -7,7 +7,10 @@ import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 
 import java.util.Map;
 
-@Component("deliveryMethodMapper")
+/**
+ * Maps {@link DeliveryMethodApi} objects to human readable strings.
+ */
+@Component
 public class DeliveryMethodMapper {
 
     private Map<DeliveryMethodTuple, String> mappings;
@@ -16,6 +19,13 @@ public class DeliveryMethodMapper {
         this.mappings = mappings;
     }
 
+    /**
+     * Maps {@link DeliveryMethodApi} objects to human readable strings.
+     *
+     * @param deliveryMethod An enum of certificate types
+     * @param timescale An enum of delivery timescales
+     * @return A string representation of the type
+     */
     public String mapDeliveryMethod(DeliveryMethodApi deliveryMethod, DeliveryTimescaleApi timescale) {
         return mappings.get(new DeliveryMethodTuple(deliveryMethod, timescale));
     }

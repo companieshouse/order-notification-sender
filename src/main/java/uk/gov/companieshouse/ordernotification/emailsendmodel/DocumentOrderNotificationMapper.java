@@ -31,7 +31,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                                            @Value("${email.document.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
                                            @Value("${email.document.filingHistoryDateFormat}") String filingHistoryDateFormat,
                                            FilingHistoryDescriptionProviderService providerService, ObjectMapper mapper,
-                                           @Qualifier("deliveryMethodMapper") DeliveryMethodMapper deliveryMethodMapper) {
+                                           DeliveryMethodMapper deliveryMethodMapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
