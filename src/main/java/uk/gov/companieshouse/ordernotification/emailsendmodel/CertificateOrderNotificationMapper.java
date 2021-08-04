@@ -29,9 +29,9 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
                                               @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                               @Value("${email.certificate.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
                                               @Value("${email.certificate.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
-                                              ObjectMapper mapper, @Qualifier("certificateTypeMapper") CertificateTypeMapper certificateTypeMapper,
-                                              @Qualifier("addressRecordTypeMapper") AddressRecordTypeMapper addressRecordTypeMapper,
-                                              @Qualifier("deliveryMethodMapper") DeliveryMethodMapper deliveryMethodMapper) {
+                                              ObjectMapper mapper, CertificateTypeMapper certificateTypeMapper,
+                                              AddressRecordTypeMapper addressRecordTypeMapper,
+                                              DeliveryMethodMapper deliveryMethodMapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
         this.messageId = messageId;
         this.applicationId = applicationId;
