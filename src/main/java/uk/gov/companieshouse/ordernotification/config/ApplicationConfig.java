@@ -4,15 +4,18 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOrderNotificationMapper;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.DeliveryMethodTuple;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.DocumentOrderNotificationMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MissingImageOrderNotificationMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiMapper;
@@ -81,10 +84,12 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Map<DeliveryMethodApi, String> deliveryMethodMappings() {
-        Map<DeliveryMethodApi, String> mappings = new HashMap<>();
-        mappings.put(DeliveryMethodApi.POSTAL, "Postal");
-        mappings.put(DeliveryMethodApi.COLLECTION, "Collection");
+    public Map<DeliveryMethodTuple, String> deliveryMethodMappings(@Value("${email.dispatchDays}") int dispatchDays) {
+        Map<DeliveryMethodTuple, String> mappings = new HashMap<>();
+        mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.STANDARD),
+                "Standard delivery (aim to dispatch within "+dispatchDays+" working days)");
+        mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.SAME_DAY),
+                "Same Day");
         return mappings;
     }
 }

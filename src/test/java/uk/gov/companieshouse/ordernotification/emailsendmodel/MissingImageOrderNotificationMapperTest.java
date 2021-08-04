@@ -68,7 +68,7 @@ public class MissingImageOrderNotificationMapperTest {
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
-        model.setAmountPaid(TestConstants.ORDER_COST);
+        model.setAmountPaid(TestConstants.ORDER_VIEW);
         expected.setData(new ObjectMapper().writeValueAsString(model));
         expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
         expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);

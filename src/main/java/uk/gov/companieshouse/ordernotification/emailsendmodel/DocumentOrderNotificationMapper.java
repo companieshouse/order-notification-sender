@@ -42,7 +42,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
 
         CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getItemOptions();
-        model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod()));
+        model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));
 
         List<FilingHistoryDetailsModel> detailsModels = itemOptions.getFilingHistoryDocuments()
                 .stream()

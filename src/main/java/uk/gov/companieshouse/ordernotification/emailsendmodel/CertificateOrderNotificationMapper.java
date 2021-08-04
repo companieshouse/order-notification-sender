@@ -12,7 +12,6 @@ import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 @Component
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
@@ -49,7 +48,7 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) item.getItemOptions();
         model.setCertificateType(certificateTypeMapper.mapCertificateType(itemOptions.getCertificateType()));
         model.setStatementOfGoodStanding(mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
-        model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod()));
+        model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));
 
         model.setRegisteredOfficeAddressDetails(addressRecordTypeMapper.mapAddressRecordType(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
 

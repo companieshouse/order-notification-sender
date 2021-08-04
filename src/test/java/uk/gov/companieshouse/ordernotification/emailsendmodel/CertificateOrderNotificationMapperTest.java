@@ -14,6 +14,7 @@ import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeDobTypeApi;
@@ -66,7 +67,7 @@ public class CertificateOrderNotificationMapperTest {
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
         when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
-        when(deliveryMethodMapper.mapDeliveryMethod(any())).thenReturn(TestConstants.DELIVERY_METHOD);
+        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
 
         // when
         EmailSend result = certificateOrderNotificationMapper.map(order);
@@ -112,7 +113,7 @@ public class CertificateOrderNotificationMapperTest {
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
         when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
-        when(deliveryMethodMapper.mapDeliveryMethod(any())).thenReturn(TestConstants.DELIVERY_METHOD);
+        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
         when(mapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
 
         //when
@@ -132,7 +133,7 @@ public class CertificateOrderNotificationMapperTest {
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
-        model.setAmountPaid(TestConstants.ORDER_COST);
+        model.setAmountPaid(TestConstants.ORDER_VIEW);
         expected.setData(new ObjectMapper().writeValueAsString(model));
         expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
         expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
@@ -177,6 +178,7 @@ public class CertificateOrderNotificationMapperTest {
         itemOptions.setCertificateType(certificateType);
         itemOptions.setIncludeGoodStandingInformation(true);
         itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
+        itemOptions.setDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
 
         RegisteredOfficeAddressDetailsApi registeredOfficeAddressDetails = new RegisteredOfficeAddressDetailsApi();
         IncludeAddressRecordsTypeApi addressRecord = IncludeAddressRecordsTypeApi.CURRENT_PREVIOUS_AND_PRIOR;

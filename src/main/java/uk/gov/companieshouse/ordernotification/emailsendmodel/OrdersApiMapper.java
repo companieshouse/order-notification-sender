@@ -67,7 +67,7 @@ public abstract class OrdersApiMapper {
         model.setCompanyName(order.getItems().get(0).getCompanyName());
         model.setCompanyNumber(order.getItems().get(0).getCompanyNumber());
         model.setOrderReferenceNumber(order.getReference());
-        model.setAmountPaid(order.getTotalOrderCost());
+        model.setAmountPaid("£"+order.getTotalOrderCost());
         model.setPaymentReference(order.getPaymentReference());
         model.setPaymentTime(order.getOrderedAt().format(DateTimeFormatter.ofPattern(paymentDateFormat)));
         return model;

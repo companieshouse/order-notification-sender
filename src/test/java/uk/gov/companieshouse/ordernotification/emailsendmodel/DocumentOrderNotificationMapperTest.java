@@ -57,7 +57,7 @@ public class DocumentOrderNotificationMapperTest {
         OrdersApi order = getOrder();
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any())).thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
-        when(deliveryMethodMapper.mapDeliveryMethod(any())).thenReturn(TestConstants.DELIVERY_METHOD);
+        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
 
         // when
         EmailSend result = documentOrderNotificationMapper.map(order);
@@ -76,7 +76,7 @@ public class DocumentOrderNotificationMapperTest {
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
-        model.setAmountPaid(TestConstants.ORDER_COST);
+        model.setAmountPaid(TestConstants.ORDER_VIEW);
         expected.setData(new ObjectMapper().writeValueAsString(model));
         expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
         expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
