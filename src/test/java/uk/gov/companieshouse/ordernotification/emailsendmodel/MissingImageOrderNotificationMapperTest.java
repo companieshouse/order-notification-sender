@@ -64,6 +64,7 @@ public class MissingImageOrderNotificationMapperTest {
         when(config.getMissingImage()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+        when(emailDataConfig.getFilingHistoryDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
 
         // when
         EmailSend result = mapper.map(order);

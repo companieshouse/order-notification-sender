@@ -71,6 +71,7 @@ public class DocumentOrderNotificationMapperTest {
         when(config.getDocument()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+        when(emailDataConfig.getFilingHistoryDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
 
         // when
         EmailSend result = documentOrderNotificationMapper.map(order);
