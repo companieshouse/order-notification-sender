@@ -19,6 +19,8 @@ import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeDobTypeApi;
 import uk.gov.companieshouse.api.model.order.item.RegisteredOfficeAddressDetailsApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
@@ -52,12 +54,16 @@ public class CertificateOrderNotificationMapperTest {
     @Mock
     private ObjectMapper mapper;
 
+    @Mock
+    private EmailConfiguration config;
+
+    @Mock
+    private EmailDataConfiguration emailDataConfig;
+
     @BeforeEach
     void setup() {
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
-                new ObjectMapper(), certificateTypeMapper, roaTypeMapper, deliveryMethodMapper);
+                config, new ObjectMapper(), certificateTypeMapper, roaTypeMapper, deliveryMethodMapper);
     }
 
     @Test
@@ -69,6 +75,15 @@ public class CertificateOrderNotificationMapperTest {
         when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
         when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
 
+        when(config.getDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
+        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
+        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
+        when(config.getApplicationId()).thenReturn(TestConstants.APPLICATION_ID);
+        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
+        when(config.getCertificate()).thenReturn(emailDataConfig);
+        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
+        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+
         // when
         EmailSend result = certificateOrderNotificationMapper.map(order);
 
@@ -78,6 +93,10 @@ public class CertificateOrderNotificationMapperTest {
 
     @Test
     void testCertificateOrderNotificationMapperReturnsMessageId() {
+        //given
+        when(config.getCertificate()).thenReturn(emailDataConfig);
+        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
+
         //when
         String actual = certificateOrderNotificationMapper.getMessageId();
 
@@ -86,16 +105,11 @@ public class CertificateOrderNotificationMapperTest {
     }
 
     @Test
-    void testCertificateOrderNotificationMapperReturnsApplicationId() {
-        //when
-        String actual = certificateOrderNotificationMapper.getApplicationId();
-
-        //then
-        assertEquals(TestConstants.APPLICATION_ID, actual);
-    }
-
-    @Test
     void testCertificateOrderNotificationMapperReturnsMessageType() {
+        //given
+        when(config.getCertificate()).thenReturn(emailDataConfig);
+        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+
         //when
         String actual = certificateOrderNotificationMapper.getMessageType();
 
@@ -106,10 +120,12 @@ public class CertificateOrderNotificationMapperTest {
     @Test
     void testMapperThrowsMappingExceptionIfJsonProcessingExceptionThrownByMapper() throws com.fasterxml.jackson.core.JsonProcessingException {
         //given
+        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
+        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
+        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
+
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
-                mapper, certificateTypeMapper, roaTypeMapper, deliveryMethodMapper);
+                config, mapper, certificateTypeMapper, roaTypeMapper, deliveryMethodMapper);
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
         when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);

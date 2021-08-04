@@ -2,12 +2,11 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,27 +15,18 @@ import java.util.List;
 @Component
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
-    private final String messageId;
-    private final String applicationId;
-    private final String messageType;
-    private final String confirmationMessage;
+    private final EmailConfiguration config;
     private final CertificateTypeMapper certificateTypeMapper;
     private final AddressRecordTypeMapper addressRecordTypeMapper;
     private final DeliveryMethodMapper deliveryMethodMapper;
 
     @Autowired
-    public CertificateOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
-                                              @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
-                                              @Value("${email.certificate.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
-                                              @Value("${email.certificate.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
+    public CertificateOrderNotificationMapper(DateGenerator dateGenerator, EmailConfiguration config,
                                               ObjectMapper mapper, CertificateTypeMapper certificateTypeMapper,
                                               AddressRecordTypeMapper addressRecordTypeMapper,
                                               DeliveryMethodMapper deliveryMethodMapper) {
-        super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
-        this.messageId = messageId;
-        this.applicationId = applicationId;
-        this.messageType = messageType;
-        this.confirmationMessage = confirmationMessage;
+        super(dateGenerator, config, mapper);
+        this.config = config;
         this.certificateTypeMapper = certificateTypeMapper;
         this.addressRecordTypeMapper = addressRecordTypeMapper;
         this.deliveryMethodMapper = deliveryMethodMapper;
@@ -112,21 +102,11 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
     @Override
     String getMessageId() {
-        return messageId;
-    }
-
-    @Override
-    String getApplicationId() {
-        return applicationId;
+        return config.getCertificate().getMessageId();
     }
 
     @Override
     String getMessageType() {
-        return messageType;
-    }
-
-    @Override
-    String getMessageSubject() {
-        return confirmationMessage;
+        return config.getCertificate().getMessageType();
     }
 }

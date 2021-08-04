@@ -2,11 +2,10 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -16,28 +15,16 @@ import java.util.stream.Collectors;
 @Component
 public class DocumentOrderNotificationMapper extends OrdersApiMapper {
 
-    private final String messageId;
-    private final String applicationId;
-    private final String messageType;
-    private final String confirmationMessage;
-    private final String filingHistoryDateFormat;
+    private final EmailConfiguration config;
     private final FilingHistoryDescriptionProviderService providerService;
     private final DeliveryMethodMapper deliveryMethodMapper;
 
     @Autowired
-    public DocumentOrderNotificationMapper(DateGenerator dateGenerator, @Value("${email.dateFormat}") String dateFormat,
-                                           @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
-                                           @Value("${email.document.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
-                                           @Value("${email.document.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
-                                           @Value("${email.document.filingHistoryDateFormat}") String filingHistoryDateFormat,
+    public DocumentOrderNotificationMapper(DateGenerator dateGenerator, EmailConfiguration config,
                                            FilingHistoryDescriptionProviderService providerService, ObjectMapper mapper,
                                            DeliveryMethodMapper deliveryMethodMapper) {
-        super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
-        this.messageId = messageId;
-        this.applicationId = applicationId;
-        this.messageType = messageType;
-        this.confirmationMessage = confirmationMessage;
-        this.filingHistoryDateFormat = filingHistoryDateFormat;
+        super(dateGenerator, config, mapper);
+        this.config = config;
         this.providerService = providerService;
         this.deliveryMethodMapper = deliveryMethodMapper;
     }
@@ -54,7 +41,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                 .map(filingHistoryDocumentApi -> {
                     FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
                     details.setFilingHistoryDate(LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
-                            .format(DateTimeFormatter.ofPattern(filingHistoryDateFormat)));
+                            .format(DateTimeFormatter.ofPattern(config.getDocument().getFilingHistoryDateFormat())));
                     details.setFilingHistoryCost("£"+filingHistoryDocumentApi.getFilingHistoryCost());
                     details.setFilingHistoryDescription(
                             this.providerService.mapFilingHistoryDescription(
@@ -73,21 +60,11 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
 
     @Override
     String getMessageId() {
-        return this.messageId;
-    }
-
-    @Override
-    String getApplicationId() {
-        return this.applicationId;
+        return config.getDocument().getMessageId();
     }
 
     @Override
     String getMessageType() {
-        return this.messageType;
-    }
-
-    @Override
-    String getMessageSubject() {
-        return confirmationMessage;
+        return config.getDocument().getMessageType();
     }
 }

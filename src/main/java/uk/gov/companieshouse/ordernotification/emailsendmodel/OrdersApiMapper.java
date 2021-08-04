@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 
 import java.text.MessageFormat;
@@ -15,16 +16,12 @@ import java.time.format.DateTimeFormatter;
 public abstract class OrdersApiMapper {
 
     private final DateGenerator dateGenerator;
-    private final String dateFormat;
-    private final String paymentDateFormat;
-    private final String senderEmail;
+    private final EmailConfiguration config;
     private final ObjectMapper mapper;
 
-    public OrdersApiMapper(DateGenerator dateGenerator, String dateFormat, String paymentDateFormat, String senderEmail, ObjectMapper mapper) {
+    public OrdersApiMapper(DateGenerator dateGenerator, EmailConfiguration config, ObjectMapper mapper) {
         this.dateGenerator = dateGenerator;
-        this.dateFormat = dateFormat;
-        this.paymentDateFormat = paymentDateFormat;
-        this.senderEmail = senderEmail;
+        this.config = config;
         this.mapper = mapper;
     }
 
@@ -39,12 +36,12 @@ public abstract class OrdersApiMapper {
     public EmailSend map(OrdersApi order) {
         try {
             EmailSend emailSend = new EmailSend();
-            emailSend.setEmailAddress(senderEmail);
+            emailSend.setEmailAddress(config.getSenderAddress());
             emailSend.setData(this.mapper.writeValueAsString(addOrderMetadata(generateEmailData(order.getItems().get(0)), order)));
             emailSend.setMessageId(getMessageId());
-            emailSend.setAppId(getApplicationId());
+            emailSend.setAppId(config.getApplicationId());
             emailSend.setMessageType(getMessageType());
-            emailSend.setCreatedAt(dateGenerator.generate().format(DateTimeFormatter.ofPattern(dateFormat)));
+            emailSend.setCreatedAt(dateGenerator.generate().format(DateTimeFormatter.ofPattern(config.getDateFormat())));
             return emailSend;
         } catch (JsonProcessingException e) {
             throw new MappingException("Failed to map order: " + order.getReference(), e);
@@ -55,21 +52,17 @@ public abstract class OrdersApiMapper {
 
     abstract String getMessageId();
 
-    abstract String getApplicationId();
-
     abstract String getMessageType();
-
-    abstract String getMessageSubject();
 
     private OrderModel addOrderMetadata(OrderModel model, OrdersApi order) {
         model.setTo(order.getOrderedBy().getEmail());
-        model.setSubject(MessageFormat.format(getMessageSubject(), order.getReference()));
+        model.setSubject(MessageFormat.format(config.getConfirmationMessage(), order.getReference()));
         model.setCompanyName(order.getItems().get(0).getCompanyName());
         model.setCompanyNumber(order.getItems().get(0).getCompanyNumber());
         model.setOrderReferenceNumber(order.getReference());
         model.setAmountPaid("£"+order.getTotalOrderCost());
         model.setPaymentReference(order.getPaymentReference());
-        model.setPaymentTime(order.getOrderedAt().format(DateTimeFormatter.ofPattern(paymentDateFormat)));
+        model.setPaymentTime(order.getOrderedAt().format(DateTimeFormatter.ofPattern(config.getPaymentDateFormat())));
         return model;
     }
 }

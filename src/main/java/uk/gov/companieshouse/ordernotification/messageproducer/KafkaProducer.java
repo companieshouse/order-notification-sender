@@ -21,7 +21,7 @@ class KafkaProducer {
     private final Long timeout;
 
     @Autowired
-    public KafkaProducer(LoggingUtils loggingUtils, CHKafkaProducer chKafkaProducer, @Value("${email.producerTimeout}") Long timeout) {
+    public KafkaProducer(LoggingUtils loggingUtils, CHKafkaProducer chKafkaProducer, @Value("${kafkaProducer.producerTimeout}") Long timeout) {
         this.loggingUtils = loggingUtils;
         this.chKafkaProducer = chKafkaProducer;
         this.timeout = timeout;

@@ -13,6 +13,8 @@ import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
@@ -42,13 +44,15 @@ public class DocumentOrderNotificationMapperTest {
     @Mock
     private DeliveryMethodMapper deliveryMethodMapper;
 
+    @Mock
+    private EmailConfiguration config;
+
+    @Mock
+    private EmailDataConfiguration emailDataConfig;
 
     @BeforeEach
     void setup() {
-        documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator,
-                TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE,
-                TestConstants.CONFIRMATION_MESSAGE, TestConstants.EMAIL_DATE_FORMAT, providerService, new ObjectMapper(), deliveryMethodMapper);
+        documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator, config, providerService, new ObjectMapper(), deliveryMethodMapper);
     }
 
     @Test
@@ -58,6 +62,15 @@ public class DocumentOrderNotificationMapperTest {
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any())).thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
+
+        when(config.getDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
+        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
+        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
+        when(config.getApplicationId()).thenReturn(TestConstants.APPLICATION_ID);
+        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
+        when(config.getDocument()).thenReturn(emailDataConfig);
+        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
+        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
 
         // when
         EmailSend result = documentOrderNotificationMapper.map(order);

@@ -11,6 +11,8 @@ import uk.gov.companieshouse.api.model.order.ActionedByApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
@@ -35,12 +37,15 @@ public class MissingImageOrderNotificationMapperTest {
     @Mock
     private FilingHistoryDescriptionProviderService providerService;
 
+    @Mock
+    private EmailConfiguration config;
+
+    @Mock
+    private EmailDataConfiguration emailDataConfig;
+
     @BeforeEach
     void setup() {
-        mapper = new MissingImageOrderNotificationMapper(dateGenerator, TestConstants.EMAIL_DATE_FORMAT,
-                TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,  TestConstants.MESSAGE_ID,
-                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
-                TestConstants.EMAIL_DATE_FORMAT, providerService, new ObjectMapper());
+        mapper = new MissingImageOrderNotificationMapper(dateGenerator, config, providerService, new ObjectMapper());
     }
 
     @Test
@@ -50,6 +55,15 @@ public class MissingImageOrderNotificationMapperTest {
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
                 .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
+
+        when(config.getDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
+        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
+        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
+        when(config.getApplicationId()).thenReturn(TestConstants.APPLICATION_ID);
+        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
+        when(config.getMissingImage()).thenReturn(emailDataConfig);
+        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
+        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
 
         // when
         EmailSend result = mapper.map(order);
