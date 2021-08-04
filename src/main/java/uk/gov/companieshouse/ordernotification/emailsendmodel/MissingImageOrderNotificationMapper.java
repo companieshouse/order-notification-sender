@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Component
 public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
 
@@ -14,6 +17,7 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
     private final String applicationId;
     private final String messageType;
     private final String confirmationMessage;
+    private final String filingHistoryDateFormat;
     private final FilingHistoryDescriptionProviderService providerService;
 
     @Autowired
@@ -24,6 +28,7 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
                                                @Value("${email.applicationId}") String applicationId,
                                                @Value("${email.missing-image.messageType}") String messageType,
                                                @Value("${email.confirmationMessage}") String confirmationMessage,
+                                               @Value("${email.missing-image.filingHistoryDateFormat}") String filingHistoryDateFormat,
                                                FilingHistoryDescriptionProviderService providerService,
                                                ObjectMapper mapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
@@ -31,6 +36,7 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
         this.applicationId = applicationId;
         this.messageType = messageType;
         this.confirmationMessage = confirmationMessage;
+        this.filingHistoryDateFormat = filingHistoryDateFormat;
         this.providerService = providerService;
     }
 
@@ -40,7 +46,9 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
         MissingImageOrderNotificationModel model = new MissingImageOrderNotificationModel();
         MissingImageDeliveryItemOptionsApi itemOptions = (MissingImageDeliveryItemOptionsApi) order.getItemOptions();
         FilingHistoryDetailsModel filingHistoryDetailsModel = new FilingHistoryDetailsModel();
-        filingHistoryDetailsModel.setFilingHistoryDate(itemOptions.getFilingHistoryDate());
+        filingHistoryDetailsModel.setFilingHistoryDate(
+                LocalDate.parse(itemOptions.getFilingHistoryDate()).format(DateTimeFormatter.ofPattern(filingHistoryDateFormat))
+        );
         filingHistoryDetailsModel.setFilingHistoryType(itemOptions.getFilingHistoryType());
         filingHistoryDetailsModel.setFilingHistoryDescription(
                 providerService.mapFilingHistoryDescription(

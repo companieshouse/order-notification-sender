@@ -34,6 +34,7 @@ public final class TestConstants {
 
     //document order constants
     public static final String FILING_HISTORY_DATE = "2021-07-28";
+    public static final String FILING_HISTORY_DATE_VIEW = "28 July 2021";
     public static final String DELIVERY_METHOD = "Standard delivery (aim to dispatch within 5 working days)";
     public static final String FILING_HISTORY_DESCRIPTION = "confirmation-statement-with-updates";
     public static final String MAPPED_FILING_HISTORY_DESCRIPTION = "Mapped filing history description";

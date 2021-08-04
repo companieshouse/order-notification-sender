@@ -39,7 +39,8 @@ public class MissingImageOrderNotificationMapperTest {
     void setup() {
         mapper = new MissingImageOrderNotificationMapper(dateGenerator, TestConstants.EMAIL_DATE_FORMAT,
                 TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,  TestConstants.MESSAGE_ID,
-                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE, providerService, new ObjectMapper());
+                TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE, TestConstants.CONFIRMATION_MESSAGE,
+                TestConstants.EMAIL_DATE_FORMAT, providerService, new ObjectMapper());
     }
 
     @Test
@@ -80,7 +81,7 @@ public class MissingImageOrderNotificationMapperTest {
     private MissingImageOrderNotificationModel getExpectedModel() {
 
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
-        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
+        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE_VIEW);
         details.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
     private final String applicationId;
     private final String messageType;
     private final String confirmationMessage;
+    private final String filingHistoryDateFormat;
     private final FilingHistoryDescriptionProviderService providerService;
     private final DeliveryMethodMapper deliveryMethodMapper;
 
@@ -26,6 +29,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                                            @Value("${email.senderAddress}") String senderEmail, @Value("${email.paymentDateFormat}") String paymentDateFormat,
                                            @Value("${email.document.messageId}") String messageId, @Value("${email.applicationId}") String applicationId,
                                            @Value("${email.document.messageType}") String messageType, @Value("${email.confirmationMessage}") String confirmationMessage,
+                                           @Value("${email.document.filingHistoryDateFormat}") String filingHistoryDateFormat,
                                            FilingHistoryDescriptionProviderService providerService, ObjectMapper mapper,
                                            @Qualifier("deliveryMethodMapper") DeliveryMethodMapper deliveryMethodMapper) {
         super(dateGenerator, dateFormat, paymentDateFormat, senderEmail, mapper);
@@ -33,6 +37,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
         this.applicationId = applicationId;
         this.messageType = messageType;
         this.confirmationMessage = confirmationMessage;
+        this.filingHistoryDateFormat = filingHistoryDateFormat;
         this.providerService = providerService;
         this.deliveryMethodMapper = deliveryMethodMapper;
     }
@@ -48,7 +53,8 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                 .stream()
                 .map(filingHistoryDocumentApi -> {
                     FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
-                    details.setFilingHistoryDate(filingHistoryDocumentApi.getFilingHistoryDate());
+                    details.setFilingHistoryDate(LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
+                            .format(DateTimeFormatter.ofPattern(filingHistoryDateFormat)));
                     details.setFilingHistoryCost(filingHistoryDocumentApi.getFilingHistoryCost());
                     details.setFilingHistoryDescription(
                             this.providerService.mapFilingHistoryDescription(

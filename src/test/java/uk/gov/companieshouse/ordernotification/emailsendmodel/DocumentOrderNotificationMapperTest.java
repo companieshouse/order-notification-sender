@@ -48,7 +48,7 @@ public class DocumentOrderNotificationMapperTest {
         documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator,
                 TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
                 TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE,
-                TestConstants.CONFIRMATION_MESSAGE, providerService, new ObjectMapper(), deliveryMethodMapper);
+                TestConstants.CONFIRMATION_MESSAGE, TestConstants.EMAIL_DATE_FORMAT, providerService, new ObjectMapper(), deliveryMethodMapper);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class DocumentOrderNotificationMapperTest {
 
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
         details.setFilingHistoryCost(TestConstants.ORDER_COST);
-        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
+        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE_VIEW);
         details.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 
