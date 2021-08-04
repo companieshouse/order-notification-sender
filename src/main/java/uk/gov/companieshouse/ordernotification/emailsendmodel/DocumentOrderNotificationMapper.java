@@ -55,7 +55,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                     FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
                     details.setFilingHistoryDate(LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
                             .format(DateTimeFormatter.ofPattern(filingHistoryDateFormat)));
-                    details.setFilingHistoryCost(filingHistoryDocumentApi.getFilingHistoryCost());
+                    details.setFilingHistoryCost("£"+filingHistoryDocumentApi.getFilingHistoryCost());
                     details.setFilingHistoryDescription(
                             this.providerService.mapFilingHistoryDescription(
                                     filingHistoryDocumentApi.getFilingHistoryDescription(),

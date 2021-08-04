@@ -92,7 +92,7 @@ public class DocumentOrderNotificationMapperTest {
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
 
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
-        details.setFilingHistoryCost(TestConstants.ORDER_COST);
+        details.setFilingHistoryCost(TestConstants.ORDER_VIEW);
         details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE_VIEW);
         details.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
