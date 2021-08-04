@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNull;
 
-public class FilingHistoryDescriptionProviderServiceTest {
+class FilingHistoryDescriptionProviderServiceTest {
     private static final Map<String, Object> DESCRIPTION_VALUES;
     private static final Map<String, Object> DESCRIPTION_VALUES_LEGACY;
     private static final Map<String, Object> DESCRIPTION_VALUES_ARRAY;

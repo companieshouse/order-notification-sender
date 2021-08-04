@@ -29,7 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class ErrorHandlingServiceTest {
+class ErrorHandlingServiceTest {
 
     private ErrorHandlingService errorHandlingService;
 
@@ -143,7 +143,7 @@ public class ErrorHandlingServiceTest {
 
         //then
         assertThrows(ErrorHandlerFailureException.class, actual);
-        verify(logger).error(eq("Failed to handle error"), any(), eq(logArgs));
+        verify(logger).error(eq("Interrupted"), any(), eq(logArgs));
     }
 
     @Test

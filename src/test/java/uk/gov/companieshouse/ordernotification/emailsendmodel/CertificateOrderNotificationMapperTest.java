@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
 
 @ExtendWith(MockitoExtension.class)
-public class CertificateOrderNotificationMapperTest {
+class CertificateOrderNotificationMapperTest {
 
     private CertificateOrderNotificationMapper certificateOrderNotificationMapper;
 

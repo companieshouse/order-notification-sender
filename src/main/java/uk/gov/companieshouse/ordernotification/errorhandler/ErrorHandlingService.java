@@ -59,9 +59,13 @@ public class ErrorHandlingService {
                         new OrderReceived(event.getEventSource().getOrderURI()),
                         event.getEventSource().getOrderURI(), ERROR_TOPIC);
             }
-        } catch (SerializationException | ExecutionException | InterruptedException | TimeoutException e) {
+        } catch (SerializationException | ExecutionException | TimeoutException e) {
             loggingUtils.getLogger().error("Failed to handle error", e, logArgs);
             throw new ErrorHandlerFailureException("Failed to handle error", e);
+        } catch(InterruptedException e) {
+            loggingUtils.getLogger().error("Interrupted", e, logArgs);
+            Thread.currentThread().interrupt();
+            throw new ErrorHandlerFailureException("Interrupted", e);
         }
     }
 }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderMapperFactoryTest {
+class OrderMapperFactoryTest {
 
     private OrderMapperFactory mapperFactory;
 
