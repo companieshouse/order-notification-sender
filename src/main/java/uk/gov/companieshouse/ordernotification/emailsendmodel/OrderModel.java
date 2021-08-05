@@ -8,7 +8,7 @@ public class OrderModel {
     private String companyName;
     private String companyNumber;
     private String orderReferenceNumber;
-    private String totalOrderCost;
+    private String amountPaid;
     private String paymentReference;
     private String paymentTime;
 
@@ -52,12 +52,12 @@ public class OrderModel {
         this.orderReferenceNumber = orderReferenceNumber;
     }
 
-    public String getTotalOrderCost() {
-        return totalOrderCost;
+    public String getAmountPaid() {
+        return amountPaid;
     }
 
-    public void setTotalOrderCost(String totalOrderCost) {
-        this.totalOrderCost = totalOrderCost;
+    public void setAmountPaid(String amountPaid) {
+        this.amountPaid = amountPaid;
     }
 
     public String getPaymentReference() {
@@ -90,13 +90,13 @@ public class OrderModel {
                 Objects.equals(getCompanyName(), that.getCompanyName()) &&
                 Objects.equals(getCompanyNumber(), that.getCompanyNumber()) &&
                 Objects.equals(getOrderReferenceNumber(), that.getOrderReferenceNumber()) &&
-                Objects.equals(getTotalOrderCost(), that.getTotalOrderCost()) &&
+                Objects.equals(getAmountPaid(), that.getAmountPaid()) &&
                 Objects.equals(getPaymentReference(), that.getPaymentReference()) &&
                 Objects.equals(getPaymentTime(), that.getPaymentTime());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTo(), getSubject(), getCompanyName(), getCompanyNumber(), getOrderReferenceNumber(), getTotalOrderCost(), getPaymentReference(), getPaymentTime());
+        return Objects.hash(getTo(), getSubject(), getCompanyName(), getCompanyNumber(), getOrderReferenceNumber(), getAmountPaid(), getPaymentReference(), getPaymentTime());
     }
 }

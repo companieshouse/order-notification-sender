@@ -13,6 +13,8 @@ import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
+import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
@@ -29,7 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DocumentOrderNotificationMapperTest {
+class DocumentOrderNotificationMapperTest {
 
     private DocumentOrderNotificationMapper documentOrderNotificationMapper;
 
@@ -39,13 +41,18 @@ public class DocumentOrderNotificationMapperTest {
     @Mock
     private FilingHistoryDescriptionProviderService providerService;
 
+    @Mock
+    private DeliveryMethodMapper deliveryMethodMapper;
+
+    @Mock
+    private EmailConfiguration config;
+
+    @Mock
+    private EmailDataConfiguration emailDataConfig;
 
     @BeforeEach
     void setup() {
-        documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator,
-                TestConstants.EMAIL_DATE_FORMAT, TestConstants.SENDER_EMAIL_ADDRESS, TestConstants.PAYMENT_DATE_FORMAT,
-                TestConstants.MESSAGE_ID, TestConstants.APPLICATION_ID, TestConstants.MESSAGE_TYPE,
-                TestConstants.CONFIRMATION_MESSAGE, providerService, new ObjectMapper());
+        documentOrderNotificationMapper = new DocumentOrderNotificationMapper(dateGenerator, config, providerService, new ObjectMapper(), deliveryMethodMapper);
     }
 
     @Test
@@ -54,6 +61,17 @@ public class DocumentOrderNotificationMapperTest {
         OrdersApi order = getOrder();
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any())).thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
+        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
+
+        when(config.getDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
+        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
+        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
+        when(config.getApplicationId()).thenReturn(TestConstants.APPLICATION_ID);
+        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
+        when(config.getDocument()).thenReturn(emailDataConfig);
+        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
+        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+        when(emailDataConfig.getFilingHistoryDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
 
         // when
         EmailSend result = documentOrderNotificationMapper.map(order);
@@ -72,7 +90,7 @@ public class DocumentOrderNotificationMapperTest {
         model.setOrderReferenceNumber(TestConstants.ORDER_REFERENCE_NUMBER);
         model.setPaymentReference(TestConstants.PAYMENT_REFERENCE);
         model.setPaymentTime(TestConstants.PAYMENT_TIME);
-        model.setTotalOrderCost(TestConstants.ORDER_COST);
+        model.setAmountPaid(TestConstants.ORDER_VIEW);
         expected.setData(new ObjectMapper().writeValueAsString(model));
         expected.setCreatedAt(TestConstants.ORDER_CREATED_AT);
         expected.setEmailAddress(TestConstants.SENDER_EMAIL_ADDRESS);
@@ -88,8 +106,8 @@ public class DocumentOrderNotificationMapperTest {
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
 
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
-        details.setFilingHistoryCost(TestConstants.ORDER_COST);
-        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE);
+        details.setFilingHistoryCost(TestConstants.ORDER_VIEW);
+        details.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE_VIEW);
         details.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         details.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
 

@@ -12,18 +12,14 @@ import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.TOPIC;
 
 @ExtendWith(MockitoExtension.class)
-public class MessageProducerTest {
+class MessageProducerTest {
 
     @InjectMocks
     private MessageProducer messageProducerUnderTest;

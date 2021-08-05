@@ -7,6 +7,7 @@ public final class TestConstants {
     public static final String COMPANY_NAME = "ACME LTD";
     public static final String COMPANY_NUMBER = "12345678";
     public static final String ORDER_COST = "15";
+    public static final String ORDER_VIEW = "£15";
     public static final String PAYMENT_REFERENCE = "ABCD-EFGH-IJKL";
     public static final String ORDER_NOTIFICATION_REFERENCE = "/order/" + ORDER_REFERENCE_NUMBER;
     public static final String KAFKA_TOPIC = "topic";
@@ -23,7 +24,7 @@ public final class TestConstants {
     public static final String ORDER_CREATED_AT = "27 July 2021";
 
     //certificate order constants
-    public static final String CERTIFICATE_TYPE = "incorporation";
+    public static final String CERTIFICATE_TYPE = "Incorporation";
     public static final String ADDRESS_TYPE = "current-previous-and-prior";
     public static final String DOB_TYPE = "full";
 
@@ -33,7 +34,8 @@ public final class TestConstants {
 
     //document order constants
     public static final String FILING_HISTORY_DATE = "2021-07-28";
-    public static final String DELIVERY_METHOD = "postal";
+    public static final String FILING_HISTORY_DATE_VIEW = "28 July 2021";
+    public static final String DELIVERY_METHOD = "Standard delivery (aim to dispatch within 5 working days)";
     public static final String FILING_HISTORY_DESCRIPTION = "confirmation-statement-with-updates";
     public static final String MAPPED_FILING_HISTORY_DESCRIPTION = "Mapped filing history description";
     public static final String MADE_UP_DATE = "2017-05-20";
@@ -54,6 +56,11 @@ public final class TestConstants {
     public static final String EXPECTED_DESCRIPTION_ARRAY = "Statement of capital following an allotment of shares on 10 November 2019";
     public static final String DESCRIPTION_KEY_NULL = "incorporation-company";
     public static final String EXPECTED_DESCRIPTION_NULL = "Incorporation";
+    public static final String INCORPORATION_CERTIFICATE_TYPE = "Incorporation";
+    public static final String EXPECTED_ADDRESS_TYPE = "Address type";
+    public static final String READABLE_TRUE = "Yes";
+    public static final String READABLE_FALSE = "No";
+    public static final int DISPATCH_DAYS = 5;
 
     private TestConstants(){
     }

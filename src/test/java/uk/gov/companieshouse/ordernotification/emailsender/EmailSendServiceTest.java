@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailSendServiceTest {
+class EmailSendServiceTest {
 
     @InjectMocks
     private EmailSendService emailSendService;
