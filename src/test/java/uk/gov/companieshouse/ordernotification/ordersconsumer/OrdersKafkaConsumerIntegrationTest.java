@@ -3,11 +3,9 @@ package uk.gov.companieshouse.ordernotification.ordersconsumer;
 import email.email_send;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -114,7 +112,7 @@ class OrdersKafkaConsumerIntegrationTest {
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
+        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -139,7 +137,7 @@ class OrdersKafkaConsumerIntegrationTest {
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
+        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -164,7 +162,7 @@ class OrdersKafkaConsumerIntegrationTest {
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
+        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -189,7 +187,7 @@ class OrdersKafkaConsumerIntegrationTest {
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry", "order-received-notification-retry", getOrderReceivedNotificationRetry())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
+        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());

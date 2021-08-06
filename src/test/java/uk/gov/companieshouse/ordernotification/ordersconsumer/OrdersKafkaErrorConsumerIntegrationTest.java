@@ -108,14 +108,14 @@ public class OrdersKafkaErrorConsumerIntegrationTest {
         eventLatch.await(30, TimeUnit.SECONDS);
 
         // then {messages up to the latest offset in the error topic at startup should be processed}
-        assertEquals(1, consumer.poll(Duration.ofSeconds(5)).count());
+        assertEquals(1, consumer.poll(Duration.ofSeconds(15)).count());
 
         // and {subsequent messages should not be processed}
         eventLatch = new CountDownLatch(1);
         OrdersKafkaConsumer.setEventLatch(eventLatch);
         orderReceivedProducer.send(new ProducerRecord<>("order-received-notification-error", "order-received-notification-error", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        assertEquals(0, consumer.poll(Duration.ofSeconds(5)).count());
+        assertEquals(0, consumer.poll(Duration.ofSeconds(15)).count());
     }
 
     private static OrderReceived getOrderReceived() {

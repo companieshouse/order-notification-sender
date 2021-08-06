@@ -1,12 +1,11 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Component
@@ -17,11 +16,10 @@ public class KafkaTopicInitialiser implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        broker.addTopics("email-send");
-        broker.addTopics("order-received");
-        broker.addTopics("order-received-notification-retry");
-        broker.addTopics("order-received-notification-error");
-        kafkaProducer.send(new ProducerRecord<>("order-received-notification-error", new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE)));
+        broker.addTopics(new NewTopic("email-send", 1, (short)1));
+        broker.addTopics(new NewTopic("order-received", 1, (short)1));
+        broker.addTopics(new NewTopic("order-received-notification-retry", 1, (short)1));
+        broker.addTopics(new NewTopic("order-received-notification-error", 1, (short)1));
     }
 
     @Autowired
