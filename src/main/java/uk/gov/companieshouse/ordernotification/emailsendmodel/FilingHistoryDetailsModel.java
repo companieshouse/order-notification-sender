@@ -43,8 +43,12 @@ public class FilingHistoryDetailsModel {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         FilingHistoryDetailsModel that = (FilingHistoryDetailsModel) o;
         return Objects.equals(filingHistoryDate, that.filingHistoryDate) && Objects.equals(filingHistoryDescription, that.filingHistoryDescription) && Objects.equals(filingHistoryType, that.filingHistoryType) && Objects.equals(filingHistoryCost, that.filingHistoryCost);
     }

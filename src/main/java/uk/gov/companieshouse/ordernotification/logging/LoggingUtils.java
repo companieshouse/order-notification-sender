@@ -5,13 +5,11 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.MessageHeaders;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LoggingUtils {
-    public static final String APPLICATION_NAMESPACE = "order-notification-sender";
     public static final String TOPIC = "topic";
     public static final String OFFSET = "offset";
     public static final String KEY = "key";
@@ -29,13 +27,17 @@ public class LoggingUtils {
     public static final String PAYMENT_REFERENCE = "payment_reference";
     public static final String COMPANY_NUMBER = "company_number";
 
-    private final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
+    private final Logger logger;
+
+    public LoggingUtils(Logger logger) {
+        this.logger = logger;
+    }
 
     public Map<String, Object> createLogMap() {
         return new HashMap<>();
     }
 
-    public  Map<String, Object> createLogMapWithKafkaMessage(Message message) {
+    public Map<String, Object> createLogMapWithKafkaMessage(Message message) {
         Map<String, Object> logMap = createLogMap();
         logIfNotNull(logMap, TOPIC, message.getTopic());
         logIfNotNull(logMap, PARTITION, message.getPartition());
@@ -49,8 +51,7 @@ public class LoggingUtils {
      *                            the server when a message has been produced to a Kafka topic.
      * @return the log map populated with Kafka message production details
      */
-    public Map<String, Object>
-    createLogMapWithAcknowledgedKafkaMessage(final RecordMetadata acknowledgedMessage) {
+    public Map<String, Object> createLogMapWithAcknowledgedKafkaMessage(final RecordMetadata acknowledgedMessage) {
         final Map<String, Object> logMap = createLogMap();
         logIfNotNull(logMap, TOPIC, acknowledgedMessage.topic());
         logIfNotNull(logMap, PARTITION, acknowledgedMessage.partition());
@@ -73,7 +74,7 @@ public class LoggingUtils {
     public Map<String, Object> logWithOrderUri(String logMessage,
                                                String orderUri) {
         Map<String, Object> logMap = createLogMapWithOrderUri(orderUri);
-        LOGGER.debug(logMessage, logMap);
+        logger.debug(logMessage, logMap);
         return logMap;
     }
 
@@ -81,12 +82,11 @@ public class LoggingUtils {
                                                       String logMessage, String orderUri) {
         Map<String, Object> logMap = createLogMapWithKafkaMessage(message);
         logIfNotNull(logMap, ORDER_URI, orderUri);
-        LOGGER.debug(logMessage, logMap);
+        logger.debug(logMessage, logMap);
         return logMap;
     }
 
-    public Map<String, Object> getMessageHeadersAsMap(
-            org.springframework.messaging.Message<?> message) {
+    public Map<String, Object> getMessageHeadersAsMap(org.springframework.messaging.Message<?> message) {
         Map<String, Object> logMap = createLogMap();
         MessageHeaders messageHeaders = message.getHeaders();
 
@@ -99,6 +99,6 @@ public class LoggingUtils {
     }
 
     public Logger getLogger() {
-        return LOGGER;
+        return logger;
     }
 }

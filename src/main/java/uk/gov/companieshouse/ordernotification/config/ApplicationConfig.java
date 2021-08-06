@@ -43,7 +43,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
+    ObjectMapper objectMapper() {
         return new ObjectMapper()
                 .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -53,7 +53,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Map<String, OrdersApiMapper> ordersApiMappers(CertificateOrderNotificationMapper certificateMapper,
+    Map<String, OrdersApiMapper> ordersApiMappers(CertificateOrderNotificationMapper certificateMapper,
                                                                                DocumentOrderNotificationMapper documentMapper,
                                                                                MissingImageOrderNotificationMapper missingImageMapper) {
         Map<String, OrdersApiMapper> mappers = new HashMap<>();
@@ -64,7 +64,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Map<CertificateTypeApi, String> certificateTypeMappings() {
+    Map<CertificateTypeApi, String> certificateTypeMappings() {
         Map<CertificateTypeApi, String> mappings = new HashMap<>();
         mappings.put(CertificateTypeApi.INCORPORATION, "Incorporation");
         mappings.put(CertificateTypeApi.DISSOLUTION, "Dissolution with all company name changes");
@@ -74,17 +74,18 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public Map<IncludeAddressRecordsTypeApi, String> incorporationAddressMappings() {
+    Map<IncludeAddressRecordsTypeApi, String> incorporationAddressMappings() {
         Map<IncludeAddressRecordsTypeApi, String> mappings = new HashMap<>();
         mappings.put(IncludeAddressRecordsTypeApi.CURRENT, "Current address");
         mappings.put(IncludeAddressRecordsTypeApi.CURRENT_AND_PREVIOUS, "Current address and the one previous");
         mappings.put(IncludeAddressRecordsTypeApi.CURRENT_PREVIOUS_AND_PRIOR, "Current address and the two previous");
         mappings.put(IncludeAddressRecordsTypeApi.ALL, "All current and previous addresses");
+        mappings.put(null, "No");
         return mappings;
     }
 
     @Bean
-    public Map<DeliveryMethodTuple, String> deliveryMethodMappings(@Value("${email.dispatchDays}") int dispatchDays) {
+    Map<DeliveryMethodTuple, String> deliveryMethodMappings(@Value("${email.dispatchDays}") int dispatchDays) {
         Map<DeliveryMethodTuple, String> mappings = new HashMap<>();
         mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.STANDARD),
                 "Standard delivery (aim to dispatch within "+dispatchDays+" working days)");
@@ -92,4 +93,5 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 "Same Day");
         return mappings;
     }
+
 }

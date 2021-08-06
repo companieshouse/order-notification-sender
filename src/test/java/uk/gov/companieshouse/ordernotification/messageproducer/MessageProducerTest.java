@@ -60,7 +60,7 @@ class MessageProducerTest {
     }
 
     @Test
-    public void logOffsetFollowingSendIngOfMessageMeetsLoggingRequirements() {
+    void logOffsetFollowingSendIngOfMessageMeetsLoggingRequirements() {
         // Given
         when(loggingUtils.getLogger()).thenReturn(structuredLogger);
 
