@@ -51,7 +51,8 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private final KafkaListenerEndpointRegistry registry;
     private ApplicationEventPublisher applicationEventPublisher;
     private final LoggingUtils loggingUtils;
-    private static CountDownLatch latch = new CountDownLatch(0);
+    private static CountDownLatch startupLatch = new CountDownLatch(0);
+    private static CountDownLatch eventLatch = new CountDownLatch(0);
 
     public OrdersKafkaConsumer(KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
         this.registry = registry;
@@ -113,6 +114,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             loggingUtils.getLogger().info("Pausing error consumer as error recovery offset reached.",
                     logMap);
             registry.getListenerContainer(ORDER_RECEIVED_GROUP_ERROR).pause();
+            eventLatch.countDown();
         }
     }
 
@@ -124,6 +126,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
                 message.getRetries()));
 
         logMessageProcessed(message.getMessage(), orderReceivedUri);
+        eventLatch.countDown();
     }
 
     private void logMessageReceived(Message<?> message, String orderUri) {
@@ -162,7 +165,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     public void onPartitionsAssigned(Map<TopicPartition, Long> map, ConsumerSeekCallback consumerSeekCallback) {
         if (errorConsumerEnabled) {
             try {
-                latch.await(5, TimeUnit.SECONDS);
+                startupLatch.await(5, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 loggingUtils.getLogger().error("Interrupted", e);
@@ -187,8 +190,12 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    static void setLatch(CountDownLatch latch) {
-        OrdersKafkaConsumer.latch = latch;
+    static void setStartupLatch(CountDownLatch startupLatch) {
+        OrdersKafkaConsumer.startupLatch = startupLatch;
+    }
+
+    static void setEventLatch(CountDownLatch eventLatch) {
+        OrdersKafkaConsumer.eventLatch = eventLatch;
     }
 
     void setErrorConsumerEnabled(boolean enabled) {

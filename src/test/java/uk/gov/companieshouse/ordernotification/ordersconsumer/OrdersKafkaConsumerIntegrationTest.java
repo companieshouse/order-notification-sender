@@ -36,9 +36,12 @@ import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -68,6 +71,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
     private static MockServerContainer container;
 
+    private CountDownLatch eventLatch;
+
     @BeforeAll
     static void before() {
         container = new MockServerContainer(DockerImageName.parse("jamesdbloom/mockserver:mockserver-5.5.4"));
@@ -78,15 +83,15 @@ class OrdersKafkaConsumerIntegrationTest {
     }
 
     @BeforeEach
-    void setup() throws IOException {
+    void setup() {
         client = new MockServerClient(container.getHost(), container.getServerPort());
-        client.when(request()
-                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
+        eventLatch = new CountDownLatch(1);
+        OrdersKafkaConsumer.setEventLatch(eventLatch);
+    }
+
+    @AfterEach
+    void teardown() {
+        client.reset();
     }
 
     @AfterAll
@@ -95,23 +100,103 @@ class OrdersKafkaConsumerIntegrationTest {
     }
 
     @Test
-    void testHandlesOrderReceivedMessage() throws ExecutionException, InterruptedException {
+    void testHandlesCertificateOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
+        //given
+        client.when(request()
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .withBody(JsonBody.json(IOUtils.resourceToString("/certified-certificate.json", StandardCharsets.UTF_8))));
+
         // when
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
+        eventLatch.await(30, TimeUnit.SECONDS);
+        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
 
         // then
-        assertEquals(1, consumer.poll(Duration.ofSeconds(10)).count());
+        assertEquals("order_notification_sender", actual.getAppId());
+        assertEquals("order_notification_sender_certificate", actual.getMessageId());
+        assertEquals("order_notification_sender_certificate", actual.getMessageType());
+        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
+        assertNotNull(actual.getData());
     }
 
     @Test
-    void testHandlesOrderReceivedRetryMessage() throws ExecutionException, InterruptedException {
+    void testHandlesCertifiedCopyOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
+        // given
+        client.when(request()
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .withBody(JsonBody.json(IOUtils.resourceToString("/certified-copy.json", StandardCharsets.UTF_8))));
+
+        // when
+        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
+        orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
+        eventLatch.await(30, TimeUnit.SECONDS);
+        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
+
+        // then
+        assertEquals("order_notification_sender", actual.getAppId());
+        assertEquals("order_notification_sender_document", actual.getMessageId());
+        assertEquals("order_notification_sender_document", actual.getMessageType());
+        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
+        assertNotNull(actual.getData());
+    }
+
+    @Test
+    void testHandlesMissingImageOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
+        // given
+        client.when(request()
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
+
+        // when
+        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
+        orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
+        eventLatch.await(30, TimeUnit.SECONDS);
+        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
+
+        // then
+        assertEquals("order_notification_sender", actual.getAppId());
+        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
+        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
+        assertNotNull(actual.getData());
+    }
+
+    @Test
+    void testHandlesOrderReceivedRetryMessage() throws ExecutionException, InterruptedException, IOException {
+        // given
+        client.when(request()
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
+
         // when
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry", "order-received-notification-retry", getOrderReceivedNotificationRetry())).get();
+        eventLatch.await(30, TimeUnit.SECONDS);
+        email_send actual = consumer.poll(Duration.ofSeconds(5)).iterator().next().value();
 
         // then
-        assertEquals(1, consumer.poll(Duration.ofSeconds(10)).count());
+        assertEquals("order_notification_sender", actual.getAppId());
+        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
+        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
+        assertNotNull(actual.getData());
     }
 
     private static OrderReceived getOrderReceived() {

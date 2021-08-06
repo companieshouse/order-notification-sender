@@ -41,7 +41,7 @@ public class OrdersKafkaConsumerTest {
 
     @AfterAll
     static void after() {
-        OrdersKafkaConsumer.setLatch(new CountDownLatch(0));
+        OrdersKafkaConsumer.setStartupLatch(new CountDownLatch(0));
     }
 
     @Test
@@ -49,7 +49,7 @@ public class OrdersKafkaConsumerTest {
         //given
         when(latch.await(anyLong(), any())).thenThrow(InterruptedException.class);
         when(loggingUtils.getLogger()).thenReturn(logger);
-        OrdersKafkaConsumer.setLatch(latch);
+        OrdersKafkaConsumer.setStartupLatch(latch);
         ordersKafkaConsumer.setErrorConsumerEnabled(true);
 
         //when

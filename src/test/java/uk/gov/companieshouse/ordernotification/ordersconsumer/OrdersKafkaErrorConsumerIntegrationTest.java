@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockserver.model.HttpRequest.request;
@@ -65,11 +66,12 @@ public class OrdersKafkaErrorConsumerIntegrationTest {
     private static MockServerContainer container;
 
     private static CountDownLatch latch = new CountDownLatch(1);
+    private CountDownLatch eventLatch;
 
 
     @BeforeAll
     static void before() {
-        OrdersKafkaConsumer.setLatch(latch);
+        OrdersKafkaConsumer.setStartupLatch(latch);
         container = new MockServerContainer(DockerImageName.parse("jamesdbloom/mockserver:mockserver-5.5.4"));
         container.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL", "http://"+container.getHost()+":"+container.getServerPort());
@@ -78,7 +80,7 @@ public class OrdersKafkaErrorConsumerIntegrationTest {
     }
 
     @BeforeEach
-    void setup() throws IOException, ExecutionException, InterruptedException {
+    void setup() throws IOException {
         client = new MockServerClient(container.getHost(), container.getServerPort());
         client.when(request()
                 .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
@@ -87,12 +89,14 @@ public class OrdersKafkaErrorConsumerIntegrationTest {
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                         .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
+        eventLatch = new CountDownLatch(1);
+        OrdersKafkaConsumer.setEventLatch(eventLatch);
     }
 
     @AfterAll
     static void after() {
         container.stop();
-        OrdersKafkaConsumer.setLatch(new CountDownLatch(0));
+        OrdersKafkaConsumer.setStartupLatch(new CountDownLatch(0));
     }
 
     @Test
@@ -101,13 +105,17 @@ public class OrdersKafkaErrorConsumerIntegrationTest {
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received-notification-error", "order-received-notification-error", getOrderReceived())).get();
         latch.countDown();
+        eventLatch.await(30, TimeUnit.SECONDS);
 
         // then {messages up to the latest offset in the error topic at startup should be processed}
-        assertEquals(1, consumer.poll(Duration.ofSeconds(15)).count());
+        assertEquals(1, consumer.poll(Duration.ofSeconds(5)).count());
 
         // and {subsequent messages should not be processed}
+        eventLatch = new CountDownLatch(1);
+        OrdersKafkaConsumer.setEventLatch(eventLatch);
         orderReceivedProducer.send(new ProducerRecord<>("order-received-notification-error", "order-received-notification-error", getOrderReceived())).get();
-        assertEquals(0, consumer.poll(Duration.ofSeconds(15)).count());
+        eventLatch.await(30, TimeUnit.SECONDS);
+        assertEquals(0, consumer.poll(Duration.ofSeconds(5)).count());
     }
 
     private static OrderReceived getOrderReceived() {
