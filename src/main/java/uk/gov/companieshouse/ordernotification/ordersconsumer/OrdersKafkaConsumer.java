@@ -14,6 +14,7 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersServiceException;
 import uk.gov.companieshouse.orders.OrderReceived;
 import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
@@ -165,11 +166,13 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     public void onPartitionsAssigned(Map<TopicPartition, Long> map, ConsumerSeekCallback consumerSeekCallback) {
         if (errorConsumerEnabled) {
             try {
-                startupLatch.await(5, TimeUnit.SECONDS);
+                if(!startupLatch.await(30, TimeUnit.SECONDS)) {
+                    throw new OrdersServiceException("Timed out waiting for latch to count down");
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 loggingUtils.getLogger().error("Interrupted", e);
-                throw new RuntimeException(e);
+                throw new OrdersServiceException(e);
             }
             try (KafkaConsumer<String, OrderReceived> consumer =
                     new KafkaConsumer<>(errorConsumerConfigs(), new StringDeserializer(), new MessageDeserialiser<>(OrderReceived.class))) {
