@@ -5,31 +5,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
-import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 @Component
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
+
+    public static final String READABLE_FALSE = "No";
+    public static final String READABLE_TRUE = "Yes";
 
     private final EmailConfiguration config;
     private final CertificateTypeMapper certificateTypeMapper;
     private final AddressRecordTypeMapper addressRecordTypeMapper;
     private final DeliveryMethodMapper deliveryMethodMapper;
+    private final CertificateAppointmentDetailsMapper appointmentDetailsMapper;
 
     @Autowired
     public CertificateOrderNotificationMapper(DateGenerator dateGenerator, EmailConfiguration config,
                                               ObjectMapper mapper, CertificateTypeMapper certificateTypeMapper,
                                               AddressRecordTypeMapper addressRecordTypeMapper,
-                                              DeliveryMethodMapper deliveryMethodMapper) {
+                                              DeliveryMethodMapper deliveryMethodMapper,
+                                              CertificateAppointmentDetailsMapper appointmentDetailsMapper) {
         super(dateGenerator, config, mapper);
         this.config = config;
         this.certificateTypeMapper = certificateTypeMapper;
         this.addressRecordTypeMapper = addressRecordTypeMapper;
         this.deliveryMethodMapper = deliveryMethodMapper;
+        this.appointmentDetailsMapper = appointmentDetailsMapper;
     }
 
     @Override
@@ -42,58 +43,15 @@ public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
         model.setRegisteredOfficeAddressDetails(addressRecordTypeMapper.mapAddressRecordType(itemOptions.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
 
-        model.setDirectorDetailsModel(mapAppointmentDetails(itemOptions.getDirectorDetails()));
-        model.setSecretaryDetailsModel(mapAppointmentDetails(itemOptions.getSecretaryDetails()));
+        model.setDirectorDetailsModel(appointmentDetailsMapper.mapAppointmentDetails(itemOptions.getDirectorDetails()));
+        model.setSecretaryDetailsModel(appointmentDetailsMapper.mapAppointmentDetails(itemOptions.getSecretaryDetails()));
 
         model.setCompanyObjects(mapBoolean(itemOptions.getIncludeCompanyObjectsInformation()));
         return model;
     }
 
-    private CertificateAppointmentDetailsModel mapAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
-        if(noAppointmentDetails(appointment)) {
-            return new CertificateAppointmentDetailsModel(false, Collections.singletonList("No"));
-        } else if(basicAppointmentDetails(appointment)) {
-            return new CertificateAppointmentDetailsModel(false, Collections.singletonList("Yes"));
-        } else {
-            List<String> results = new ArrayList<>();
-            if(booleanWrapperToBoolean(appointment.getIncludeAddress())){
-                results.add("Correspondence address");
-            }
-            if(booleanWrapperToBoolean(appointment.getIncludeAppointmentDate())){
-                results.add("Appointment date");
-            }
-            if(booleanWrapperToBoolean(appointment.getIncludeCountryOfResidence())){
-                results.add("Country of residence");
-            }
-            if(booleanWrapperToBoolean(appointment.getIncludeNationality())){
-                results.add("Nationality");
-            }
-            if(booleanWrapperToBoolean(appointment.getIncludeOccupation())){
-                results.add("Occupation");
-            }
-            if(appointment.getIncludeDobType() != null) {
-                results.add("Date of birth (month and year)");
-            }
-            return new CertificateAppointmentDetailsModel(true, results);
-        }
-    }
-
-    private boolean noAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
-        return !booleanWrapperToBoolean(appointment.getIncludeBasicInformation());
-    }
-
-    private boolean basicAppointmentDetails(DirectorOrSecretaryDetailsApi appointment) {
-        return booleanWrapperToBoolean(appointment.getIncludeBasicInformation()) &&
-                !booleanWrapperToBoolean(appointment.getIncludeAddress()) &&
-                !booleanWrapperToBoolean(appointment.getIncludeAppointmentDate()) &&
-                !booleanWrapperToBoolean(appointment.getIncludeCountryOfResidence()) &&
-                !booleanWrapperToBoolean(appointment.getIncludeNationality()) &&
-                !booleanWrapperToBoolean(appointment.getIncludeOccupation()) &&
-                appointment.getIncludeDobType() == null;
-    }
-
     private String mapBoolean(Boolean bool) {
-        return booleanWrapperToBoolean(bool) ? "Yes" : "No";
+        return booleanWrapperToBoolean(bool) ? READABLE_TRUE : READABLE_FALSE;
     }
 
     private boolean booleanWrapperToBoolean(Boolean bool) {

@@ -19,8 +19,10 @@ import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.APPLICATION_NAMESPACE;
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtilsConfiguration.APPLICATION_NAMESPACE;
 
 /**
  * <p>Consumes order-received messages and notifies the application that an order is
@@ -49,6 +51,8 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private final KafkaListenerEndpointRegistry registry;
     private ApplicationEventPublisher applicationEventPublisher;
     private final LoggingUtils loggingUtils;
+    private static CountDownLatch startupLatch = new CountDownLatch(0);
+    private static CountDownLatch eventLatch = new CountDownLatch(0);
 
     public OrdersKafkaConsumer(KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
         this.registry = registry;
@@ -98,7 +102,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     @KafkaListener(id = ORDER_RECEIVED_GROUP_ERROR, groupId = ORDER_RECEIVED_GROUP_ERROR,
             topics = ORDER_RECEIVED_TOPIC_ERROR,
             autoStartup = "${uk.gov.companieshouse.item-handler.error-consumer}",
-            containerFactory = "kafkaListenerContainerFactory")
+            containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceivedError(Message<OrderReceived> message) {
         long offset = Long.parseLong("" + message.getHeaders().get("kafka_offset"));
         if (offset <= errorRecoveryOffset) {
@@ -110,6 +114,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             loggingUtils.getLogger().info("Pausing error consumer as error recovery offset reached.",
                     logMap);
             registry.getListenerContainer(ORDER_RECEIVED_GROUP_ERROR).pause();
+            eventLatch.countDown();
         }
     }
 
@@ -121,6 +126,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
                 message.getRetries()));
 
         logMessageProcessed(message.getMessage(), orderReceivedUri);
+        eventLatch.countDown();
     }
 
     private void logMessageReceived(Message<?> message, String orderUri) {
@@ -142,11 +148,8 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private Map<String, Object> errorConsumerConfigs() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MessageDeserialiser.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, ORDER_RECEIVED_GROUP_ERROR);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-
         return props;
     }
 
@@ -159,11 +162,17 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
      * @param consumerSeekCallback callback that allows a consumers offset position to be moved.
      */
     @Override
-    public void onPartitionsAssigned(Map<TopicPartition, Long> map,
-            ConsumerSeekCallback consumerSeekCallback) {
+    public void onPartitionsAssigned(Map<TopicPartition, Long> map, ConsumerSeekCallback consumerSeekCallback) {
         if (errorConsumerEnabled) {
-            try (KafkaConsumer<String, String> consumer =
-                    new KafkaConsumer<>(errorConsumerConfigs())) {
+            try {
+                startupLatch.await(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                loggingUtils.getLogger().error("Interrupted", e);
+                throw new RuntimeException(e);
+            }
+            try (KafkaConsumer<String, OrderReceived> consumer =
+                    new KafkaConsumer<>(errorConsumerConfigs(), new StringDeserializer(), new MessageDeserialiser<>(OrderReceived.class))) {
                 final Map<TopicPartition, Long> topicPartitionsMap =
                         consumer.endOffsets(map.keySet());
                 map.forEach((topic, action) -> {
@@ -179,5 +188,17 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    static void setStartupLatch(CountDownLatch startupLatch) {
+        OrdersKafkaConsumer.startupLatch = startupLatch;
+    }
+
+    static void setEventLatch(CountDownLatch eventLatch) {
+        OrdersKafkaConsumer.eventLatch = eventLatch;
+    }
+
+    void setErrorConsumerEnabled(boolean enabled) {
+        this.errorConsumerEnabled = enabled;
     }
 }

@@ -33,8 +33,7 @@ class KafkaProducerConfigurationTest {
         KafkaBrokerConfiguration configuration = new KafkaBrokerConfiguration(null);
 
         // When
-        ProducerConfigException exception = Assertions.assertThrows(ProducerConfigException.class, () ->
-                configuration.chKafkaProducer(configuration.producerConfig()));
+        ProducerConfigException exception = Assertions.assertThrows(ProducerConfigException.class, configuration::producerConfig);
 
         // Then
         final String actualMessage = exception.getMessage();

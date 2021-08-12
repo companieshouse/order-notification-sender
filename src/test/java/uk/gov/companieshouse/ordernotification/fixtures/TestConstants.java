@@ -9,7 +9,7 @@ public final class TestConstants {
     public static final String ORDER_COST = "15";
     public static final String ORDER_VIEW = "£15";
     public static final String PAYMENT_REFERENCE = "ABCD-EFGH-IJKL";
-    public static final String ORDER_NOTIFICATION_REFERENCE = "/order/" + ORDER_REFERENCE_NUMBER;
+    public static final String ORDER_NOTIFICATION_REFERENCE = "/orders/" + ORDER_REFERENCE_NUMBER;
     public static final String KAFKA_TOPIC = "topic";
     public static final String EMAIL_DATA = "Message content";
     public static final String CREATED_AT = "2020-08-25T09:27:09.519+01:00";
