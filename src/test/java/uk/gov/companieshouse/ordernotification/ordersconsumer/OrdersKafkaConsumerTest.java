@@ -10,10 +10,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.listener.ConsumerSeekAware;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersServiceException;
 
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -22,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class OrdersKafkaConsumerTest {
+class OrdersKafkaConsumerTest {
 
     @InjectMocks
     private OrdersKafkaConsumer ordersKafkaConsumer;
@@ -45,7 +47,7 @@ public class OrdersKafkaConsumerTest {
     }
 
     @Test
-    void testThrowRuntimeExceptionIfLatchInterrupted() throws InterruptedException {
+    void testThrowOrdersServiceExceptionIfLatchInterrupted() throws InterruptedException {
         //given
         when(latch.await(anyLong(), any())).thenThrow(InterruptedException.class);
         when(loggingUtils.getLogger()).thenReturn(logger);
@@ -56,7 +58,22 @@ public class OrdersKafkaConsumerTest {
         Executable actual = () -> ordersKafkaConsumer.onPartitionsAssigned(Collections.emptyMap(), callback);
 
         //then
-        Exception exception = assertThrows(RuntimeException.class, actual);
+        assertThrows(OrdersServiceException.class, actual);
         verify(logger).error(eq("Interrupted"), any(Exception.class));
+    }
+
+    @Test
+    void testThrowOrdersServiceExceptionIfLatchTimesOut() throws InterruptedException {
+        //given
+        when(latch.await(anyLong(), any())).thenReturn(false);
+        OrdersKafkaConsumer.setStartupLatch(latch);
+        ordersKafkaConsumer.setErrorConsumerEnabled(true);
+
+        //when
+        Executable actual = () -> ordersKafkaConsumer.onPartitionsAssigned(Collections.emptyMap(), callback);
+
+        //then
+        OrdersServiceException exception = assertThrows(OrdersServiceException.class, actual);
+        assertEquals("Timed out waiting for latch to count down", exception.getMessage());
     }
 }

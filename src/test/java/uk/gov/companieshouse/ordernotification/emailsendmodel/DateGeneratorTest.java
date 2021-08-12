@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class DateGeneratorTest {
+class DateGeneratorTest {
 
     @Test
     void testGenerateDate() {

@@ -45,7 +45,7 @@ import static org.mockserver.model.HttpResponse.response;
 @EmbeddedKafka
 @Import(TestConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed-error-consumer.properties")
-public class OrdersKafkaErrorConsumerIntegrationTest {
+class OrdersKafkaErrorConsumerIntegrationTest {
     @Autowired
     private OrdersKafkaConsumer ordersKafkaConsumer;
 
