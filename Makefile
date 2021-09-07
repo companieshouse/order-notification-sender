@@ -1,6 +1,6 @@
 artifact_name       := order-notification-sender
 version             := latest
-repository_prefix   := 169942020521.dkr.ecr.eu-west-1.amazonaws.com/local
+repository_prefix   := 169942020521.dkr.ecr.eu-west-1.amazonaws.com
 
 .PHONY: all
 all: build
