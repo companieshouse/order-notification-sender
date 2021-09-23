@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.ActionedByApi;
@@ -65,10 +66,16 @@ class CertificateOrderNotificationMapperTest {
     @Mock
     private CertificateAppointmentDetailsModel appointmentDetailsModel;
 
+    @Mock
+    private CertificateOptionsMapperFactory certificateOptionsMapperFactory;
+
+    @InjectMocks
+    private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
+
     @BeforeEach
     void setup() {
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, new ObjectMapper(), certificateTypeMapper, roaTypeMapper, deliveryMethodMapper, appointmentDetailsMapper);
+                config, new ObjectMapper(), certificateTypeMapper, roaTypeMapper, deliveryMethodMapper, appointmentDetailsMapper, certificateOptionsMapperFactory);
     }
 
     @Test
@@ -91,6 +98,8 @@ class CertificateOrderNotificationMapperTest {
         when(appointmentDetailsMapper.mapAppointmentDetails(any(DirectorOrSecretaryDetailsApi.class))).thenReturn(appointmentDetailsModel);
         when(appointmentDetailsModel.isSpecificDetails()).thenReturn(true);
         when(appointmentDetailsModel.getDetails()).thenReturn(Collections.singletonList(TestConstants.READABLE_TRUE));
+        
+        when(certificateOptionsMapperFactory.getCertificateOptionsMapper(any())).thenReturn(otherCertificateOptionsMapper);
 
         // when
         EmailSend result = certificateOrderNotificationMapper.map(order);
@@ -132,8 +141,10 @@ class CertificateOrderNotificationMapperTest {
         when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
         when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
 
+        when(certificateOptionsMapperFactory.getCertificateOptionsMapper(any())).thenReturn(otherCertificateOptionsMapper);
+
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, mapper, certificateTypeMapper, roaTypeMapper, deliveryMethodMapper, appointmentDetailsMapper);
+                config, mapper, certificateTypeMapper, roaTypeMapper, deliveryMethodMapper, appointmentDetailsMapper, certificateOptionsMapperFactory);
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
         when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
