@@ -75,7 +75,7 @@ class CertificateOrderNotificationMapperTest {
     @BeforeEach
     void setup() {
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, new ObjectMapper(), certificateTypeMapper, roaTypeMapper, deliveryMethodMapper, appointmentDetailsMapper, certificateOptionsMapperFactory);
+                config, new ObjectMapper(), certificateOptionsMapperFactory);
     }
 
     @Test
@@ -144,7 +144,7 @@ class CertificateOrderNotificationMapperTest {
         when(certificateOptionsMapperFactory.getCertificateOptionsMapper(any())).thenReturn(otherCertificateOptionsMapper);
 
         certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, mapper, certificateTypeMapper, roaTypeMapper, deliveryMethodMapper, appointmentDetailsMapper, certificateOptionsMapperFactory);
+                config, mapper, certificateOptionsMapperFactory);
         OrdersApi order = getOrder(getAppointmentApiDetails(null));
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
         when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);

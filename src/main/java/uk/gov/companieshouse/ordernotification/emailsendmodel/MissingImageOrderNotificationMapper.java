@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
 
-    private EmailConfiguration config;
     private final FilingHistoryDescriptionProviderService providerService;
 
     @Autowired
@@ -21,18 +20,17 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
                                                FilingHistoryDescriptionProviderService providerService,
                                                ObjectMapper mapper) {
         super(dateGenerator, config, mapper);
-        this.config = config;
         this.providerService = providerService;
     }
 
     @Override
-    OrderModel generateEmailData(BaseItemApi order) {
+    protected OrderModel generateEmailData(BaseItemApi order) {
 
         MissingImageOrderNotificationModel model = new MissingImageOrderNotificationModel();
         MissingImageDeliveryItemOptionsApi itemOptions = (MissingImageDeliveryItemOptionsApi) order.getItemOptions();
         FilingHistoryDetailsModel filingHistoryDetailsModel = new FilingHistoryDetailsModel();
         filingHistoryDetailsModel.setFilingHistoryDate(
-                LocalDate.parse(itemOptions.getFilingHistoryDate()).format(DateTimeFormatter.ofPattern(config.getMissingImage().getFilingHistoryDateFormat()))
+                LocalDate.parse(itemOptions.getFilingHistoryDate()).format(DateTimeFormatter.ofPattern(getConfig().getMissingImage().getFilingHistoryDateFormat()))
         );
         filingHistoryDetailsModel.setFilingHistoryType(itemOptions.getFilingHistoryType());
         filingHistoryDetailsModel.setFilingHistoryDescription(
@@ -47,12 +45,12 @@ public class MissingImageOrderNotificationMapper extends OrdersApiMapper {
     }
 
     @Override
-    String getMessageId() {
-        return config.getMissingImage().getMessageId();
+    protected String getMessageId() {
+        return getConfig().getMissingImage().getMessageId();
     }
 
     @Override
-    String getMessageType() {
-        return config.getMissingImage().getMessageType();
+    protected String getMessageType() {
+        return getConfig().getMissingImage().getMessageType();
     }
 }

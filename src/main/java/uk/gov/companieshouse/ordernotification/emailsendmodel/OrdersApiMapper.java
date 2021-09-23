@@ -36,33 +36,37 @@ public abstract class OrdersApiMapper {
     public EmailSend map(OrdersApi order) {
         try {
             EmailSend emailSend = new EmailSend();
-            emailSend.setEmailAddress(config.getSenderAddress());
+            emailSend.setEmailAddress(getConfig().getSenderAddress());
             emailSend.setData(this.mapper.writeValueAsString(addOrderMetadata(generateEmailData(order.getItems().get(0)), order)));
             emailSend.setMessageId(getMessageId());
-            emailSend.setAppId(config.getApplicationId());
+            emailSend.setAppId(getConfig().getApplicationId());
             emailSend.setMessageType(getMessageType());
-            emailSend.setCreatedAt(dateGenerator.generate().format(DateTimeFormatter.ofPattern(config.getDateFormat())));
+            emailSend.setCreatedAt(dateGenerator.generate().format(DateTimeFormatter.ofPattern(getConfig().getDateFormat())));
             return emailSend;
         } catch (JsonProcessingException e) {
             throw new MappingException("Failed to map order: " + order.getReference(), e);
         }
     }
 
-    abstract OrderModel generateEmailData(BaseItemApi order);
+    abstract protected OrderModel generateEmailData(BaseItemApi order);
 
-    abstract String getMessageId();
+    abstract protected String getMessageId();
 
-    abstract String getMessageType();
+    abstract protected String getMessageType();
 
     private OrderModel addOrderMetadata(OrderModel model, OrdersApi order) {
         model.setTo(order.getOrderedBy().getEmail());
-        model.setSubject(MessageFormat.format(config.getConfirmationMessage(), order.getReference()));
+        model.setSubject(MessageFormat.format(getConfig().getConfirmationMessage(), order.getReference()));
         model.setCompanyName(order.getItems().get(0).getCompanyName());
         model.setCompanyNumber(order.getItems().get(0).getCompanyNumber());
         model.setOrderReferenceNumber(order.getReference());
         model.setAmountPaid("£"+order.getTotalOrderCost());
         model.setPaymentReference(order.getPaymentReference());
-        model.setPaymentTime(order.getOrderedAt().format(DateTimeFormatter.ofPattern(config.getPaymentDateFormat())));
+        model.setPaymentTime(order.getOrderedAt().format(DateTimeFormatter.ofPattern(getConfig().getPaymentDateFormat())));
         return model;
+    }
+
+    protected final EmailConfiguration getConfig() {
+        return config;
     }
 }

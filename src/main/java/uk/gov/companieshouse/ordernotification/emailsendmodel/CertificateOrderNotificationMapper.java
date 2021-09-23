@@ -10,42 +10,29 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 @Component
 public class CertificateOrderNotificationMapper extends OrdersApiMapper {
 
-    private final EmailConfiguration config;
-    private final CertificateTypeMapper certificateTypeMapper;
-    private final AddressRecordTypeMapper addressRecordTypeMapper;
-    private final DeliveryMethodMapper deliveryMethodMapper;
-    private final CertificateAppointmentDetailsMapper appointmentDetailsMapper;
     private final CertificateOptionsMapperFactory certificateOptionsMapperFactory;
 
     @Autowired
     public CertificateOrderNotificationMapper(DateGenerator dateGenerator, EmailConfiguration config,
-                                              ObjectMapper mapper, CertificateTypeMapper certificateTypeMapper,
-                                              AddressRecordTypeMapper addressRecordTypeMapper,
-                                              DeliveryMethodMapper deliveryMethodMapper,
-                                              CertificateAppointmentDetailsMapper appointmentDetailsMapper,
+                                              ObjectMapper mapper,
                                               CertificateOptionsMapperFactory certificateOptionsMapperFactory) {
         super(dateGenerator, config, mapper);
-        this.config = config;
-        this.certificateTypeMapper = certificateTypeMapper;
-        this.addressRecordTypeMapper = addressRecordTypeMapper;
-        this.deliveryMethodMapper = deliveryMethodMapper;
-        this.appointmentDetailsMapper = appointmentDetailsMapper;
         this.certificateOptionsMapperFactory = certificateOptionsMapperFactory;
     }
 
     @Override
-    CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
+    protected CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
         return certificateOptionsMapperFactory.getCertificateOptionsMapper(
                 ((CertificateItemOptionsApi) item.getItemOptions()).getCompanyType()).generateEmailData(item);
     }
 
     @Override
-    String getMessageId() {
-        return config.getCertificate().getMessageId();
+    protected String getMessageId() {
+        return getConfig().getCertificate().getMessageId();
     }
 
     @Override
-    String getMessageType() {
-        return config.getCertificate().getMessageType();
+    protected String getMessageType() {
+        return getConfig().getCertificate().getMessageType();
     }
 }
