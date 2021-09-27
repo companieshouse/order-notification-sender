@@ -14,21 +14,11 @@ import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.AddressRecordTypeMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateAppointmentDetailsMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOptionsMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOptionsMapperFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOrderNotificationMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateTypeMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.DateGenerator;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.DeliveryMethodMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.DeliveryMethodTuple;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.DocumentOrderNotificationMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.LPCertificateOptionsMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MissingImageOrderNotificationMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.LLPCertificateOptionsMapper;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.OtherCertificateOptionsMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -102,15 +92,5 @@ public class ApplicationConfig implements WebMvcConfigurer {
         mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.SAME_DAY),
                 "Same Day");
         return mappings;
-    }
-
-    @Bean
-    CertificateOptionsMapperFactory certificateOptionsMapperFactory(LLPCertificateOptionsMapper llpCertificateOptionsMapper,
-                                                                    LPCertificateOptionsMapper lpCertificateOptionsMapper,
-                                                                    OtherCertificateOptionsMapper otherCertificateOptionsMapper) {
-        Map<String, CertificateOptionsMapper> mappings = new HashMap<>();
-        mappings.put("llp", llpCertificateOptionsMapper);
-        mappings.put("limited-partnership", lpCertificateOptionsMapper);
-        return new CertificateOptionsMapperFactory(mappings, otherCertificateOptionsMapper);
     }
 }
