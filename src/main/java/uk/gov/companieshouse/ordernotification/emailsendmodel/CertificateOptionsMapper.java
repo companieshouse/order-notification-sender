@@ -2,7 +2,6 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
-import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 public abstract class CertificateOptionsMapper {
 
@@ -21,6 +20,9 @@ public abstract class CertificateOptionsMapper {
     public final CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) item.getItemOptions();
+        model.setCompanyType(itemOptions.getCompanyType());
+        model.setCompanyName(item.getCompanyName());
+        model.setCompanyNumber(item.getCompanyNumber());
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
         model.setStatementOfGoodStanding(mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
         model.setDeliveryMethod(getDeliveryMethodMapper().mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));

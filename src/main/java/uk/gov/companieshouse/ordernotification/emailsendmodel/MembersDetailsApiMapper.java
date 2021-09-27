@@ -16,16 +16,16 @@ public class MembersDetailsApiMapper {
     private String address;
     private String appointmentDate;
     private String countryOfResidence;
-    private String dobType;
+    private String dob;
 
-    CertificateDetailsModel map(BaseMemberDetailsApi baseMembersDetailsApi) {
-        ListHelper helper = new ListHelper(new ArrayList<String>());
-        helper.add(baseMembersDetailsApi.getIncludeAddress(), address)
-                .add(baseMembersDetailsApi.getIncludeAppointmentDate(), appointmentDate)
-                .add(baseMembersDetailsApi.getIncludeCountryOfResidence(), countryOfResidence)
-                .add(baseMembersDetailsApi.getIncludeDobType() != null, dobType);
+    public CertificateDetailsModel map(BaseMemberDetailsApi baseMembersDetailsApi) {
+        ListHelper helper = new ListHelper(new ArrayList<>());
+        helper.add(baseMembersDetailsApi.getIncludeAddress(), getAddress());
+        helper.add(baseMembersDetailsApi.getIncludeAppointmentDate(), getAppointmentDate());
+        helper.add(baseMembersDetailsApi.getIncludeCountryOfResidence(), getCountryOfResidence());
+        helper.add(baseMembersDetailsApi.getIncludeDobType() != null, getDob());
 
-        return new CertificateDetailsModel(helper.size() > 0 || baseMembersDetailsApi.getIncludeBasicInformation(), helper.getList());
+        return new CertificateDetailsModel(helper.size() > 0 || baseMembersDetailsApi.getIncludeBasicInformation(), helper.toList());
     }
 
     public void setAddress(String address) {
@@ -40,7 +40,23 @@ public class MembersDetailsApiMapper {
         this.countryOfResidence = countryOfResidence;
     }
 
-    public void setDobType(String dobType) {
-        this.dobType = dobType;
+    public void setDob(String dob) {
+        this.dob = dob;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public String getCountryOfResidence() {
+        return countryOfResidence;
+    }
+
+    public String getDob() {
+        return dob;
     }
 }

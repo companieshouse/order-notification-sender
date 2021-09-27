@@ -6,8 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
@@ -17,14 +15,9 @@ import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeDobTypeApi;
 import uk.gov.companieshouse.api.model.order.item.RegisteredOfficeAddressDetailsApi;
-import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
-import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
-import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
-import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +28,7 @@ public class CertificateOptionsMapperTest {
     @Mock
     private CertificateTypeMapper certificateTypeMapper;
     @Mock
-    private AddressRecordTypeMapper roaTypeMapper;
+    private AddressRecordTypeMapper addressRecordTypeMapper;
     @Mock
     private DeliveryMethodMapper deliveryMethodMapper;
     @Mock
@@ -53,8 +46,8 @@ public class CertificateOptionsMapperTest {
         appointmentDetails.setIncludeBasicInformation(true);
         appointmentDetails.setIncludeCountryOfResidence(true);
         appointmentDetails.setIncludeDobType(IncludeDobTypeApi.FULL);
-        appointmentDetails.setIncludeNationality(null);
-        appointmentDetails.setIncludeOccupation(false);
+        appointmentDetails.setIncludeNationality(true);
+        appointmentDetails.setIncludeOccupation(true);
 
         CertificateApi item = new CertificateApi();
         item.setCompanyName(TestConstants.COMPANY_NAME);
@@ -80,23 +73,15 @@ public class CertificateOptionsMapperTest {
         item.setItemOptions(itemOptions);
 
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
-        when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
+        when(addressRecordTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
         when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
-//        when(directorOrSecretaryDetailsApiMapper.getAddress()).thenReturn(TestConstants.ADDRESS_TYPE);
-//        when(directorOrSecretaryDetailsApiMapper.getAppointmentDate()).thenReturn(TestConstants.APPOINTMENT_DATE);
-//        when(directorOrSecretaryDetailsApiMapper.getDob()).thenReturn(TestConstants.DOB_TYPE);
-//        when(directorOrSecretaryDetailsApiMapper.getCountryOfResidence()).thenReturn(TestConstants.COUNTRY_OF_RESIDENCE);
-//        when(directorOrSecretaryDetailsApiMapper.getNationality()).thenReturn(TestConstants.NATIONALITY);
-//        when(directorOrSecretaryDetailsApiMapper.getOccupation()).thenReturn(TestConstants.OCCUPATION);
+
+        when(directorOrSecretaryDetailsApiMapper.map(any())).thenReturn(getCertificateDetailsModel());
 
         // when
         CertificateOrderNotificationModel result = otherCertificateOptionsMapper.generateEmailData(item);
 
         // then
-        assertEquals(getExpectedModel(), result);
-    }
-
-    private CertificateOrderNotificationModel getExpectedModel() {
         CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();
         expected.setCompanyType(TestConstants.LIMITED_COMPANY_TYPE);
         expected.setCompanyName(TestConstants.COMPANY_NAME);
@@ -105,13 +90,23 @@ public class CertificateOptionsMapperTest {
         expected.setStatementOfGoodStanding(TestConstants.READABLE_TRUE);
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
         expected.setRegisteredOfficeAddressDetails(TestConstants.EXPECTED_ADDRESS_TYPE);
-        expected.setDirectorDetailsModel(getAppointmentDetails());
-        expected.setSecretaryDetailsModel(getAppointmentDetails());
+        expected.setDirectorDetailsModel(getCertificateDetailsModel());
+        expected.setSecretaryDetailsModel(getCertificateDetailsModel());
         expected.setCompanyObjects(TestConstants.READABLE_FALSE);
-        return expected;
+
+        assertEquals(expected, result);
     }
 
-    private CertificateDetailsModel getAppointmentDetails() {
-        return new CertificateDetailsModel(true, Collections.singletonList("Yes"));
+    private CertificateDetailsModel getCertificateDetailsModel() {
+        return new CertificateDetailsModel(true, new ArrayList<String>() {
+            {
+                add("Correspondence address");
+                add("Appointment date");
+                add("Country of residence");
+                add("Nationality");
+                add("Occupation");
+                add("Date of birth (month and year)");
+            }
+        });
     }
 }

@@ -20,16 +20,19 @@ public class DirectorOrSecretaryDetailsApiMapper {
     private String occupation;
     private String dob;
 
-    CertificateDetailsModel map(DirectorOrSecretaryDetailsApi appointment) {
-        ListHelper helper = new ListHelper(new ArrayList<String>());
-        helper.add(appointment.getIncludeAddress(), address);
-        helper.add(appointment.getIncludeAppointmentDate(), appointmentDate);
-        helper.add(appointment.getIncludeCountryOfResidence(), countryOfResidence);
-        helper.add(appointment.getIncludeNationality(), nationality);
-        helper.add(appointment.getIncludeOccupation(), occupation);
-        helper.add(appointment.getIncludeDobType() != null, dob);
+    public DirectorOrSecretaryDetailsApiMapper() {
+    }
 
-        return new CertificateDetailsModel(helper.size() > 0 || appointment.getIncludeBasicInformation(), helper.getList());
+    public CertificateDetailsModel map(DirectorOrSecretaryDetailsApi appointment) {
+        ListHelper helper = new ListHelper(new ArrayList<String>());
+        helper.add(appointment.getIncludeAddress(), getAddress());
+        helper.add(appointment.getIncludeAppointmentDate(), getAppointmentDate());
+        helper.add(appointment.getIncludeCountryOfResidence(), getCountryOfResidence());
+        helper.add(appointment.getIncludeNationality(), getNationality());
+        helper.add(appointment.getIncludeOccupation(), getOccupation());
+        helper.add(appointment.getIncludeDobType() != null, getDob());
+
+        return new CertificateDetailsModel(helper.size() > 0 || appointment.getIncludeBasicInformation(), helper.toList());
     }
 
     public void setAddress(String address) {
