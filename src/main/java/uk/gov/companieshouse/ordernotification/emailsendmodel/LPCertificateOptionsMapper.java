@@ -19,8 +19,8 @@ public class LPCertificateOptionsMapper extends CertificateOptionsMapper {
     @Override
     protected void doMapCustomData(CertificateItemOptionsApi source, CertificateOrderNotificationModel destination) {
         destination.setPrincipalPlaceOfBusinessDetails(addressRecordTypeMapper.mapAddressRecordType(source.getPrincipalPlaceOfBusinessDetails().getIncludeAddressRecordsType()));
-        destination.setGeneralPartnerDetails(mapBoolean(source.getGeneralPartnerDetails().getIncludeBasicInformation()));
-        destination.setLimitedPartnerDetails(mapBoolean(source.getLimitedPartnerDetails().getIncludeBasicInformation()));
-        destination.setGeneralNatureOfBusinessInformation(mapBoolean(source.getIncludeGeneralNatureOfBusinessInformation()));
+        destination.setGeneralPartnerDetails(MapUtil.mapBoolean(source.getGeneralPartnerDetails().getIncludeBasicInformation()));
+        destination.setLimitedPartnerDetails(MapUtil.mapBoolean(source.getLimitedPartnerDetails().getIncludeBasicInformation()));
+        destination.setGeneralNatureOfBusinessInformation(MapUtil.mapBoolean(source.getIncludeGeneralNatureOfBusinessInformation()));
     }
 }

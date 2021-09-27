@@ -27,7 +27,7 @@ public class DirectorOrSecretaryDetailsApiMapperIntegrationTest {
         CertificateDetailsModel result = directorOrSecretaryDetailsApiMapper.map(sourceDetails);
 
         // Then
-        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.emptyList());
+        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.singletonList("No"));
 
         assertEquals(result, expected);
     }
@@ -48,7 +48,28 @@ public class DirectorOrSecretaryDetailsApiMapperIntegrationTest {
         CertificateDetailsModel result = directorOrSecretaryDetailsApiMapper.map(sourceDetails);
 
         // Then
-        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.emptyList());
+        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.singletonList("No"));
+
+        assertEquals(result, expected);
+    }
+
+    @Test
+    void testCorrectlyMapsOnlyBasicInformationIsTrue() {
+        // Given
+        DirectorOrSecretaryDetailsApi sourceDetails = new DirectorOrSecretaryDetailsApi();
+        sourceDetails.setIncludeAddress(false);
+        sourceDetails.setIncludeAppointmentDate(false);
+        sourceDetails.setIncludeBasicInformation(true);
+        sourceDetails.setIncludeDobType(null);
+        sourceDetails.setIncludeNationality(false);
+        sourceDetails.setIncludeCountryOfResidence(false);
+        sourceDetails.setIncludeOccupation(false);
+
+        // When
+        CertificateDetailsModel result = directorOrSecretaryDetailsApiMapper.map(sourceDetails);
+
+        // Then
+        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.singletonList("Yes"));
 
         assertEquals(result, expected);
     }

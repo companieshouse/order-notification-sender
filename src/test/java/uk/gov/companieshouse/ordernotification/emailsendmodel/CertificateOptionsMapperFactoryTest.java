@@ -5,6 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,7 +26,7 @@ public class CertificateOptionsMapperFactoryTest {
     void returnOtherCertificateOptionsMapperWhenCompanyTypeMatch() {
         // given
         // when
-        CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper("ltd");
+        CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(TestConstants.LIMITED_COMPANY_TYPE);
 
         // then
         assertTrue(certificateOptionsMapper instanceof OtherCertificateOptionsMapper);
@@ -35,9 +36,19 @@ public class CertificateOptionsMapperFactoryTest {
     void returnLLPCertificateOptionsMapperWhenCompanyTypeLLP() {
         // given
         // when
-        CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper("llp");
+        CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_LIABILITY_PARTNERSHIP);
 
         // then
         assertTrue(certificateOptionsMapper instanceof LLPCertificateOptionsMapper);
+    }
+
+    @Test
+    void returnLLPCertificateOptionsMapperWhenCompanyTypeLP() {
+        // given
+        // when
+        CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_PARTNERSHIP);
+
+        // then
+        assertTrue(certificateOptionsMapper instanceof LPCertificateOptionsMapper);
     }
 }

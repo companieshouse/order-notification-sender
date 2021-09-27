@@ -93,4 +93,5 @@ public class ApplicationConfig implements WebMvcConfigurer {
                 "Same Day");
         return mappings;
     }
+
 }

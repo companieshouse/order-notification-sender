@@ -24,7 +24,7 @@ public class DirectorOrSecretaryDetailsApiMapper {
     }
 
     public CertificateDetailsModel map(DirectorOrSecretaryDetailsApi appointment) {
-        ListHelper helper = new ListHelper(new ArrayList<String>());
+        ListHelper helper = new ListHelper(new ArrayList<String>(), appointment.getIncludeBasicInformation());
         helper.add(appointment.getIncludeAddress(), getAddress());
         helper.add(appointment.getIncludeAppointmentDate(), getAppointmentDate());
         helper.add(appointment.getIncludeCountryOfResidence(), getCountryOfResidence());
@@ -32,9 +32,7 @@ public class DirectorOrSecretaryDetailsApiMapper {
         helper.add(appointment.getIncludeOccupation(), getOccupation());
         helper.add(appointment.getIncludeDobType() != null, getDob());
 
-        return new CertificateDetailsModel(helper.size() > 0 ||
-                (appointment.getIncludeBasicInformation() != null && appointment.getIncludeBasicInformation()),
-                helper.toList());
+        return helper.certificateDetailsModel();
     }
 
     public void setAddress(String address) {

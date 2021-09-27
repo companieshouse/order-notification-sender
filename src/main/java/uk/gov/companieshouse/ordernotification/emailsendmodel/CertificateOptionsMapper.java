@@ -5,9 +5,6 @@ import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 
 public abstract class CertificateOptionsMapper {
 
-    public static final String READABLE_FALSE = "No";
-    public static final String READABLE_TRUE = "Yes";
-
     private final CertificateTypeMapper certificateTypeMapper;
     private final DeliveryMethodMapper deliveryMethodMapper;
 
@@ -24,7 +21,7 @@ public abstract class CertificateOptionsMapper {
         model.setCompanyName(item.getCompanyName());
         model.setCompanyNumber(item.getCompanyNumber());
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
-        model.setStatementOfGoodStanding(mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
+        model.setStatementOfGoodStanding(MapUtil.mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
         model.setDeliveryMethod(getDeliveryMethodMapper().mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));
 
         doMapCustomData(itemOptions, model);
@@ -42,11 +39,5 @@ public abstract class CertificateOptionsMapper {
         return deliveryMethodMapper;
     }
 
-    protected String mapBoolean(Boolean bool) {
-        return booleanWrapperToBoolean(bool) ? READABLE_TRUE : READABLE_FALSE;
-    }
 
-    private boolean booleanWrapperToBoolean(Boolean bool) {
-        return bool != null && bool;
-    }
 }

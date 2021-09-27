@@ -5,9 +5,11 @@ import java.util.List;
 
 class ListHelper {
     private final List<String> list;
+    private final Boolean includeBasicInformation;
 
-    ListHelper(List<String> list) {
+    ListHelper(List<String> list, Boolean includeBasicInformation) {
         this.list = list;
+        this.includeBasicInformation = includeBasicInformation;
     }
 
     void add(Boolean condition, String text) {
@@ -16,11 +18,9 @@ class ListHelper {
         }
     }
 
-    int size() {
-        return list.size();
-    }
-
-    List toList() {
-        return Collections.unmodifiableList(list);
+    CertificateDetailsModel certificateDetailsModel() {
+        return list.isEmpty() ?
+                new CertificateDetailsModel(false, Collections.singletonList(MapUtil.mapBoolean(includeBasicInformation))) :
+                new CertificateDetailsModel(true, Collections.unmodifiableList(list));
     }
 }

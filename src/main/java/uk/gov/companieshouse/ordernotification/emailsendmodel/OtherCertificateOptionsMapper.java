@@ -25,6 +25,6 @@ public class OtherCertificateOptionsMapper extends CertificateOptionsMapper {
         destination.setRegisteredOfficeAddressDetails(addressRecordTypeMapper.mapAddressRecordType(source.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
         destination.setDirectorDetailsModel(directorOrSecretaryDetailsApiMapper.map(source.getDirectorDetails()));
         destination.setSecretaryDetailsModel(directorOrSecretaryDetailsApiMapper.map(source.getSecretaryDetails()));
-        destination.setCompanyObjects(mapBoolean(source.getIncludeCompanyObjectsInformation()));
+        destination.setCompanyObjects(MapUtil.mapBoolean(source.getIncludeCompanyObjectsInformation()));
     }
 }

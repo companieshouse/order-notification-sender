@@ -28,7 +28,7 @@ public class MembersDetailsApiMapperIntegrationTest {
         CertificateDetailsModel result = membersDetailsApiMapper.map(sourceMemberDetails);
 
         // Then
-        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.emptyList());
+        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.singletonList("No"));
 
         assertEquals(result, expected);
     }
@@ -42,7 +42,21 @@ public class MembersDetailsApiMapperIntegrationTest {
         CertificateDetailsModel result = membersDetailsApiMapper.map(sourceMemberDetails);
 
         // Then
-        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.emptyList());
+        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.singletonList("No"));
+
+        assertEquals(result, expected);
+    }
+
+    @Test
+    void testCorrectlyMapsOnlyBasicInformationIsTrue() {
+        // Given
+        BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(false, false, true, false, null);
+
+        // When
+        CertificateDetailsModel result = membersDetailsApiMapper.map(sourceMemberDetails);
+
+        // Then
+        CertificateDetailsModel expected = new CertificateDetailsModel(false, Collections.singletonList("Yes"));
 
         assertEquals(result, expected);
     }
@@ -71,7 +85,7 @@ public class MembersDetailsApiMapperIntegrationTest {
     @Test
     void testCorrectlyMapsAddressSelected() {
         // Given
-        BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(true, false,false, false, IncludeDobTypeApi.PARTIAL);
+        BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(true, false, false, false, IncludeDobTypeApi.PARTIAL);
 
         // When
         CertificateDetailsModel result = membersDetailsApiMapper.map(sourceMemberDetails);
@@ -90,7 +104,7 @@ public class MembersDetailsApiMapperIntegrationTest {
     @Test
     void testCorrectlyMapsAppointmentDateSelected() {
         // Given
-        BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(false, true,false, false, IncludeDobTypeApi.PARTIAL);
+        BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(false, true, false, false, IncludeDobTypeApi.PARTIAL);
 
         // When
         CertificateDetailsModel result = membersDetailsApiMapper.map(sourceMemberDetails);

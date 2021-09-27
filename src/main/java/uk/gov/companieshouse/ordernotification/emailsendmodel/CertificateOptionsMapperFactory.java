@@ -17,8 +17,8 @@ public class CertificateOptionsMapperFactory {
                                            LPCertificateOptionsMapper lpCertificateOptionsMapper,
                                            OtherCertificateOptionsMapper defaultMapper) {
         certificateOptionsMappings = new HashMap<>();
-        certificateOptionsMappings.put("llp", llpCertificateOptionsMapper);
-        certificateOptionsMappings.put("limited-partnership", lpCertificateOptionsMapper);
+        certificateOptionsMappings.put(CompanyType.LIMITED_LIABILITY_PARTNERSHIP, llpCertificateOptionsMapper);
+        certificateOptionsMappings.put(CompanyType.LIMITED_PARTNERSHIP, lpCertificateOptionsMapper);
         this.defaultMapper = defaultMapper;
     }
 

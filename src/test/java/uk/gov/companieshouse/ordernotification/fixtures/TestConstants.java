@@ -25,8 +25,6 @@ public final class TestConstants {
 
     //certificate order constants
     public static final String LIMITED_COMPANY_TYPE = "ltd";
-    public static final String LIMITED_LIABILITY_PARTNERSHIP = "llp";
-    public static final String LIMITED_PARTNERSHIP = "limited-partnership";
     public static final String CERTIFICATE_TYPE = "Incorporation";
     public static final String ADDRESS_TYPE = "current-previous-and-prior";
     public static final String DOB_TYPE = "dob-type";

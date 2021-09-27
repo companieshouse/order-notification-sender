@@ -19,15 +19,13 @@ public class MembersDetailsApiMapper {
     private String dob;
 
     public CertificateDetailsModel map(BaseMemberDetailsApi baseMembersDetailsApi) {
-        ListHelper helper = new ListHelper(new ArrayList<>());
+        ListHelper helper = new ListHelper(new ArrayList<>(), baseMembersDetailsApi.getIncludeBasicInformation());
         helper.add(baseMembersDetailsApi.getIncludeAddress(), getAddress());
         helper.add(baseMembersDetailsApi.getIncludeAppointmentDate(), getAppointmentDate());
         helper.add(baseMembersDetailsApi.getIncludeCountryOfResidence(), getCountryOfResidence());
         helper.add(baseMembersDetailsApi.getIncludeDobType() != null, getDob());
 
-        return new CertificateDetailsModel(helper.size() > 0 ||
-                (baseMembersDetailsApi.getIncludeBasicInformation() != null && baseMembersDetailsApi.getIncludeBasicInformation()),
-                helper.toList());
+        return helper.certificateDetailsModel();
     }
 
     public void setAddress(String address) {
