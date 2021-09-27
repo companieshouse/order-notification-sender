@@ -24,9 +24,9 @@ public class ErrorHandlingService {
     private static final String RETRY_TOPIC = "order-received-notification-retry";
     private static final String ERROR_TOPIC = "order-received-notification-error";
 
-    private MessageProducer messageProducer;
-    private LoggingUtils loggingUtils;
-    private int maxRetries;
+    private final MessageProducer messageProducer;
+    private final LoggingUtils loggingUtils;
+    private final int maxRetries;
 
     @Autowired
     public ErrorHandlingService(MessageProducer messageProducer, LoggingUtils loggingUtils, @Value("${maximum.retries}") int maxRetries) {

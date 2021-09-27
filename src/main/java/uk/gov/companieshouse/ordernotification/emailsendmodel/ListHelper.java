@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 class ListHelper {
-    private List<String> list;
+    private final List<String> list;
 
     ListHelper(List<String> list) {
         this.list = list;

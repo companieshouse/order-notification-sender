@@ -13,7 +13,7 @@ import java.util.Map;
 @Component
 public class DeliveryMethodMapper {
 
-    private Map<DeliveryMethodTuple, String> mappings;
+    private final Map<DeliveryMethodTuple, String> mappings;
 
     public DeliveryMethodMapper(@Qualifier("deliveryMethodMappings") Map<DeliveryMethodTuple, String> mappings) {
         this.mappings = mappings;

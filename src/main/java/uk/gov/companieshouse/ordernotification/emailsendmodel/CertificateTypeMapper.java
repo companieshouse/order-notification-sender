@@ -12,7 +12,7 @@ import java.util.Map;
  */
 @Component
 public class CertificateTypeMapper {
-    private Map<CertificateTypeApi, String> certificateTypeMappings;
+    private final Map<CertificateTypeApi, String> certificateTypeMappings;
 
     @Autowired
     public CertificateTypeMapper(@Qualifier("certificateTypeMappings") Map<CertificateTypeApi, String> certificateTypeMappings) {

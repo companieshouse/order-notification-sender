@@ -6,8 +6,8 @@ import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 
 @Component
 public class LLPCertificateOptionsMapper extends CertificateOptionsMapper {
-    private AddressRecordTypeMapper addressRecordTypeMapper;
-    private MembersDetailsApiMapper membersDetailsApiMapper;
+    private final AddressRecordTypeMapper addressRecordTypeMapper;
+    private final MembersDetailsApiMapper membersDetailsApiMapper;
 
     @Autowired
     public LLPCertificateOptionsMapper(CertificateTypeMapper certificateTypeMapper,

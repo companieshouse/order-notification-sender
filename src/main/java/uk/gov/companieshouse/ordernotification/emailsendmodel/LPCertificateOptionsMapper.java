@@ -6,7 +6,7 @@ import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 
 @Component
 public class LPCertificateOptionsMapper extends CertificateOptionsMapper {
-    private AddressRecordTypeMapper addressRecordTypeMapper;
+    private final AddressRecordTypeMapper addressRecordTypeMapper;
 
     @Autowired
     public LPCertificateOptionsMapper(CertificateTypeMapper certificateTypeMapper,
@@ -18,7 +18,7 @@ public class LPCertificateOptionsMapper extends CertificateOptionsMapper {
 
     @Override
     protected void doMapCustomData(CertificateItemOptionsApi source, CertificateOrderNotificationModel destination) {
-        destination.setPrincipalPlaceOfBusinessDetails(addressRecordTypeMapper.mapAddressRecordType(source.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
+        destination.setPrincipalPlaceOfBusinessDetails(addressRecordTypeMapper.mapAddressRecordType(source.getPrincipalPlaceOfBusinessDetails().getIncludeAddressRecordsType()));
         destination.setGeneralPartnerDetails(mapBoolean(source.getGeneralPartnerDetails().getIncludeBasicInformation()));
         destination.setLimitedPartnerDetails(mapBoolean(source.getLimitedPartnerDetails().getIncludeBasicInformation()));
         destination.setGeneralNatureOfBusinessInformation(mapBoolean(source.getIncludeGeneralNatureOfBusinessInformation()));

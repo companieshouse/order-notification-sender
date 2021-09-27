@@ -9,8 +9,8 @@ import java.util.Map;
 @Component
 public class CertificateOptionsMapperFactory {
 
-    private Map<String, CertificateOptionsMapper> certificateOptionsMappings;
-    private CertificateOptionsMapper defaultMapper;
+    private final Map<String, CertificateOptionsMapper> certificateOptionsMappings;
+    private final CertificateOptionsMapper defaultMapper;
 
     @Autowired
     public CertificateOptionsMapperFactory(LLPCertificateOptionsMapper llpCertificateOptionsMapper,
