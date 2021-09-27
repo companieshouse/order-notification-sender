@@ -25,7 +25,9 @@ public class MembersDetailsApiMapper {
         helper.add(baseMembersDetailsApi.getIncludeCountryOfResidence(), getCountryOfResidence());
         helper.add(baseMembersDetailsApi.getIncludeDobType() != null, getDob());
 
-        return new CertificateDetailsModel(helper.size() > 0 || baseMembersDetailsApi.getIncludeBasicInformation(), helper.toList());
+        return new CertificateDetailsModel(helper.size() > 0 ||
+                (baseMembersDetailsApi.getIncludeBasicInformation() != null && baseMembersDetailsApi.getIncludeBasicInformation()),
+                helper.toList());
     }
 
     public void setAddress(String address) {
