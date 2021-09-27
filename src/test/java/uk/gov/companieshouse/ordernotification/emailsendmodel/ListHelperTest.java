@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ListHelperTest {
 
-    private ListHelper listHelper;
+    private ListHelper helper;
 
     @Test
     void listHelperAdd() {
-        ListHelper helper = new ListHelper(new ArrayList<>());
+        helper = new ListHelper(new ArrayList<>());
         helper.add(null, "testNull");
         helper.add(false, "testFalse");
         helper.add(true, "testTrue");
