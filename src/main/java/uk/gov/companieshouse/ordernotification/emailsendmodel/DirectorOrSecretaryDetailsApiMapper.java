@@ -6,15 +6,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.ArrayList;
 
 @Component
 @Configuration
 @ConfigurationProperties(prefix = "appointment.details.text")
 @PropertySource("classpath:application.properties")
-public class AppointmentDetailsDictionary {
-
+public class DirectorOrSecretaryDetailsApiMapper {
     private String address;
     private String appointmentDate;
     private String countryOfResidence;
@@ -22,25 +20,16 @@ public class AppointmentDetailsDictionary {
     private String occupation;
     private String dob;
 
-    public List<Boolean> evaluateAppointment(DirectorOrSecretaryDetailsApi appointment) {
-        return Arrays.asList(
-                appointment.getIncludeAddress(),
-                appointment.getIncludeAppointmentDate(),
-                appointment.getIncludeCountryOfResidence(),
-                appointment.getIncludeNationality(),
-                appointment.getIncludeOccupation(),
-                appointment.getIncludeDobType() != null);
-    }
+    CertificateDetailsModel map(DirectorOrSecretaryDetailsApi appointment) {
+        ListHelper helper = new ListHelper(new ArrayList<String>());
+        helper.add(appointment.getIncludeAddress(), address);
+        helper.add(appointment.getIncludeAppointmentDate(), appointmentDate);
+        helper.add(appointment.getIncludeCountryOfResidence(), countryOfResidence);
+        helper.add(appointment.getIncludeNationality(), nationality);
+        helper.add(appointment.getIncludeOccupation(), occupation);
+        helper.add(appointment.getIncludeDobType() != null, dob);
 
-    public List<String> getText() {
-        return Arrays.asList(
-                address,
-                appointmentDate,
-                countryOfResidence,
-                nationality,
-                occupation,
-                dob
-        );
+        return new CertificateDetailsModel(helper.size() > 0 || appointment.getIncludeBasicInformation(), helper.getList());
     }
 
     public void setAddress(String address) {
@@ -65,5 +54,29 @@ public class AppointmentDetailsDictionary {
 
     public void setDob(String dob) {
         this.dob = dob;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public String getCountryOfResidence() {
+        return countryOfResidence;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public String getDob() {
+        return dob;
     }
 }

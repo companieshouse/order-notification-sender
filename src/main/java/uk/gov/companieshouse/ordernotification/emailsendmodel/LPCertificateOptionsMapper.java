@@ -2,22 +2,26 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
+import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 @Component
 public class LPCertificateOptionsMapper extends CertificateOptionsMapper {
+    private AddressRecordTypeMapper addressRecordTypeMapper;
 
     @Autowired
-    public LPCertificateOptionsMapper(EmailConfiguration config,
-                                      CertificateTypeMapper certificateTypeMapper,
+    public LPCertificateOptionsMapper(CertificateTypeMapper certificateTypeMapper,
                                       AddressRecordTypeMapper addressRecordTypeMapper,
                                       DeliveryMethodMapper deliveryMethodMapper) {
-        super(config, certificateTypeMapper, addressRecordTypeMapper, deliveryMethodMapper);
+        super(certificateTypeMapper, deliveryMethodMapper);
+        this.addressRecordTypeMapper = addressRecordTypeMapper;
     }
 
     @Override
-    public CertificateOrderNotificationModel generateEmailData(BaseItemApi item) {
-        return null;
+    protected void doMapCustomData(CertificateItemOptionsApi source, CertificateOrderNotificationModel destination) {
+        destination.setPrincipalPlaceOfBusinessDetails(addressRecordTypeMapper.mapAddressRecordType(source.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
+        destination.setGeneralPartnerDetails(mapBoolean(source.getGeneralPartnerDetails().getIncludeBasicInformation()));
+        destination.setLimitedPartnerDetails(mapBoolean(source.getLimitedPartnerDetails().getIncludeBasicInformation()));
+        destination.setGeneralNatureOfBusinessInformation(mapBoolean(source.getIncludeGeneralNatureOfBusinessInformation()));
     }
 }

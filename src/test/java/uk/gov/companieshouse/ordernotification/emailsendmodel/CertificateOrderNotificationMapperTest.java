@@ -61,10 +61,10 @@ class CertificateOrderNotificationMapperTest {
     private EmailDataConfiguration emailDataConfig;
 
     @Mock
-    private CertificateAppointmentDetailsMapper appointmentDetailsMapper;
+    private DirectorOrSecretaryDetailsApiMapper appointmentDetailsMapper;
 
     @Mock
-    private CertificateAppointmentDetailsModel appointmentDetailsModel;
+    private CertificateDetailsModel appointmentDetailsModel;
 
     @Mock
     private CertificateOptionsMapperFactory certificateOptionsMapperFactory;
@@ -78,35 +78,6 @@ class CertificateOrderNotificationMapperTest {
                 config, new ObjectMapper(), certificateOptionsMapperFactory);
     }
 
-    @Test
-    void testCertificateOrderNotificationMapperMapsSuccessfully() throws JsonProcessingException {
-        // given
-        OrdersApi order = getOrder(getAppointmentApiDetails(IncludeDobTypeApi.FULL));
-        when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2021, 7, 27, 15, 20, 10));
-        when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
-        when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
-        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
-
-        when(config.getDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
-        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
-        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
-        when(config.getApplicationId()).thenReturn(TestConstants.APPLICATION_ID);
-        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
-        when(config.getCertificate()).thenReturn(emailDataConfig);
-        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
-        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
-        when(appointmentDetailsMapper.mapAppointmentDetails(any(DirectorOrSecretaryDetailsApi.class))).thenReturn(appointmentDetailsModel);
-        when(appointmentDetailsModel.isSpecificDetails()).thenReturn(true);
-        when(appointmentDetailsModel.getDetails()).thenReturn(Collections.singletonList(TestConstants.READABLE_TRUE));
-        
-        when(certificateOptionsMapperFactory.getCertificateOptionsMapper(any())).thenReturn(otherCertificateOptionsMapper);
-
-        // when
-        EmailSend result = certificateOrderNotificationMapper.map(order);
-
-        // then
-        assertEquals(getExpectedEmailSendModel(), result);
-    }
 
     @Test
     void testCertificateOrderNotificationMapperReturnsMessageId() {
@@ -134,31 +105,6 @@ class CertificateOrderNotificationMapperTest {
         assertEquals(TestConstants.MESSAGE_TYPE, actual);
     }
 
-    @Test
-    void testMapperThrowsMappingExceptionIfJsonProcessingExceptionThrownByMapper() throws com.fasterxml.jackson.core.JsonProcessingException {
-        //given
-        when(config.getSenderAddress()).thenReturn(TestConstants.SENDER_EMAIL_ADDRESS);
-        when(config.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
-        when(config.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
-
-        when(certificateOptionsMapperFactory.getCertificateOptionsMapper(any())).thenReturn(otherCertificateOptionsMapper);
-
-        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, mapper, certificateOptionsMapperFactory);
-        OrdersApi order = getOrder(getAppointmentApiDetails(null));
-        when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
-        when(roaTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
-        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
-        when(appointmentDetailsMapper.mapAppointmentDetails(any(DirectorOrSecretaryDetailsApi.class))).thenReturn(appointmentDetailsModel);
-        when(mapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
-
-        //when
-        Executable actual = () -> certificateOrderNotificationMapper.map(order);
-
-        //then
-        MappingException exception = assertThrows(MappingException.class, actual);
-        assertEquals("Failed to map order: " + TestConstants.ORDER_REFERENCE_NUMBER, exception.getMessage());
-    }
 
     private EmailSend getExpectedEmailSendModel() throws JsonProcessingException {
         EmailSend expected = new EmailSend();
@@ -192,8 +138,8 @@ class CertificateOrderNotificationMapperTest {
         return expected;
     }
 
-    private CertificateAppointmentDetailsModel getAppointmentDetails() {
-        return new CertificateAppointmentDetailsModel(true, Collections.singletonList("Yes"));
+    private CertificateDetailsModel getAppointmentDetails() {
+        return new CertificateDetailsModel(true, Collections.singletonList("Yes"));
     }
     private OrdersApi getOrder(DirectorOrSecretaryDetailsApi appointmentDetails) {
         OrdersApi order = new OrdersApi();

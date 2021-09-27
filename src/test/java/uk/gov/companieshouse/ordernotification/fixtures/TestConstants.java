@@ -24,9 +24,16 @@ public final class TestConstants {
     public static final String ORDER_CREATED_AT = "27 July 2021";
 
     //certificate order constants
+    public static final String LIMITED_COMPANY_TYPE = "ltd";
+    public static final String LIMITED_LIABILITY_PARTNERSHIP = "llp";
+    public static final String LIMITED_PARTNERSHIP = "limited-partnership";
     public static final String CERTIFICATE_TYPE = "Incorporation";
     public static final String ADDRESS_TYPE = "current-previous-and-prior";
-    public static final String DOB_TYPE = "full";
+    public static final String DOB_TYPE = "dob-type";
+    public static final String APPOINTMENT_DATE = "27 Sep 2021";
+    public static final String COUNTRY_OF_RESIDENCE = "UK";
+    public static final String NATIONALITY = "British";
+    public static final String OCCUPATION = "Blacksmith";
 
     public static final String MESSAGE_ID = "message_id";
     public static final String APPLICATION_ID = "application_id";
