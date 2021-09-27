@@ -32,7 +32,9 @@ public class DirectorOrSecretaryDetailsApiMapper {
         helper.add(appointment.getIncludeOccupation(), getOccupation());
         helper.add(appointment.getIncludeDobType() != null, getDob());
 
-        return new CertificateDetailsModel(helper.size() > 0 || appointment.getIncludeBasicInformation(), helper.toList());
+        return new CertificateDetailsModel(helper.size() > 0 ||
+                (appointment.getIncludeBasicInformation() != null && appointment.getIncludeBasicInformation()),
+                helper.toList());
     }
 
     public void setAddress(String address) {

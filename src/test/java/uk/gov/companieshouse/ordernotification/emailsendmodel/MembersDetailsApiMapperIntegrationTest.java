@@ -48,7 +48,7 @@ public class MembersDetailsApiMapperIntegrationTest {
     }
 
     @Test
-    void testCorrectlyMapsAddressAllOptionsSelected() {
+    void testCorrectlyMapsAllOptionsSelected() {
         // Given
         BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(true, true, true, true, IncludeDobTypeApi.PARTIAL);
 
@@ -88,7 +88,7 @@ public class MembersDetailsApiMapperIntegrationTest {
     }
 
     @Test
-    void testCorrectlyMapsAppintmentDateSelected() {
+    void testCorrectlyMapsAppointmentDateSelected() {
         // Given
         BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(false, true,false, false, IncludeDobTypeApi.PARTIAL);
 
@@ -126,7 +126,7 @@ public class MembersDetailsApiMapperIntegrationTest {
     }
 
     @Test
-    void testCorrectlyMapsincludeDobTypeSelected() {
+    void testCorrectlyMapsIncludeDobTypeSelected() {
         // Given
         BaseMemberDetailsApi sourceMemberDetails = new TestMemberDetails(false, false, false, false, IncludeDobTypeApi.PARTIAL);
 

@@ -5,8 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ser.Serializers;
-import uk.gov.companieshouse.api.model.order.item.BaseMemberDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DesignatedMemberDetailsApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
