@@ -18,6 +18,7 @@ import uk.gov.companieshouse.api.model.order.item.RegisteredOfficeAddressDetails
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -98,7 +99,7 @@ public class CertificateOptionsMapperTest {
     }
 
     private CertificateDetailsModel getCertificateDetailsModel() {
-        return new CertificateDetailsModel(true, new ArrayList<String>() {
+        return new CertificateDetailsModel(true, Collections.unmodifiableList(new ArrayList<String>() {
             {
                 add("Correspondence address");
                 add("Appointment date");
@@ -107,6 +108,6 @@ public class CertificateOptionsMapperTest {
                 add("Occupation");
                 add("Date of birth (month and year)");
             }
-        });
+        }));
     }
 }
