@@ -12,7 +12,7 @@ import java.util.Map;
 @Component
 public class AddressRecordTypeMapper {
 
-    private Map<IncludeAddressRecordsTypeApi, String> mappings;
+    private final Map<IncludeAddressRecordsTypeApi, String> mappings;
 
     public AddressRecordTypeMapper(@Qualifier("incorporationAddressMappings") Map<IncludeAddressRecordsTypeApi, String> mappings) {
         this.mappings = mappings;

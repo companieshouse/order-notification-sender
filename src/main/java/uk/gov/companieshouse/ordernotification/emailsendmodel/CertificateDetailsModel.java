@@ -3,15 +3,15 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.List;
 import java.util.Objects;
 
-public class CertificateAppointmentDetailsModel {
+public class CertificateDetailsModel {
 
     private boolean specificDetails;
     private List<String> details;
 
-    public CertificateAppointmentDetailsModel() {
+    public CertificateDetailsModel() {
     }
 
-    public CertificateAppointmentDetailsModel(boolean specificDetails, List<String> details) {
+    public CertificateDetailsModel(boolean specificDetails, List<String> details) {
         this.specificDetails = specificDetails;
         this.details = details;
     }
@@ -37,10 +37,10 @@ public class CertificateAppointmentDetailsModel {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CertificateAppointmentDetailsModel)) {
+        if (!(o instanceof CertificateDetailsModel)) {
             return false;
         }
-        CertificateAppointmentDetailsModel that = (CertificateAppointmentDetailsModel) o;
+        CertificateDetailsModel that = (CertificateDetailsModel) o;
         return isSpecificDetails() == that.isSpecificDetails() &&
                 Objects.equals(getDetails(), that.getDetails());
     }

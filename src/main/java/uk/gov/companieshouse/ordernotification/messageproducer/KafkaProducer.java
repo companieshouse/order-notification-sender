@@ -16,8 +16,8 @@ import java.util.function.Consumer;
 
 @Service
 class KafkaProducer {
-    private LoggingUtils loggingUtils;
-    private CHKafkaProducer chKafkaProducer;
+    private final LoggingUtils loggingUtils;
+    private final CHKafkaProducer chKafkaProducer;
     private final Long timeout;
 
     @Autowired

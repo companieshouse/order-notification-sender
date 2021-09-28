@@ -24,7 +24,7 @@ import java.util.Map;
 @Configuration
 public class KafkaBrokerConfiguration {
 
-    private String brokerAddresses;
+    private final String brokerAddresses;
 
     public KafkaBrokerConfiguration(@Value("${spring.kafka.bootstrap-servers}") String brokerAddresses) {
         this.brokerAddresses = brokerAddresses;

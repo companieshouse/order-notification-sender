@@ -65,7 +65,7 @@ class OrdersKafkaErrorConsumerIntegrationTest {
 
     private static MockServerContainer container;
 
-    private static CountDownLatch latch = new CountDownLatch(1);
+    private static final CountDownLatch latch = new CountDownLatch(1);
     private CountDownLatch eventLatch;
 
 

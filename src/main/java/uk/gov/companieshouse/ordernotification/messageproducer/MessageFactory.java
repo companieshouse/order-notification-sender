@@ -15,7 +15,7 @@ import java.util.Map;
 class MessageFactory {
 
 	private final SerializerFactory serializerFactory;
-	private LoggingUtils loggingUtils;
+	private final LoggingUtils loggingUtils;
 
 	public MessageFactory(SerializerFactory serializer, LoggingUtils loggingUtils) {
 		serializerFactory = serializer;

@@ -6,15 +6,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Component
 @Configuration
 @ConfigurationProperties(prefix = "appointment.details.text")
 @PropertySource("classpath:application.properties")
-public class AppointmentDetailsDictionary {
-
+public class DirectorOrSecretaryDetailsApiMapper {
     private String address;
     private String appointmentDate;
     private String countryOfResidence;
@@ -22,25 +18,16 @@ public class AppointmentDetailsDictionary {
     private String occupation;
     private String dob;
 
-    public List<Boolean> evaluateAppointment(DirectorOrSecretaryDetailsApi appointment) {
-        return Arrays.asList(
-                appointment.getIncludeAddress(),
-                appointment.getIncludeAppointmentDate(),
-                appointment.getIncludeCountryOfResidence(),
-                appointment.getIncludeNationality(),
-                appointment.getIncludeOccupation(),
-                appointment.getIncludeDobType() != null);
-    }
-
-    public List<String> getText() {
-        return Arrays.asList(
-                address,
-                appointmentDate,
-                countryOfResidence,
-                nationality,
-                occupation,
-                dob
-        );
+    public CertificateDetailsModel map(DirectorOrSecretaryDetailsApi appointment) {
+        return new CertificateDetailsModelBuilder()
+                .includeBasicInformation(appointment.getIncludeBasicInformation())
+                .includeText(appointment.getIncludeAddress(), address)
+                .includeText(appointment.getIncludeAppointmentDate(), appointmentDate)
+                .includeText(appointment.getIncludeCountryOfResidence(), countryOfResidence)
+                .includeText(appointment.getIncludeNationality(), nationality)
+                .includeText(appointment.getIncludeOccupation(), occupation)
+                .includeText(appointment.getIncludeDobType() != null, dob)
+                .build();
     }
 
     public void setAddress(String address) {

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @Component
 public class DocumentOrderNotificationMapper extends OrdersApiMapper {
 
-    private final EmailConfiguration config;
     private final FilingHistoryDescriptionProviderService providerService;
     private final DeliveryMethodMapper deliveryMethodMapper;
 
@@ -24,13 +23,12 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                                            FilingHistoryDescriptionProviderService providerService, ObjectMapper mapper,
                                            DeliveryMethodMapper deliveryMethodMapper) {
         super(dateGenerator, config, mapper);
-        this.config = config;
         this.providerService = providerService;
         this.deliveryMethodMapper = deliveryMethodMapper;
     }
 
     @Override
-    OrderModel generateEmailData(BaseItemApi order) {
+    protected OrderModel generateEmailData(BaseItemApi order) {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
 
         CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getItemOptions();
@@ -41,7 +39,7 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
                 .map(filingHistoryDocumentApi -> {
                     FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
                     details.setFilingHistoryDate(LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
-                            .format(DateTimeFormatter.ofPattern(config.getDocument().getFilingHistoryDateFormat())));
+                            .format(DateTimeFormatter.ofPattern(getConfig().getDocument().getFilingHistoryDateFormat())));
                     details.setFilingHistoryCost("£"+filingHistoryDocumentApi.getFilingHistoryCost());
                     details.setFilingHistoryDescription(
                             this.providerService.mapFilingHistoryDescription(
@@ -59,12 +57,12 @@ public class DocumentOrderNotificationMapper extends OrdersApiMapper {
     }
 
     @Override
-    String getMessageId() {
-        return config.getDocument().getMessageId();
+    protected String getMessageId() {
+        return getConfig().getDocument().getMessageId();
     }
 
     @Override
-    String getMessageType() {
-        return config.getDocument().getMessageType();
+    protected String getMessageType() {
+        return getConfig().getDocument().getMessageType();
     }
 }
