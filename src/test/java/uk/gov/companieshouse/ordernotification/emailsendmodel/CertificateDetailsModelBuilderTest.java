@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -7,74 +8,74 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class ListHelperTest {
+public class CertificateDetailsModelBuilderTest {
 
-    private ListHelper helper;
+    private CertificateDetailsModelBuilder builder;
+
+    @BeforeEach
+    void setup() {
+        builder = new CertificateDetailsModelBuilder();
+    }
 
     @Test
     void correctlyBuildModelWhenListIsEmptyAndBasicInformationNull() {
-        helper = new ListHelper(new ArrayList<>(), null);
-
         CertificateDetailsModel expected = new CertificateDetailsModel(false, new ArrayList<String>() {
             {
                 add("No");
             }
         });
-        CertificateDetailsModel result = helper.certificateDetailsModel();
-        assertEquals(result, expected);
+        assertEquals(builder.build(), expected);
     }
 
     @Test
     void correctlyBuildModelWhenListIsEmptyAndBasicInformationFalse() {
-        helper = new ListHelper(new ArrayList<>(), null);
-
         CertificateDetailsModel expected = new CertificateDetailsModel(false, new ArrayList<String>() {
             {
                 add("No");
             }
         });
-        assertEquals(helper.certificateDetailsModel(), expected);
+        assertEquals(builder.build(), expected);
     }
 
     @Test
     void correctlyBuildModelWhenListIsEmptyAndBasicInformationTrue() {
-        helper = new ListHelper(new ArrayList<>(), true);
+        builder.includeBasicInformation(true);
 
         CertificateDetailsModel expected = new CertificateDetailsModel(false, new ArrayList<String>() {
             {
                 add("Yes");
             }
         });
-        assertEquals(helper.certificateDetailsModel(), expected);
+        assertEquals(builder.build(), expected);
     }
 
     @Test
     void correctlyBuildModelWhenListHasEntriesBasicInformationFalse() {
-        helper = new ListHelper(new ArrayList<>(), false);
-        helper.add(null, "testNull");
-        helper.add(false, "testFalse");
-        helper.add(true, "testTrue");
+        builder.includeBasicInformation(false);
+        builder.includeText(null, "testNull");
+        builder.includeText(false, "testFalse");
+        builder.includeText(true, "testTrue");
 
         CertificateDetailsModel expected = new CertificateDetailsModel(true, new ArrayList<String>() {
             {
                 add("testTrue");
             }
         });
-        assertEquals(helper.certificateDetailsModel(), expected);
+        assertEquals(builder.build(), expected);
     }
 
     @Test
     void correctlyBuildModelWhenListHasEntriesBasicInformationTrue() {
-        helper = new ListHelper(new ArrayList<>(), true);
-        helper.add(null, "testNull");
-        helper.add(false, "testFalse");
-        helper.add(true, "testTrue");
+        builder.includeBasicInformation(true);
+        builder.includeText(null, "testNull");
+        builder.includeText(false, "testFalse");
+        builder.includeText(true, "testTrue");
 
         CertificateDetailsModel expected = new CertificateDetailsModel(true, new ArrayList<String>() {
             {
                 add("testTrue");
             }
         });
-        assertEquals(helper.certificateDetailsModel(), expected);
+        assertEquals(builder.build(), expected);
     }
 }

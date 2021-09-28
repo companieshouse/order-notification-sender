@@ -6,8 +6,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.DirectorOrSecretaryDetailsApi;
 
-import java.util.ArrayList;
-
 @Component
 @Configuration
 @ConfigurationProperties(prefix = "appointment.details.text")
@@ -20,19 +18,16 @@ public class DirectorOrSecretaryDetailsApiMapper {
     private String occupation;
     private String dob;
 
-    public DirectorOrSecretaryDetailsApiMapper() {
-    }
-
     public CertificateDetailsModel map(DirectorOrSecretaryDetailsApi appointment) {
-        ListHelper helper = new ListHelper(new ArrayList<String>(), appointment.getIncludeBasicInformation());
-        helper.add(appointment.getIncludeAddress(), getAddress());
-        helper.add(appointment.getIncludeAppointmentDate(), getAppointmentDate());
-        helper.add(appointment.getIncludeCountryOfResidence(), getCountryOfResidence());
-        helper.add(appointment.getIncludeNationality(), getNationality());
-        helper.add(appointment.getIncludeOccupation(), getOccupation());
-        helper.add(appointment.getIncludeDobType() != null, getDob());
-
-        return helper.certificateDetailsModel();
+        return new CertificateDetailsModelBuilder()
+                .includeBasicInformation(appointment.getIncludeBasicInformation())
+                .includeText(appointment.getIncludeAddress(), address)
+                .includeText(appointment.getIncludeAppointmentDate(), appointmentDate)
+                .includeText(appointment.getIncludeCountryOfResidence(), countryOfResidence)
+                .includeText(appointment.getIncludeNationality(), nationality)
+                .includeText(appointment.getIncludeOccupation(), occupation)
+                .includeText(appointment.getIncludeDobType() != null, dob)
+                .build();
     }
 
     public void setAddress(String address) {
@@ -57,29 +52,5 @@ public class DirectorOrSecretaryDetailsApiMapper {
 
     public void setDob(String dob) {
         this.dob = dob;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getAppointmentDate() {
-        return appointmentDate;
-    }
-
-    public String getCountryOfResidence() {
-        return countryOfResidence;
-    }
-
-    public String getNationality() {
-        return nationality;
-    }
-
-    public String getOccupation() {
-        return occupation;
-    }
-
-    public String getDob() {
-        return dob;
     }
 }

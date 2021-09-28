@@ -1,24 +1,30 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class ListHelper {
+class CertificateDetailsModelBuilder {
     private final List<String> list;
-    private final Boolean includeBasicInformation;
+    private Boolean includeBasicInformation;
 
-    ListHelper(List<String> list, Boolean includeBasicInformation) {
-        this.list = list;
-        this.includeBasicInformation = includeBasicInformation;
+    CertificateDetailsModelBuilder() {
+        this.list = new ArrayList<>();
     }
 
-    void add(Boolean condition, String text) {
+    CertificateDetailsModelBuilder includeBasicInformation(Boolean includeBasicInformation) {
+        this.includeBasicInformation = includeBasicInformation;
+        return this;
+    }
+
+    CertificateDetailsModelBuilder includeText(Boolean condition, String text) {
         if (condition != null && condition) {
             list.add(text);
         }
+        return this;
     }
 
-    CertificateDetailsModel certificateDetailsModel() {
+    CertificateDetailsModel build() {
         return list.isEmpty() ?
                 new CertificateDetailsModel(false, Collections.singletonList(MapUtil.mapBoolean(includeBasicInformation))) :
                 new CertificateDetailsModel(true, Collections.unmodifiableList(list));

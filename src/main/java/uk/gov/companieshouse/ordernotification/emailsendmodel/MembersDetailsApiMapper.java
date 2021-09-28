@@ -6,8 +6,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseMemberDetailsApi;
 
-import java.util.ArrayList;
-
 @Component
 @Configuration
 @ConfigurationProperties(prefix = "members.details.text")
@@ -19,13 +17,13 @@ public class MembersDetailsApiMapper {
     private String dob;
 
     public CertificateDetailsModel map(BaseMemberDetailsApi baseMembersDetailsApi) {
-        ListHelper helper = new ListHelper(new ArrayList<>(), baseMembersDetailsApi.getIncludeBasicInformation());
-        helper.add(baseMembersDetailsApi.getIncludeAddress(), getAddress());
-        helper.add(baseMembersDetailsApi.getIncludeAppointmentDate(), getAppointmentDate());
-        helper.add(baseMembersDetailsApi.getIncludeCountryOfResidence(), getCountryOfResidence());
-        helper.add(baseMembersDetailsApi.getIncludeDobType() != null, getDob());
-
-        return helper.certificateDetailsModel();
+        return new CertificateDetailsModelBuilder()
+                .includeBasicInformation(baseMembersDetailsApi.getIncludeBasicInformation())
+                .includeText(baseMembersDetailsApi.getIncludeAddress(), address)
+                .includeText(baseMembersDetailsApi.getIncludeAppointmentDate(), appointmentDate)
+                .includeText(baseMembersDetailsApi.getIncludeCountryOfResidence(), countryOfResidence)
+                .includeText(baseMembersDetailsApi.getIncludeDobType() != null, dob)
+                .build();
     }
 
     public void setAddress(String address) {
@@ -42,21 +40,5 @@ public class MembersDetailsApiMapper {
 
     public void setDob(String dob) {
         this.dob = dob;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getAppointmentDate() {
-        return appointmentDate;
-    }
-
-    public String getCountryOfResidence() {
-        return countryOfResidence;
-    }
-
-    public String getDob() {
-        return dob;
     }
 }
