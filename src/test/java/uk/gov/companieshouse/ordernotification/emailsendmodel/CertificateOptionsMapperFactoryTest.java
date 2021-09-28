@@ -15,9 +15,9 @@ public class CertificateOptionsMapperFactoryTest {
     @Mock
     private LLPCertificateOptionsMapper llpCertificateOptionsMapper;
     @Mock
-    LPCertificateOptionsMapper lpCertificateOptionsMapper;
+    private LPCertificateOptionsMapper lpCertificateOptionsMapper;
     @Mock
-    OtherCertificateOptionsMapper otherCertificateOptionsMapper;
+    private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
 
     @InjectMocks
     private CertificateOptionsMapperFactory mapperFactory;

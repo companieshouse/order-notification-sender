@@ -19,6 +19,7 @@ public class CertificateDetailsModelBuilderTest {
 
     @Test
     void correctlyBuildModelWhenListIsEmptyAndBasicInformationNull() {
+        builder.includeBasicInformation(null);
         CertificateDetailsModel expected = new CertificateDetailsModel(false, new ArrayList<String>() {
             {
                 add("No");
@@ -29,6 +30,7 @@ public class CertificateDetailsModelBuilderTest {
 
     @Test
     void correctlyBuildModelWhenListIsEmptyAndBasicInformationFalse() {
+        builder.includeBasicInformation(false);
         CertificateDetailsModel expected = new CertificateDetailsModel(false, new ArrayList<String>() {
             {
                 add("No");
