@@ -1,10 +1,12 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Maps {@link IncludeAddressRecordsTypeApi} objects to human readable strings.
@@ -13,9 +15,12 @@ import java.util.Map;
 public class AddressRecordTypeMapper {
 
     private final Map<IncludeAddressRecordsTypeApi, String> mappings;
+    private final String nullMapping;
 
-    public AddressRecordTypeMapper(@Qualifier("incorporationAddressMappings") Map<IncludeAddressRecordsTypeApi, String> mappings) {
+    public AddressRecordTypeMapper(@Qualifier("incorporationAddressMappings") Map<IncludeAddressRecordsTypeApi, String> mappings,
+                                   @Value("${address.record.type.mapper.nullMapping}") String nullMapping) {
         this.mappings = mappings;
+        this.nullMapping = nullMapping;
     }
 
     /**
@@ -25,6 +30,9 @@ public class AddressRecordTypeMapper {
      * @return A string representation of the type
      */
     public String mapAddressRecordType(IncludeAddressRecordsTypeApi roaType) {
+        if (roaType == null) {
+            return nullMapping;
+        }
         return mappings.get(roaType);
     }
 }

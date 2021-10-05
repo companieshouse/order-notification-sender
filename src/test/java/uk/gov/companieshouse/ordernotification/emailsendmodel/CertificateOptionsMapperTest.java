@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class CertificateOptionsMapperTest {
+class CertificateOptionsMapperTest {
     @Mock
     private CertificateTypeMapper certificateTypeMapper;
     @Mock

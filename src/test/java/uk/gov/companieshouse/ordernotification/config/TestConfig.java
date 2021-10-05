@@ -8,12 +8,20 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOptionsMapperFactory;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
 import uk.gov.companieshouse.orders.OrderReceived;
 import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
@@ -22,8 +30,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-@TestConfiguration
+@Configuration
+@Import({CertificateOptionsMapperFactory.class, FeatureOptionsConfig.class})
 public class TestConfig {
+
+    @Bean
+    EmbeddedKafkaBroker embeddedKafkaBroker() {
+        return new EmbeddedKafkaBroker(1);
+    }
 
     @Bean
     KafkaProducer<String, OrderReceived> myProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {

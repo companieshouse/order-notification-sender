@@ -20,6 +20,7 @@ import uk.gov.companieshouse.ordernotification.emailsendmodel.DocumentOrderNotif
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MissingImageOrderNotificationMapper;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiMapper;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,7 +66,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     Map<CertificateTypeApi, String> certificateTypeMappings() {
-        Map<CertificateTypeApi, String> mappings = new HashMap<>();
+        Map<CertificateTypeApi, String> mappings = new EnumMap<>(CertificateTypeApi.class);
         mappings.put(CertificateTypeApi.INCORPORATION, "Incorporation");
         mappings.put(CertificateTypeApi.DISSOLUTION, "Dissolution with all company name changes");
         mappings.put(CertificateTypeApi.INCORPORATION_WITH_ALL_NAME_CHANGES, "Incorporation with all company name changes");
@@ -75,12 +76,11 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     Map<IncludeAddressRecordsTypeApi, String> incorporationAddressMappings() {
-        Map<IncludeAddressRecordsTypeApi, String> mappings = new HashMap<>();
+        Map<IncludeAddressRecordsTypeApi, String> mappings = new EnumMap<>(IncludeAddressRecordsTypeApi.class);
         mappings.put(IncludeAddressRecordsTypeApi.CURRENT, "Current address");
         mappings.put(IncludeAddressRecordsTypeApi.CURRENT_AND_PREVIOUS, "Current address and the one previous");
         mappings.put(IncludeAddressRecordsTypeApi.CURRENT_PREVIOUS_AND_PRIOR, "Current address and the two previous");
         mappings.put(IncludeAddressRecordsTypeApi.ALL, "All current and previous addresses");
-        mappings.put(null, "No");
         return mappings;
     }
 
