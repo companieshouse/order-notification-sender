@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import uk.gov.companieshouse.ordernotification.config.FeatureOptions;
+
 import java.util.Objects;
 
 public class CertificateOrderNotificationModel extends OrderModel {
@@ -18,6 +20,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String limitedPartnerDetails;
     private String principalPlaceOfBusinessDetails;
     private String generalNatureOfBusinessInformation;
+    private FeatureOptions featureOptions;
 
     public String getCertificateType() {
         return certificateType;
@@ -131,6 +134,14 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.generalNatureOfBusinessInformation = generalNatureOfBusinessInformation;
     }
 
+    public FeatureOptions getFeatureOptions() {
+        return featureOptions;
+    }
+
+    public void setFeatureOptions(FeatureOptions featureOptions) {
+        this.featureOptions = featureOptions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -156,7 +167,8 @@ public class CertificateOrderNotificationModel extends OrderModel {
                 Objects.equals(generalPartnerDetails, that.generalPartnerDetails) &&
                 Objects.equals(limitedPartnerDetails, that.limitedPartnerDetails) &&
                 Objects.equals(principalPlaceOfBusinessDetails, that.principalPlaceOfBusinessDetails) &&
-                Objects.equals(generalNatureOfBusinessInformation, that.generalNatureOfBusinessInformation);
+                Objects.equals(generalNatureOfBusinessInformation, that.generalNatureOfBusinessInformation) &&
+                Objects.equals(featureOptions, that.featureOptions);
     }
 
     @Override
@@ -164,6 +176,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
         return Objects.hash(super.hashCode(), certificateType, statementOfGoodStanding, deliveryMethod,
                 registeredOfficeAddressDetails, directorDetailsModel, secretaryDetailsModel, companyObjects,
                 companyType, designatedMembersDetails, membersDetails, generalPartnerDetails, limitedPartnerDetails,
-                principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation);
+                principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation, featureOptions);
     }
 }

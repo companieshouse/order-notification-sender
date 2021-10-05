@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import java.util.Objects;
+
 public class FeatureOptions {
     private boolean llpCertificateOrdersEnabled;
     private boolean lpCertificateOrdersEnabled;
@@ -15,5 +17,22 @@ public class FeatureOptions {
 
     public boolean isLpCertificateOrdersEnabled() {
         return lpCertificateOrdersEnabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        FeatureOptions that = (FeatureOptions) o;
+        return llpCertificateOrdersEnabled == that.llpCertificateOrdersEnabled && lpCertificateOrdersEnabled == that.lpCertificateOrdersEnabled;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(llpCertificateOrdersEnabled, lpCertificateOrdersEnabled);
     }
 }

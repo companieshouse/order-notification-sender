@@ -2,14 +2,17 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
+import uk.gov.companieshouse.ordernotification.config.FeatureOptions;
 
 public abstract class CertificateOptionsMapper {
 
+    private final FeatureOptions featureOptions;
     private final CertificateTypeMapper certificateTypeMapper;
     private final DeliveryMethodMapper deliveryMethodMapper;
 
-    public CertificateOptionsMapper(CertificateTypeMapper certificateTypeMapper,
+    protected CertificateOptionsMapper(FeatureOptions featureOptions, CertificateTypeMapper certificateTypeMapper,
                                     DeliveryMethodMapper deliveryMethodMapper) {
+        this.featureOptions = featureOptions;
         this.certificateTypeMapper = certificateTypeMapper;
         this.deliveryMethodMapper = deliveryMethodMapper;
     }
@@ -23,6 +26,7 @@ public abstract class CertificateOptionsMapper {
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
         model.setStatementOfGoodStanding(MapUtil.mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
         model.setDeliveryMethod(getDeliveryMethodMapper().mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));
+        model.setFeatureOptions(featureOptions);
 
         doMapCustomData(itemOptions, model);
 

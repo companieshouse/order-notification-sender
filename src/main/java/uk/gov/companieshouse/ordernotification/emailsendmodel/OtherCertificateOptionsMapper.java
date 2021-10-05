@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
+import uk.gov.companieshouse.ordernotification.config.FeatureOptions;
 
 @Component
 public class OtherCertificateOptionsMapper extends CertificateOptionsMapper {
@@ -11,11 +12,12 @@ public class OtherCertificateOptionsMapper extends CertificateOptionsMapper {
     private final DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
 
     @Autowired
-    public OtherCertificateOptionsMapper(CertificateTypeMapper certificateTypeMapper,
+    public OtherCertificateOptionsMapper(FeatureOptions featureOptions,
+                                         CertificateTypeMapper certificateTypeMapper,
                                          AddressRecordTypeMapper addressRecordTypeMapper,
                                          DeliveryMethodMapper deliveryMethodMapper,
                                          DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper) {
-        super(certificateTypeMapper, deliveryMethodMapper);
+        super(featureOptions, certificateTypeMapper, deliveryMethodMapper);
         this.addressRecordTypeMapper = addressRecordTypeMapper;
         this.directorOrSecretaryDetailsApiMapper = directorOrSecretaryDetailsApiMapper;
     }
