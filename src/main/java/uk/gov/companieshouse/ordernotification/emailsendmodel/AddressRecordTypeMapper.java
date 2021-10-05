@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Maps {@link IncludeAddressRecordsTypeApi} objects to human readable strings.
@@ -30,9 +29,6 @@ public class AddressRecordTypeMapper {
      * @return A string representation of the type
      */
     public String mapAddressRecordType(IncludeAddressRecordsTypeApi roaType) {
-        if (roaType == null) {
-            return nullMapping;
-        }
-        return mappings.get(roaType);
+        return roaType != null ? mappings.get(roaType) : nullMapping;
     }
 }
