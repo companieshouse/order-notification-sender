@@ -32,9 +32,9 @@ class CertificateOptionsMapperFactoryTest {
         // given
         when(featureOptions.isLpCertificateOrdersEnabled()).thenReturn(true);
         when(featureOptions.isLlpCertificateOrdersEnabled()).thenReturn(true);
+        CertificateOptionsMapperFactory mapperFactory = new CertificateOptionsMapperFactory(llpCertificateOptionsMapper, lpCertificateOptionsMapper, otherCertificateOptionsMapper, featureOptions);
 
         // when
-        CertificateOptionsMapperFactory mapperFactory = new CertificateOptionsMapperFactory(llpCertificateOptionsMapper, lpCertificateOptionsMapper, otherCertificateOptionsMapper, featureOptions);
         CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(TestConstants.LIMITED_COMPANY_TYPE);
 
         // then
@@ -46,9 +46,9 @@ class CertificateOptionsMapperFactoryTest {
         // given
         when(featureOptions.isLpCertificateOrdersEnabled()).thenReturn(false);
         when(featureOptions.isLlpCertificateOrdersEnabled()).thenReturn(true);
+        CertificateOptionsMapperFactory mapperFactory = new CertificateOptionsMapperFactory(llpCertificateOptionsMapper, lpCertificateOptionsMapper, otherCertificateOptionsMapper, featureOptions);
 
         // when
-        CertificateOptionsMapperFactory mapperFactory = new CertificateOptionsMapperFactory(llpCertificateOptionsMapper, lpCertificateOptionsMapper, otherCertificateOptionsMapper, featureOptions);
         CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_LIABILITY_PARTNERSHIP);
 
         // then
@@ -60,9 +60,9 @@ class CertificateOptionsMapperFactoryTest {
         // given
         when(featureOptions.isLpCertificateOrdersEnabled()).thenReturn(true);
         when(featureOptions.isLlpCertificateOrdersEnabled()).thenReturn(false);
+        CertificateOptionsMapperFactory mapperFactory = new CertificateOptionsMapperFactory(llpCertificateOptionsMapper, lpCertificateOptionsMapper, otherCertificateOptionsMapper, featureOptions);
 
         // when
-        CertificateOptionsMapperFactory mapperFactory = new CertificateOptionsMapperFactory(llpCertificateOptionsMapper, lpCertificateOptionsMapper, otherCertificateOptionsMapper, featureOptions);
         CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_PARTNERSHIP);
 
         // then

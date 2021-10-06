@@ -33,7 +33,7 @@ class CertificateOptionsMapperFactoryFeatureFlagsDisabledIntegrationTest {
     }
 
     @Test
-    void returnLLPCertificateOptionsMapperWhenCompanyTypeLLP() {
+    void returnOtherCertificateOptionsMapperWhenCompanyTypeLLP() {
         // given
         // when
         CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_LIABILITY_PARTNERSHIP);
@@ -43,7 +43,7 @@ class CertificateOptionsMapperFactoryFeatureFlagsDisabledIntegrationTest {
     }
 
     @Test
-    void returnLLPCertificateOptionsMapperWhenCompanyTypeLP() {
+    void returnOtherCertificateOptionsMapperWhenCompanyTypeLP() {
         // given
         // when
         CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_PARTNERSHIP);

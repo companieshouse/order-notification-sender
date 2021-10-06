@@ -43,7 +43,7 @@ class CertificateOptionsMapperFactoryLLPFeatureFlagEnabledIntegrationTest {
     }
 
     @Test
-    void returnLLPCertificateOptionsMapperWhenCompanyTypeLP() {
+    void returnOtherCertificateOptionsMapperWhenCompanyTypeLP() {
         // given
         // when
         CertificateOptionsMapper certificateOptionsMapper = mapperFactory.getCertificateOptionsMapper(CompanyType.LIMITED_PARTNERSHIP);
