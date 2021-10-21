@@ -15,7 +15,7 @@ class AddressRecordTypeMapperTest {
 
     @BeforeEach
     void setup() {
-        mapper = new AddressRecordTypeMapper(Collections.singletonMap(IncludeAddressRecordsTypeApi.CURRENT, "Current"));
+        mapper = new AddressRecordTypeMapper(Collections.singletonMap(IncludeAddressRecordsTypeApi.CURRENT, "Current"), "No");
     }
 
     @Test

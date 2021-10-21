@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -42,9 +42,9 @@ import static org.mockserver.model.HttpResponse.response;
 
 @SpringBootTest
 @DirtiesContext
-@EmbeddedKafka
 @Import(TestConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed-error-consumer.properties")
+@ActiveProfiles("feature-flags-disabled")
 class OrdersKafkaErrorConsumerIntegrationTest {
     @Autowired
     private OrdersKafkaConsumer ordersKafkaConsumer;

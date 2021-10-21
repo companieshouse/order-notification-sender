@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = {DirectorOrSecretaryDetailsApiMapper.class})
 @EnableConfigurationProperties
-public class DirectorOrSecretaryDetailsApiMapperIntegrationTest {
+class DirectorOrSecretaryDetailsApiMapperIntegrationTest {
     @Autowired
     private DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
 

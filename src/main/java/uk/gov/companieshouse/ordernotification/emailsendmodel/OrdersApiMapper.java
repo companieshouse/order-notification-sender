@@ -48,11 +48,11 @@ public abstract class OrdersApiMapper {
         }
     }
 
-    abstract protected OrderModel generateEmailData(BaseItemApi order);
+    protected abstract OrderModel generateEmailData(BaseItemApi order);
 
-    abstract protected String getMessageId();
+    protected abstract String getMessageId();
 
-    abstract protected String getMessageType();
+    protected abstract String getMessageType();
 
     private OrderModel addOrderMetadata(OrderModel model, OrdersApi order) {
         model.setTo(order.getOrderedBy().getEmail());
