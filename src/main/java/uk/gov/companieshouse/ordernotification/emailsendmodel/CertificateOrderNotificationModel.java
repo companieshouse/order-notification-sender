@@ -21,6 +21,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String principalPlaceOfBusinessDetails;
     private String generalNatureOfBusinessInformation;
     private FeatureOptions featureOptions;
+    private String liquidatorsDetails;
 
     public String getCertificateType() {
         return certificateType;
@@ -142,6 +143,14 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.featureOptions = featureOptions;
     }
 
+    public String getLiquidatorsDetails() {
+        return liquidatorsDetails;
+    }
+
+    public void setLiquidatorsDetails(String liquidatorsDetails) {
+        this.liquidatorsDetails = liquidatorsDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -168,7 +177,8 @@ public class CertificateOrderNotificationModel extends OrderModel {
                 Objects.equals(limitedPartnerDetails, that.limitedPartnerDetails) &&
                 Objects.equals(principalPlaceOfBusinessDetails, that.principalPlaceOfBusinessDetails) &&
                 Objects.equals(generalNatureOfBusinessInformation, that.generalNatureOfBusinessInformation) &&
-                Objects.equals(featureOptions, that.featureOptions);
+                Objects.equals(featureOptions, that.featureOptions) &&
+                Objects.equals(liquidatorsDetails, that.liquidatorsDetails);
     }
 
     @Override
@@ -176,6 +186,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
         return Objects.hash(super.hashCode(), certificateType, statementOfGoodStanding, deliveryMethod,
                 registeredOfficeAddressDetails, directorDetailsModel, secretaryDetailsModel, companyObjects,
                 companyType, designatedMembersDetails, membersDetails, generalPartnerDetails, limitedPartnerDetails,
-                principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation, featureOptions);
+                principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation, featureOptions, liquidatorsDetails);
     }
 }

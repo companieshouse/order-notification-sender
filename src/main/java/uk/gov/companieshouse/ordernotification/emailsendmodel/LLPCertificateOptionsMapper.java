@@ -9,16 +9,19 @@ import uk.gov.companieshouse.ordernotification.config.FeatureOptions;
 public class LLPCertificateOptionsMapper extends CertificateOptionsMapper {
     private final AddressRecordTypeMapper addressRecordTypeMapper;
     private final MembersDetailsApiMapper membersDetailsApiMapper;
+    private final LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper;
 
     @Autowired
     public LLPCertificateOptionsMapper(FeatureOptions featureOptions,
                                        CertificateTypeMapper certificateTypeMapper,
                                        AddressRecordTypeMapper addressRecordTypeMapper,
                                        DeliveryMethodMapper deliveryMethodMapper,
-                                       MembersDetailsApiMapper membersDetailsApiMapper) {
+                                       MembersDetailsApiMapper membersDetailsApiMapper,
+                                       LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper) {
         super(featureOptions, certificateTypeMapper, deliveryMethodMapper);
         this.addressRecordTypeMapper = addressRecordTypeMapper;
         this.membersDetailsApiMapper = membersDetailsApiMapper;
+        this.liquidatorsDetailsApiMapper = liquidatorsDetailsApiMapper;
     }
 
     @Override
@@ -26,5 +29,6 @@ public class LLPCertificateOptionsMapper extends CertificateOptionsMapper {
         destination.setRegisteredOfficeAddressDetails(addressRecordTypeMapper.mapAddressRecordType(source.getRegisteredOfficeAddressDetails().getIncludeAddressRecordsType()));
         destination.setDesignatedMembersDetails(membersDetailsApiMapper.map(source.getDesignatedMemberDetails()));
         destination.setMembersDetails(membersDetailsApiMapper.map(source.getMemberDetails()));
+        liquidatorsDetailsApiMapper.map(source, destination);
     }
 }
