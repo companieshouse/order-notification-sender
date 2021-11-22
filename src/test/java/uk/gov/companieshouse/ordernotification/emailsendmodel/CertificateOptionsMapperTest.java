@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
@@ -22,6 +21,8 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,12 +35,14 @@ class CertificateOptionsMapperTest {
     private DeliveryMethodMapper deliveryMethodMapper;
     @Mock
     private DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
+    @Mock
+    private LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper;
 
     @InjectMocks
     private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
 
     @Test
-    void testCertificateOrderNotificationMapperMapsSuccessfully() throws JsonProcessingException {
+    void testCertificateOrderNotificationMapperMapsSuccessfully() {
         // given
         DirectorOrSecretaryDetailsApi appointmentDetails = new DirectorOrSecretaryDetailsApi();
         appointmentDetails.setIncludeAddress(true);
@@ -96,6 +99,7 @@ class CertificateOptionsMapperTest {
         expected.setCompanyObjects(TestConstants.READABLE_FALSE);
 
         assertEquals(expected, result);
+        verify(liquidatorsDetailsApiMapper).map(eq(itemOptions), any());
     }
 
     private CertificateDetailsModel getCertificateDetailsModel() {

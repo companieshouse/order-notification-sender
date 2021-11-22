@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +28,8 @@ class LLPCertificateOptionsMapperTest {
     private AddressRecordTypeMapper addressRecordTypeMapper;
     @Mock
     private MembersDetailsApiMapper membersDetailsApiMapper;
+    @Mock
+    private LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper;
 
     @InjectMocks
     private LLPCertificateOptionsMapper llpCertificateOptionsMapper;
@@ -66,6 +70,7 @@ class LLPCertificateOptionsMapperTest {
 
         // then
         assertEquals(getCertificateOrderNotificationModel(), result);
+        verify(liquidatorsDetailsApiMapper).map(eq(itemOptions), any());
     }
 
     private CertificateOrderNotificationModel getCertificateOrderNotificationModel() {
