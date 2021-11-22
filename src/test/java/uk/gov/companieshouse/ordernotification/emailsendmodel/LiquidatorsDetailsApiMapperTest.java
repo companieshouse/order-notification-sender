@@ -60,7 +60,7 @@ public class LiquidatorsDetailsApiMapperTest {
     }
 
     @Test
-    void testSetLiquidatorsDetailsToNullIfLiquidatorsDetailsBasicInformationNull() {
+    void testSetLiquidatorsDetailsToNoIfLiquidatorsDetailsBasicInformationNull() {
         //given
         LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
         LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
@@ -72,6 +72,6 @@ public class LiquidatorsDetailsApiMapperTest {
         mapper.map(certificateItemOptions, model);
 
         //then
-        assertNull(model.getLiquidatorsDetails());
+        assertEquals(TestConstants.READABLE_FALSE, model.getLiquidatorsDetails());
     }
 }
