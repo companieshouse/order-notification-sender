@@ -19,7 +19,6 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOptionsMapperFactory;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,11 +36,6 @@ public class TestConfig {
     @Bean
     KafkaProducer<String, OrderReceived> myProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         return createProducer(bootstrapServers, OrderReceived.class);
-    }
-
-    @Bean
-    KafkaProducer<String, OrderReceivedNotificationRetry> myRetryProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-        return createProducer(bootstrapServers, OrderReceivedNotificationRetry.class);
     }
 
     private <T extends SpecificRecord> KafkaProducer<String, T> createProducer(String bootstrapServers, Class<T> type) {

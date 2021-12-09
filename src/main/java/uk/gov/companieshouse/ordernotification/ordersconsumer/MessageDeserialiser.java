@@ -8,7 +8,7 @@ import org.apache.avro.reflect.ReflectDatumReader;
 import org.apache.kafka.common.serialization.Deserializer;
 
 /**
- * OrderReceivedNotificationRetry deserializer based on apache kafka Deserializer interface
+ * OrderReceived deserializer based on apache kafka Deserializer interface
  * @param <T>
  */
 public class MessageDeserialiser<T extends IndexedRecord> implements Deserializer<T> {

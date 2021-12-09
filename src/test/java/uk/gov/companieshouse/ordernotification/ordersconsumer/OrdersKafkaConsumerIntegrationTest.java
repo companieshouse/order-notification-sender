@@ -28,7 +28,6 @@ import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -59,7 +58,7 @@ class OrdersKafkaConsumerIntegrationTest {
     private KafkaProducer<String, OrderReceived> orderReceivedProducer;
 
     @Autowired
-    private KafkaProducer<String, OrderReceivedNotificationRetry> orderReceivedRetryProducer;
+    private KafkaProducer<String, OrderReceived> orderReceivedRetryProducer;
 
     @Autowired
     private KafkaConsumer<String, email_send> consumer;
@@ -184,7 +183,7 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // when
         embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
-        orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry", "order-received-notification-retry", getOrderReceivedNotificationRetry())).get();
+        orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry", "order-received-notification-retry", getOrderReceivedRetry())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
         email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
@@ -202,10 +201,10 @@ class OrdersKafkaConsumerIntegrationTest {
         return orderReceived;
     }
 
-    private static OrderReceivedNotificationRetry getOrderReceivedNotificationRetry() {
-        OrderReceivedNotificationRetry orderReceivedNotificationRetry = new OrderReceivedNotificationRetry();
-        orderReceivedNotificationRetry.setAttempt(2);
-        orderReceivedNotificationRetry.setOrder(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE));
-        return orderReceivedNotificationRetry;
+    private static OrderReceived getOrderReceivedRetry() {
+        OrderReceived orderReceivedRetry = new OrderReceived();
+        orderReceivedRetry.setAttempt(2);
+        orderReceivedRetry.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        return orderReceivedRetry;
     }
 }

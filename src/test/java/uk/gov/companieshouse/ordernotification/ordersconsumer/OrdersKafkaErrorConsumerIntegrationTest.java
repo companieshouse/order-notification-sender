@@ -27,7 +27,6 @@ import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -53,7 +52,7 @@ class OrdersKafkaErrorConsumerIntegrationTest {
     private KafkaProducer<String, OrderReceived> orderReceivedProducer;
 
     @Autowired
-    private KafkaProducer<String, OrderReceivedNotificationRetry> orderReceivedRetryProducer;
+    private KafkaProducer<String, OrderReceived> orderReceivedRetryProducer;
 
     @Autowired
     private KafkaConsumer<String, email_send> consumer;
