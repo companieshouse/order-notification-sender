@@ -81,6 +81,7 @@ class OrdersApiOrderRetrieverTest {
         //then
         assertThat(actual, is(ordersApi));
         verify(logger).debug("Order data returned from API client", logMap);
+        verify(ordersGet).execute();
     }
 
     @Test
@@ -93,7 +94,7 @@ class OrdersApiOrderRetrieverTest {
         when(ordersGet.execute()).thenThrow(URIValidationException.class);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
-        OrdersServiceException e = assertThrows(OrdersServiceException.class, () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT));
+        assertThrows(OrdersServiceException.class, () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT));
         verify(logger).error(eq("Unrecognised URI pattern"), any(), eq(logMap));
     }
 
