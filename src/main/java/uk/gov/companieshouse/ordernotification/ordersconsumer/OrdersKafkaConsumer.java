@@ -16,7 +16,6 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersServiceException;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceived(Message<OrderReceived> message) {
-        handleMessage(new OrderReceivedFacade(message));
+        handleMessage(message);
     }
 
     /**
@@ -80,16 +79,14 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
      * is ready to be published.</p>
      *
      * @param message A {@link Message message} containing an
-     * {@link OrderReceivedNotificationRetry order received retry entity}. This entity contains the original
-     * {@link OrderReceived order that was received} and an integer indicating the number of times the message
-     * has been resent.
+     * {@link OrderReceived order received entity}.
      */
     @KafkaListener(id = ORDER_RECEIVED_GROUP_RETRY, groupId = ORDER_RECEIVED_GROUP_RETRY,
             topics = ORDER_RECEIVED_TOPIC_RETRY,
             autoStartup = "#{!${uk.gov.companieshouse.item-handler.error-consumer}}",
-            containerFactory = "kafkaOrderReceivedRetryListenerContainerFactory")
-    public void processOrderReceivedRetry(Message<OrderReceivedNotificationRetry> message) {
-            handleMessage(new OrderReceivedNotificationRetryFacade(message));
+            containerFactory = "kafkaOrderReceivedListenerContainerFactory")
+    public void processOrderReceivedRetry(Message<OrderReceived> message) {
+            handleMessage(message);
     }
 
     /**
@@ -107,7 +104,7 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     public void processOrderReceivedError(Message<OrderReceived> message) {
         long offset = Long.parseLong("" + message.getHeaders().get("kafka_offset"));
         if (offset <= errorRecoveryOffset) {
-            handleMessage(new OrderReceivedFacade(message));
+            handleMessage(message);
         } else {
             Map<String, Object> logMap = loggingUtils.createLogMap();
             logMap.put(LoggingUtils.ORDER_RECEIVED_GROUP_ERROR, errorRecoveryOffset);
@@ -119,14 +116,14 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
         }
     }
 
-    private void handleMessage(MessageFacade<?> message) {
-        String orderReceivedUri = message.getOrderUri();
-        logMessageReceived(message.getMessage(), orderReceivedUri);
+    private void handleMessage(Message<OrderReceived> message) {
+        String orderReceivedUri = message.getPayload().getOrderUri();
+        logMessageReceived(message, orderReceivedUri);
 
         applicationEventPublisher.publishEvent(new SendOrderNotificationEvent(orderReceivedUri,
-                message.getRetries()));
+                message.getPayload().getAttempt()));
 
-        logMessageProcessed(message.getMessage(), orderReceivedUri);
+        logMessageProcessed(message, orderReceivedUri);
         eventLatch.countDown();
     }
 

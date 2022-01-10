@@ -39,7 +39,7 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
             if(response.getStatusCode() != HttpStatus.SC_OK) {
                 throw new OrdersResponseException("Orders API returned status code " + response.getStatusCode());
             } else {
-                OrdersApi ordersApi = privateOrderResourceHandler.getOrder(orderUri).execute().getData();
+                OrdersApi ordersApi = response.getData();
                 loggingUtils.getLogger().debug("Order data returned from API client", logMap);
                 return ordersApi;
             }

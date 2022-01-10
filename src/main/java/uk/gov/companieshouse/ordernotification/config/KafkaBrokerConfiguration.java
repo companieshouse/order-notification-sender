@@ -16,7 +16,6 @@ import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,23 +41,9 @@ public class KafkaBrokerConfiguration {
     }
 
     @Bean
-    public ConsumerFactory<String, OrderReceivedNotificationRetry> orderReceivedRetryConsumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
-                new MessageDeserialiser<>(OrderReceivedNotificationRetry.class));
-    }
-
-    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, OrderReceived> kafkaOrderReceivedListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, OrderReceived> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderReceivedConsumerFactory());
-        factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(0, 0)));
-        return factory;
-    }
-
-    @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, OrderReceivedNotificationRetry> kafkaOrderReceivedRetryListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, OrderReceivedNotificationRetry> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(orderReceivedRetryConsumerFactory());
         factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(0, 0)));
         return factory;
     }

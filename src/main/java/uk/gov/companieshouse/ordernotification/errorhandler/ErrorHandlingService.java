@@ -9,7 +9,6 @@ import uk.gov.companieshouse.ordernotification.eventmodel.EventSourceRetrievable
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -49,14 +48,13 @@ public class ErrorHandlingService {
         try {
             if(event.getEventSource().getRetryCount() < maxRetries) {
                 loggingUtils.getLogger().debug("Publishing message to retry topic", logArgs);
-                messageProducer.sendMessage(new OrderReceivedNotificationRetry(
-                        new OrderReceived(event.getEventSource().getOrderURI()),
-                        event.getEventSource().getRetryCount() + 1
-                ), event.getEventSource().getOrderURI(), RETRY_TOPIC);
+                messageProducer.sendMessage(
+                        new OrderReceived(event.getEventSource().getOrderURI(), event.getEventSource().getRetryCount() + 1),
+                        event.getEventSource().getOrderURI(), RETRY_TOPIC);
             } else {
                 loggingUtils.getLogger().debug("Maximum number of attempts exceeded; publishing message to error topic", logArgs);
                 messageProducer.sendMessage(
-                        new OrderReceived(event.getEventSource().getOrderURI()),
+                        new OrderReceived(event.getEventSource().getOrderURI(), 0),
                         event.getEventSource().getOrderURI(), ERROR_TOPIC);
             }
         } catch (SerializationException | ExecutionException | TimeoutException e) {

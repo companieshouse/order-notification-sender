@@ -14,7 +14,6 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 import uk.gov.companieshouse.orders.OrderReceived;
-import uk.gov.companieshouse.orders.OrderReceivedNotificationRetry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +66,7 @@ class ErrorHandlingServiceTest {
         errorHandlingService.handleEvent(eventSourceRetrievable);
 
         //then
-        verify(messageProducer).sendMessage(new OrderReceivedNotificationRetry(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE), 1), TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-retry");
+        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE, 1), TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-retry");
         verify(logger).debug("Publishing message to retry topic", logArgs);
     }
 
@@ -85,7 +84,7 @@ class ErrorHandlingServiceTest {
         errorHandlingService.handleEvent(eventSourceRetrievable);
 
         //then
-        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE), TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-error");
+        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE, 0), TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-error");
         verify(logger).debug("Maximum number of attempts exceeded; publishing message to error topic", logArgs);
     }
 
