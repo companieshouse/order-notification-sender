@@ -1,18 +1,28 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import static java.util.Objects.isNull;
+
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
-
-import java.util.Optional;
 
 @Component
 public class LiquidatorsDetailsApiMapper {
 
     public void map(CertificateItemOptionsApi source, CertificateOrderNotificationModel target) {
-        target.setLiquidatorsDetails(
-                Optional.ofNullable(source.getLiquidatorsDetails())
-                        .map(liquidatorsDetails -> Optional.ofNullable(liquidatorsDetails.getIncludeBasicInformation())
-                                .orElse(Boolean.FALSE))
-                        .map(MapUtil::mapBoolean).orElse(null));
+        if (CompanyStatus.LIQUIDATION == CompanyStatus.getEnumValue(source.getCompanyStatus())) {
+            if (!isNull(source.getLiquidatorsDetails())) {
+                target.setLiquidatorsDetails(MapUtil.mapBoolean(source.getLiquidatorsDetails()
+                        .getIncludeBasicInformation()));
+                target.setRenderLiquidatorDetails(true);
+            } else {
+                target.setLiquidatorsDetails(null);
+                target.setRenderLiquidatorDetails(false);
+            }
+            target.setRenderStatementOfGoodStanding(false);
+        } else {
+            target.setStatementOfGoodStanding(MapUtil.mapBoolean(source.getIncludeGoodStandingInformation()));
+            target.setRenderStatementOfGoodStanding(true);
+            target.setRenderLiquidatorDetails(false);
+        }
     }
 }

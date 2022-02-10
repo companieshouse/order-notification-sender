@@ -8,6 +8,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     private String certificateType;
     private String statementOfGoodStanding;
+    private boolean renderStatementOfGoodStanding;
     private String deliveryMethod;
     private String registeredOfficeAddressDetails;
     private CertificateDetailsModel directorDetailsModel;
@@ -22,6 +23,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String generalNatureOfBusinessInformation;
     private FeatureOptions featureOptions;
     private String liquidatorsDetails;
+    private boolean renderLiquidatorDetails;
 
     public String getCertificateType() {
         return certificateType;
@@ -37,6 +39,14 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     public void setStatementOfGoodStanding(String statementOfGoodStanding) {
         this.statementOfGoodStanding = statementOfGoodStanding;
+    }
+
+    public boolean isRenderStatementOfGoodStanding() {
+        return renderStatementOfGoodStanding;
+    }
+
+    public void setRenderStatementOfGoodStanding(boolean renderStatementOfGoodStanding) {
+        this.renderStatementOfGoodStanding = renderStatementOfGoodStanding;
     }
 
     public String getDeliveryMethod() {
@@ -149,6 +159,14 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     public void setLiquidatorsDetails(String liquidatorsDetails) {
         this.liquidatorsDetails = liquidatorsDetails;
+    }
+
+    public boolean isRenderLiquidatorDetails() {
+        return renderLiquidatorDetails;
+    }
+
+    public void setRenderLiquidatorDetails(boolean renderLiquidatorDetails) {
+        this.renderLiquidatorDetails = renderLiquidatorDetails;
     }
 
     @Override
