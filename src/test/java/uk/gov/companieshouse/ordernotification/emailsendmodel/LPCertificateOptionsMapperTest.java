@@ -52,11 +52,15 @@ class LPCertificateOptionsMapperTest {
 
         when(addressRecordTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.ADDRESS_TYPE);
 
+        CertificateOrderNotificationModel expected = getCertificateOrderNotificationModel();
+        expected.setStatementOfGoodStanding("No");
+        expected.setRenderStatementOfGoodStanding(true);
+
         // when
         lpCertificateOptionsMapper.doMapCustomData(itemOptions, result);
 
         // then
-        assertEquals(getCertificateOrderNotificationModel(), result);
+        assertEquals(expected, result);
     }
 
     private CertificateOrderNotificationModel getCertificateOrderNotificationModel() {

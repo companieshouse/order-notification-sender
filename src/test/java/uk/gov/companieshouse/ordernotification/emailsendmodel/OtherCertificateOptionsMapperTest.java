@@ -28,7 +28,7 @@ class OtherCertificateOptionsMapperTest {
     @Mock
     private DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
     @Mock
-    private LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper;
+    private CompanyStatusMapper companyStatusMapper;
 
     @InjectMocks
     private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
@@ -65,7 +65,7 @@ class OtherCertificateOptionsMapperTest {
 
         // then
         assertEquals(getCertificateOrderNotificationModel(), result);
-        verify(liquidatorsDetailsApiMapper).map(eq(itemOptions), any());
+        verify(companyStatusMapper).map(eq(itemOptions), any());
     }
 
     private CertificateOrderNotificationModel getCertificateOrderNotificationModel() {

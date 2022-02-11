@@ -23,7 +23,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String generalNatureOfBusinessInformation;
     private FeatureOptions featureOptions;
     private String liquidatorsDetails;
-    private boolean renderLiquidatorDetails;
+    private boolean renderLiquidatorsDetails;
 
     public String getCertificateType() {
         return certificateType;
@@ -161,12 +161,12 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.liquidatorsDetails = liquidatorsDetails;
     }
 
-    public boolean isRenderLiquidatorDetails() {
-        return renderLiquidatorDetails;
+    public boolean isRenderLiquidatorsDetails() {
+        return renderLiquidatorsDetails;
     }
 
-    public void setRenderLiquidatorDetails(boolean renderLiquidatorDetails) {
-        this.renderLiquidatorDetails = renderLiquidatorDetails;
+    public void setRenderLiquidatorsDetails(boolean renderLiquidatorsDetails) {
+        this.renderLiquidatorsDetails = renderLiquidatorsDetails;
     }
 
     @Override

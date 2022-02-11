@@ -10,12 +10,12 @@ import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.LiquidatorsDetailsApi;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
-public class LiquidatorsDetailsApiMapperTest {
+class CompanyStatusMapperTest {
 
     @Test
     void testSetLiquidatorsDetailsToYesIfLiquidatorsDetailsTrue() {
         //given
-        LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
+        CompanyStatusMapper mapper = new CompanyStatusMapper();
         LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
         liquidatorsDetailsApi.setIncludeBasicInformation(Boolean.TRUE);
         CertificateItemOptionsApi certificateItemOptionsApi = new CertificateItemOptionsApi();
@@ -29,7 +29,7 @@ public class LiquidatorsDetailsApiMapperTest {
 
         //then
         assertEquals(TestConstants.READABLE_TRUE, model.getLiquidatorsDetails());
-        assertTrue(model.isRenderLiquidatorDetails());
+        assertTrue(model.isRenderLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
         assertFalse(model.isRenderStatementOfGoodStanding());
     }
@@ -37,7 +37,7 @@ public class LiquidatorsDetailsApiMapperTest {
     @Test
     void testSetLiquidatorsDetailsToNoIfLiquidatorsDetailsFalse() {
         //given
-        LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
+        CompanyStatusMapper mapper = new CompanyStatusMapper();
         LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
         liquidatorsDetailsApi.setIncludeBasicInformation(Boolean.FALSE);
         CertificateItemOptionsApi certificateItemOptionsApi = new CertificateItemOptionsApi();
@@ -51,7 +51,7 @@ public class LiquidatorsDetailsApiMapperTest {
 
         //then
         assertEquals(TestConstants.READABLE_FALSE, model.getLiquidatorsDetails());
-        assertTrue(model.isRenderLiquidatorDetails());
+        assertTrue(model.isRenderLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
         assertFalse(model.isRenderStatementOfGoodStanding());
     }
@@ -59,7 +59,7 @@ public class LiquidatorsDetailsApiMapperTest {
     @Test
     void testSetLiquidatorsDetailsToNullIfLiquidatorsDetailsAbsent() {
         //given
-        LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
+        CompanyStatusMapper mapper = new CompanyStatusMapper();
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
         certificateItemOptions.setCompanyStatus("liquidation");
@@ -69,7 +69,7 @@ public class LiquidatorsDetailsApiMapperTest {
 
         //then
         assertNull(model.getLiquidatorsDetails());
-        assertFalse(model.isRenderLiquidatorDetails());
+        assertFalse(model.isRenderLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
         assertFalse(model.isRenderStatementOfGoodStanding());
     }
@@ -77,7 +77,7 @@ public class LiquidatorsDetailsApiMapperTest {
     @Test
     void testSetLiquidatorsDetailsToNoIfLiquidatorsDetailsBasicInformationNull() {
         //given
-        LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
+        CompanyStatusMapper mapper = new CompanyStatusMapper();
         LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
         CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
         certificateItemOptions.setLiquidatorsDetails(liquidatorsDetailsApi);
@@ -89,14 +89,14 @@ public class LiquidatorsDetailsApiMapperTest {
 
         //then
         assertEquals(TestConstants.READABLE_FALSE, model.getLiquidatorsDetails());
-        assertTrue(model.isRenderLiquidatorDetails());
+        assertTrue(model.isRenderLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
         assertFalse(model.isRenderStatementOfGoodStanding());
     }
 
     @Test
     void testStatementOfGoodStandingRenderedAndSetToNoIfCompanyNotInLiquidationAndIncludeStatementOfGoodStandingIsFalse() {
-        LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
+        CompanyStatusMapper mapper = new CompanyStatusMapper();
         LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
         CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
         certificateItemOptions.setIncludeGoodStandingInformation(false);
@@ -108,14 +108,14 @@ public class LiquidatorsDetailsApiMapperTest {
 
         //then
         assertNull(model.getLiquidatorsDetails());
-        assertFalse(model.isRenderLiquidatorDetails());
+        assertFalse(model.isRenderLiquidatorsDetails());
         assertEquals(TestConstants.READABLE_FALSE, model.getStatementOfGoodStanding());
         assertTrue(model.isRenderStatementOfGoodStanding());
     }
 
     @Test
     void testStatementOfGoodStandingRenderedAndSetToYesIfCompanyNotInLiquidationAndIncludeStatementOfGoodStandingIsTrue() {
-        LiquidatorsDetailsApiMapper mapper = new LiquidatorsDetailsApiMapper();
+        CompanyStatusMapper mapper = new CompanyStatusMapper();
         LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
         CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
         certificateItemOptions.setIncludeGoodStandingInformation(true);
@@ -127,7 +127,7 @@ public class LiquidatorsDetailsApiMapperTest {
 
         //then
         assertNull(model.getLiquidatorsDetails());
-        assertFalse(model.isRenderLiquidatorDetails());
+        assertFalse(model.isRenderLiquidatorsDetails());
         assertEquals(TestConstants.READABLE_TRUE, model.getStatementOfGoodStanding());
         assertTrue(model.isRenderStatementOfGoodStanding());
     }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
@@ -35,8 +36,8 @@ class CertificateOptionsMapperTest {
     private DeliveryMethodMapper deliveryMethodMapper;
     @Mock
     private DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
-    @Mock
-    private LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper;
+    @Spy
+    private CompanyStatusMapper companyStatusMapper;
 
     @InjectMocks
     private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
@@ -92,6 +93,7 @@ class CertificateOptionsMapperTest {
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
         expected.setStatementOfGoodStanding(TestConstants.READABLE_TRUE);
+        expected.setRenderStatementOfGoodStanding(true);
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
         expected.setRegisteredOfficeAddressDetails(TestConstants.EXPECTED_ADDRESS_TYPE);
         expected.setDirectorDetailsModel(getCertificateDetailsModel());
@@ -99,7 +101,7 @@ class CertificateOptionsMapperTest {
         expected.setCompanyObjects(TestConstants.READABLE_FALSE);
 
         assertEquals(expected, result);
-        verify(liquidatorsDetailsApiMapper).map(eq(itemOptions), any());
+        verify(companyStatusMapper).map(eq(itemOptions), any());
     }
 
     private CertificateDetailsModel getCertificateDetailsModel() {

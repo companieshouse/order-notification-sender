@@ -29,7 +29,7 @@ class LLPCertificateOptionsMapperTest {
     @Mock
     private MembersDetailsApiMapper membersDetailsApiMapper;
     @Mock
-    private LiquidatorsDetailsApiMapper liquidatorsDetailsApiMapper;
+    private CompanyStatusMapper companyStatusMapper;
 
     @InjectMocks
     private LLPCertificateOptionsMapper llpCertificateOptionsMapper;
@@ -70,7 +70,7 @@ class LLPCertificateOptionsMapperTest {
 
         // then
         assertEquals(getCertificateOrderNotificationModel(), result);
-        verify(liquidatorsDetailsApiMapper).map(eq(itemOptions), any());
+        verify(companyStatusMapper).map(eq(itemOptions), any());
     }
 
     private CertificateOrderNotificationModel getCertificateOrderNotificationModel() {
