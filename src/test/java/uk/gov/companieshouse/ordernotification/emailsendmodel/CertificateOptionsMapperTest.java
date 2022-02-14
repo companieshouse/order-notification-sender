@@ -92,8 +92,7 @@ class CertificateOptionsMapperTest {
         expected.setCompanyName(TestConstants.COMPANY_NAME);
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
-        expected.setStatementOfGoodStanding(TestConstants.READABLE_TRUE);
-        expected.setRenderStatementOfGoodStanding(true);
+        expected.setStatementOfGoodStanding(new Content<>(TestConstants.READABLE_TRUE));
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
         expected.setRegisteredOfficeAddressDetails(TestConstants.EXPECTED_ADDRESS_TYPE);
         expected.setDirectorDetailsModel(getCertificateDetailsModel());

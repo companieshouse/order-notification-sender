@@ -11,18 +11,15 @@ public class CompanyStatusMapper {
     public void map(CertificateItemOptionsApi source, CertificateOrderNotificationModel target) {
         if (CompanyStatus.LIQUIDATION == CompanyStatus.getEnumValue(source.getCompanyStatus())) {
             if (!isNull(source.getLiquidatorsDetails())) {
-                target.setLiquidatorsDetails(MapUtil.mapBoolean(source.getLiquidatorsDetails()
-                        .getIncludeBasicInformation()));
-                target.setRenderLiquidatorsDetails(true);
+                target.setLiquidatorsDetails(new Content<>(MapUtil.mapBoolean(source.getLiquidatorsDetails()
+                        .getIncludeBasicInformation())));
             } else {
                 target.setLiquidatorsDetails(null);
-                target.setRenderLiquidatorsDetails(false);
             }
-            target.setRenderStatementOfGoodStanding(false);
+            target.setStatementOfGoodStanding(null);
         } else {
-            target.setStatementOfGoodStanding(MapUtil.mapBoolean(source.getIncludeGoodStandingInformation()));
-            target.setRenderStatementOfGoodStanding(true);
-            target.setRenderLiquidatorsDetails(false);
+            target.setLiquidatorsDetails(null);
+            target.setStatementOfGoodStanding(new Content<>(MapUtil.mapBoolean(source.getIncludeGoodStandingInformation())));
         }
     }
 }

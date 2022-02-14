@@ -28,10 +28,8 @@ class CompanyStatusMapperTest {
         mapper.map(certificateItemOptionsApi, model);
 
         //then
-        assertEquals(TestConstants.READABLE_TRUE, model.getLiquidatorsDetails());
-        assertTrue(model.isRenderLiquidatorsDetails());
+        assertEquals(new Content<>(TestConstants.READABLE_TRUE), model.getLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
-        assertFalse(model.isRenderStatementOfGoodStanding());
     }
 
     @Test
@@ -50,10 +48,8 @@ class CompanyStatusMapperTest {
         mapper.map(certificateItemOptionsApi, model);
 
         //then
-        assertEquals(TestConstants.READABLE_FALSE, model.getLiquidatorsDetails());
-        assertTrue(model.isRenderLiquidatorsDetails());
+        assertEquals(new Content<>(TestConstants.READABLE_FALSE), model.getLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
-        assertFalse(model.isRenderStatementOfGoodStanding());
     }
 
     @Test
@@ -69,9 +65,7 @@ class CompanyStatusMapperTest {
 
         //then
         assertNull(model.getLiquidatorsDetails());
-        assertFalse(model.isRenderLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
-        assertFalse(model.isRenderStatementOfGoodStanding());
     }
 
     @Test
@@ -88,10 +82,8 @@ class CompanyStatusMapperTest {
         mapper.map(certificateItemOptions, model);
 
         //then
-        assertEquals(TestConstants.READABLE_FALSE, model.getLiquidatorsDetails());
-        assertTrue(model.isRenderLiquidatorsDetails());
+        assertEquals(new Content<>(TestConstants.READABLE_FALSE), model.getLiquidatorsDetails());
         assertNull(model.getStatementOfGoodStanding());
-        assertFalse(model.isRenderStatementOfGoodStanding());
     }
 
     @Test
@@ -108,9 +100,7 @@ class CompanyStatusMapperTest {
 
         //then
         assertNull(model.getLiquidatorsDetails());
-        assertFalse(model.isRenderLiquidatorsDetails());
-        assertEquals(TestConstants.READABLE_FALSE, model.getStatementOfGoodStanding());
-        assertTrue(model.isRenderStatementOfGoodStanding());
+        assertEquals(new Content<>(TestConstants.READABLE_FALSE), model.getStatementOfGoodStanding());
     }
 
     @Test
@@ -127,8 +117,6 @@ class CompanyStatusMapperTest {
 
         //then
         assertNull(model.getLiquidatorsDetails());
-        assertFalse(model.isRenderLiquidatorsDetails());
-        assertEquals(TestConstants.READABLE_TRUE, model.getStatementOfGoodStanding());
-        assertTrue(model.isRenderStatementOfGoodStanding());
+        assertEquals(new Content<>(TestConstants.READABLE_TRUE), model.getStatementOfGoodStanding());
     }
 }
