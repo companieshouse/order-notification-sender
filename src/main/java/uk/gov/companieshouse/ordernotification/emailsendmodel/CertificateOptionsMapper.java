@@ -24,7 +24,6 @@ public abstract class CertificateOptionsMapper {
         model.setCompanyName(item.getCompanyName());
         model.setCompanyNumber(item.getCompanyNumber());
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
-        model.setStatementOfGoodStanding(MapUtil.mapBoolean(itemOptions.getIncludeGoodStandingInformation()));
         model.setDeliveryMethod(getDeliveryMethodMapper().mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));
         model.setFeatureOptions(featureOptions);
 
@@ -42,6 +41,4 @@ public abstract class CertificateOptionsMapper {
     protected DeliveryMethodMapper getDeliveryMethodMapper() {
         return deliveryMethodMapper;
     }
-
-
 }

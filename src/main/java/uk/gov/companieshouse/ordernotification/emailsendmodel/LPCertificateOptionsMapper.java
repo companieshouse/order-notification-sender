@@ -24,5 +24,6 @@ public class LPCertificateOptionsMapper extends CertificateOptionsMapper {
         destination.setGeneralPartnerDetails(MapUtil.mapBoolean(source.getGeneralPartnerDetails().getIncludeBasicInformation()));
         destination.setLimitedPartnerDetails(MapUtil.mapBoolean(source.getLimitedPartnerDetails().getIncludeBasicInformation()));
         destination.setGeneralNatureOfBusinessInformation(MapUtil.mapBoolean(source.getIncludeGeneralNatureOfBusinessInformation()));
+        destination.setStatementOfGoodStanding(new Content<>(MapUtil.mapBoolean(source.getIncludeGoodStandingInformation())));
     }
 }

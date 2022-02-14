@@ -7,7 +7,7 @@ import java.util.Objects;
 public class CertificateOrderNotificationModel extends OrderModel {
 
     private String certificateType;
-    private String statementOfGoodStanding;
+    private Content<String> statementOfGoodStanding;
     private String deliveryMethod;
     private String registeredOfficeAddressDetails;
     private CertificateDetailsModel directorDetailsModel;
@@ -21,7 +21,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String principalPlaceOfBusinessDetails;
     private String generalNatureOfBusinessInformation;
     private FeatureOptions featureOptions;
-    private String liquidatorsDetails;
+    private Content<String> liquidatorsDetails;
 
     public String getCertificateType() {
         return certificateType;
@@ -31,11 +31,11 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.certificateType = certificateType;
     }
 
-    public String getStatementOfGoodStanding() {
+    public Content<String> getStatementOfGoodStanding() {
         return statementOfGoodStanding;
     }
 
-    public void setStatementOfGoodStanding(String statementOfGoodStanding) {
+    public void setStatementOfGoodStanding(Content<String> statementOfGoodStanding) {
         this.statementOfGoodStanding = statementOfGoodStanding;
     }
 
@@ -143,11 +143,11 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.featureOptions = featureOptions;
     }
 
-    public String getLiquidatorsDetails() {
+    public Content<String> getLiquidatorsDetails() {
         return liquidatorsDetails;
     }
 
-    public void setLiquidatorsDetails(String liquidatorsDetails) {
+    public void setLiquidatorsDetails(Content<String> liquidatorsDetails) {
         this.liquidatorsDetails = liquidatorsDetails;
     }
 
