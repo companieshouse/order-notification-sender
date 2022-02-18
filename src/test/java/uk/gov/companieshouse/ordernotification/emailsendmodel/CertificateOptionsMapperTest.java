@@ -1,10 +1,9 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
@@ -22,9 +21,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateOptionsMapperTest {
@@ -36,11 +33,15 @@ class CertificateOptionsMapperTest {
     private DeliveryMethodMapper deliveryMethodMapper;
     @Mock
     private DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
-    @Spy
-    private CompanyStatusMapper companyStatusMapper;
 
-    @InjectMocks
     private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
+
+    @BeforeEach
+    void setUp() {
+        otherCertificateOptionsMapper = new OtherCertificateOptionsMapper(null, certificateTypeMapper,
+                addressRecordTypeMapper, deliveryMethodMapper, directorOrSecretaryDetailsApiMapper,
+                new CompanyStatusMapper(Collections.emptyMap(), new DefaultStatusMapper()));
+    }
 
     @Test
     void testCertificateOrderNotificationMapperMapsSuccessfully() {
@@ -100,7 +101,6 @@ class CertificateOptionsMapperTest {
         expected.setCompanyObjects(TestConstants.READABLE_FALSE);
 
         assertEquals(expected, result);
-        verify(companyStatusMapper).map(eq(itemOptions), any());
     }
 
     private CertificateDetailsModel getCertificateDetailsModel() {
