@@ -22,6 +22,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String generalNatureOfBusinessInformation;
     private FeatureOptions featureOptions;
     private Content<String> liquidatorsDetails;
+    private Content<String> administratorsDetails;
 
     public String getCertificateType() {
         return certificateType;
@@ -151,6 +152,14 @@ public class CertificateOrderNotificationModel extends OrderModel {
         this.liquidatorsDetails = liquidatorsDetails;
     }
 
+    public Content<String> getAdministratorsDetails() {
+        return administratorsDetails;
+    }
+
+    public void setAdministratorsDetails(Content<String> administratorsDetails) {
+        this.administratorsDetails = administratorsDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -178,7 +187,8 @@ public class CertificateOrderNotificationModel extends OrderModel {
                 Objects.equals(principalPlaceOfBusinessDetails, that.principalPlaceOfBusinessDetails) &&
                 Objects.equals(generalNatureOfBusinessInformation, that.generalNatureOfBusinessInformation) &&
                 Objects.equals(featureOptions, that.featureOptions) &&
-                Objects.equals(liquidatorsDetails, that.liquidatorsDetails);
+                Objects.equals(liquidatorsDetails, that.liquidatorsDetails) &&
+                Objects.equals(administratorsDetails, that.administratorsDetails);
     }
 
     @Override
@@ -186,6 +196,7 @@ public class CertificateOrderNotificationModel extends OrderModel {
         return Objects.hash(super.hashCode(), certificateType, statementOfGoodStanding, deliveryMethod,
                 registeredOfficeAddressDetails, directorDetailsModel, secretaryDetailsModel, companyObjects,
                 companyType, designatedMembersDetails, membersDetails, generalPartnerDetails, limitedPartnerDetails,
-                principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation, featureOptions, liquidatorsDetails);
+                principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation, featureOptions, liquidatorsDetails,
+                administratorsDetails);
     }
 }
