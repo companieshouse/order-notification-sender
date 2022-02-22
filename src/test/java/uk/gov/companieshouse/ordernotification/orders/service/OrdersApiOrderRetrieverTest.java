@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpStatusCodes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -62,6 +64,9 @@ class OrdersApiOrderRetrieverTest {
     @Mock
     private Logger logger;
 
+    @Mock
+    ApiErrorResponseException apiErrorResponseException;
+
     @Test
     void getOrderData() throws Exception {
         //given
@@ -70,7 +75,6 @@ class OrdersApiOrderRetrieverTest {
         when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
         when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
         when(ordersGet.execute()).thenReturn(ordersResponse);
-        when(ordersResponse.getStatusCode()).thenReturn(200);
         when(ordersResponse.getData()).thenReturn(ordersApi);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
@@ -85,6 +89,42 @@ class OrdersApiOrderRetrieverTest {
     }
 
     @Test
+    void getOrderDataThrowsResponseExceptionIfApiErrorResponseExceptionThrown() throws ApiErrorResponseException, URIValidationException {
+        //given
+        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
+        when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
+        when(ordersGet.execute()).thenThrow(apiErrorResponseException);
+        when(apiErrorResponseException.getMessage()).thenReturn("Orders API unavailable");
+        when(apiErrorResponseException.getStatusCode()).thenReturn(HttpStatusCodes.STATUS_CODE_SERVER_ERROR);
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(loggingUtils.createLogMap()).thenReturn(new HashMap<>());
+
+        OrdersResponseException exception = assertThrows(OrdersResponseException.class, () -> serviceUnderTest.getOrderData(ORDER_URL));
+        assertEquals("Order URI /orders/1234, API exception Orders API unavailable, HTTP status 500", exception.getMessage());
+    }
+
+    @Test
+    void getOrderDataThrowsServiceExceptionIf404ReturnedByOrdersApi() throws ApiErrorResponseException, URIValidationException {
+        //given
+        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
+        when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
+        when(ordersGet.execute()).thenThrow(apiErrorResponseException);
+        when(apiErrorResponseException.getMessage()).thenReturn("Resource not found");
+        when(apiErrorResponseException.getStatusCode()).thenReturn(HttpStatusCodes.STATUS_CODE_NOT_FOUND);
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(loggingUtils.createLogMap()).thenReturn(new HashMap<>());
+
+        //when
+        Executable actual = () -> serviceUnderTest.getOrderData(ORDER_URL);
+
+        //then
+        OrdersServiceException exception = assertThrows(OrdersServiceException.class, actual);
+        assertEquals("Order URI /orders/1234, API exception Resource not found, HTTP status 404", exception.getMessage());
+    }
+
+    @Test
     void getOrderDataThrowsServiceExceptionForIncorrectUri() throws ApiErrorResponseException, URIValidationException {
         //given
         Map<String, Object> logMap = new HashMap<>();
@@ -96,33 +136,5 @@ class OrdersApiOrderRetrieverTest {
         when(loggingUtils.createLogMap()).thenReturn(logMap);
         assertThrows(OrdersServiceException.class, () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT));
         verify(logger).error(eq("Unrecognised URI pattern"), any(), eq(logMap));
-    }
-
-    @Test
-    void getOrderDataThrowsServiceExceptionIfApiErrorResponseExceptionThrown() throws ApiErrorResponseException, URIValidationException {
-        //given
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
-        when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
-        when(privateOrderResourceHandler.getOrder(anyString())).thenReturn(ordersGet);
-        when(ordersGet.execute()).thenThrow(ApiErrorResponseException.class);
-        OrdersResponseException exception = assertThrows(OrdersResponseException.class, () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT));
-        assertEquals("Error fetching data from Orders API", exception.getMessage());
-    }
-
-    @Test
-    void getOrderDataThrowsServiceExceptionIfNon200ReturnedByOrdersApi() throws ApiErrorResponseException, URIValidationException {
-        //given
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
-        when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
-        when(privateOrderResourceHandler.getOrder(anyString())).thenReturn(ordersGet);
-        when(ordersGet.execute()).thenReturn(ordersResponse);
-        when(ordersResponse.getStatusCode()).thenReturn(500);
-
-        //when
-        Executable actual = () -> serviceUnderTest.getOrderData(ORDER_URL);
-
-        //then
-        OrdersResponseException exception = assertThrows(OrdersResponseException.class, actual);
-        assertEquals("Orders API returned status code 500", exception.getMessage());
     }
 }
