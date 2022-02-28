@@ -30,11 +30,11 @@ class OrderMessageErrorConsumerUnitTest {
     @Mock
     private KafkaConsumer<String, OrderReceived> consumer;
 
-    /*@Mock
+    @Mock
     private OrderMessageHandler orderMessageHandler;
 
     @Mock
-    private ErrorConsumerController errorConsumerController;*/
+    private ErrorConsumerController errorConsumerController;
 
     @Spy
     private PartitionOffset partitionOffset = new PartitionOffset();
