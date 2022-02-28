@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
-import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -100,7 +99,11 @@ class OrdersApiOrderRetrieverTest {
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(new HashMap<>());
 
-        OrdersResponseException exception = assertThrows(OrdersResponseException.class, () -> serviceUnderTest.getOrderData(ORDER_URL));
+        // when
+        Executable actual = () -> serviceUnderTest.getOrderData(ORDER_URL);
+
+        // then
+        OrdersResponseException exception = assertThrows(OrdersResponseException.class, actual);
         assertEquals("Order URI /orders/1234, API exception Orders API unavailable, HTTP status 500", exception.getMessage());
     }
 
@@ -134,7 +137,12 @@ class OrdersApiOrderRetrieverTest {
         when(ordersGet.execute()).thenThrow(URIValidationException.class);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
-        assertThrows(OrdersServiceException.class, () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT));
+
+        // when
+        Executable actual = () -> serviceUnderTest.getOrderData(ORDER_URL_INCORRECT);
+
+        // then
+        assertThrows(OrdersServiceException.class, actual);
         verify(logger).error(eq("Unrecognised URI pattern"), any(), eq(logMap));
     }
 }
