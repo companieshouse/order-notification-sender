@@ -4,6 +4,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -53,6 +54,9 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
     private final LoggingUtils loggingUtils;
     private static CountDownLatch startupLatch = new CountDownLatch(0);
     private static CountDownLatch eventLatch = new CountDownLatch(0);
+
+    private String errorGroup;
+    private String errorTopic;
 
     public OrdersKafkaConsumer(KafkaListenerEndpointRegistry registry, LoggingUtils loggingUtils) {
         this.registry = registry;
@@ -200,5 +204,13 @@ public class OrdersKafkaConsumer implements ConsumerSeekAware, ApplicationEventP
 
     void setErrorConsumerEnabled(boolean enabled) {
         this.errorConsumerEnabled = enabled;
+    }
+
+    void setErrorGroup(String errorGroup) {
+        this.errorGroup = errorGroup;
+    }
+
+    void setErrorTopic(String errorTopic) {
+        this.errorTopic = errorTopic;
     }
 }
