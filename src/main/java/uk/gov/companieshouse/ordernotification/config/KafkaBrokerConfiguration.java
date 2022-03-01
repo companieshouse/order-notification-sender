@@ -15,6 +15,7 @@ import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
+import uk.gov.companieshouse.ordernotification.ordersconsumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 import java.util.HashMap;
@@ -70,5 +71,10 @@ public class KafkaBrokerConfiguration {
         config.setAcks(Acks.WAIT_FOR_ALL);
         config.setRetries(10);
         return config;
+    }
+
+    @Bean
+    public PartitionOffset errorRecoveryOffset() {
+        return new PartitionOffset();
     }
 }

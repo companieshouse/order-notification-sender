@@ -19,6 +19,7 @@ import org.springframework.kafka.event.ConsumerStoppedEvent;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.messaging.Message;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +47,9 @@ class OrderMessageErrorConsumerUnitTest {
     private KafkaMessageListenerContainer<String, OrderReceived> kafkaMessageListenerContainer;
 
     @Mock
+    private LoggingUtils loggingUtils;
+
+    @Mock
     private Logger logger;
 
     @InjectMocks
@@ -64,7 +68,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 1L, consumer);
+        orderMessageErrorConsumer.processOrderReceivedError(message, 1L, consumer);
 
         //then
         verify(orderMessageHandler, times(0)).handleMessage(message);
@@ -77,7 +81,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 2L, consumer);
+        orderMessageErrorConsumer.processOrderReceivedError(message, 2L, consumer);
 
         //then
         verify(orderMessageHandler, times(0)).handleMessage(message);
@@ -90,7 +94,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 0L, consumer);
+        orderMessageErrorConsumer.processOrderReceivedError(message, 0L, consumer);
 
         //then
         verify(orderMessageHandler).handleMessage(message);
@@ -103,7 +107,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(2L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 0L, consumer);
+        orderMessageErrorConsumer.processOrderReceivedError(message, 0L, consumer);
 
         //then
         verify(orderMessageHandler).handleMessage(message);
@@ -114,7 +118,8 @@ class OrderMessageErrorConsumerUnitTest {
     void shouldStopConsumerThreadForErrorTopic() {
         //given
         when(consumerStoppedEvent.getSource(KafkaMessageListenerContainer.class)).thenReturn(kafkaMessageListenerContainer);
-        when(kafkaMessageListenerContainer.getBeanName()).thenReturn("item-handler-order-received-error-0");
+        when(kafkaMessageListenerContainer.getBeanName()).thenReturn("order-notification-sender"
+                + "-order-received-notification-error-0");
 
         //when
         orderMessageErrorConsumer.consumerStopped(consumerStoppedEvent);
@@ -127,7 +132,8 @@ class OrderMessageErrorConsumerUnitTest {
     void shouldNotStopConsumerThreadForRetryTopic() {
         //given
         when(consumerStoppedEvent.getSource(KafkaMessageListenerContainer.class)).thenReturn(kafkaMessageListenerContainer);
-        when(kafkaMessageListenerContainer.getBeanName()).thenReturn("item-handler-order-received-retry-0");
+        when(kafkaMessageListenerContainer.getBeanName()).thenReturn("order-notification-sender"
+                + "-order-received-notification-retry-0");
 
         //when
         orderMessageErrorConsumer.consumerStopped(consumerStoppedEvent);
@@ -140,6 +146,7 @@ class OrderMessageErrorConsumerUnitTest {
     void shouldNotSetErrorRecoveryOffsetWhenOffsetHasAlreadyBeenSet() {
         //given
         when(partitionOffset.getOffset()).thenReturn(null);
+        when(loggingUtils.getLogger()).thenReturn(logger);
 
         //when
         orderMessageErrorConsumer.configureErrorRecoveryOffset(consumer);
@@ -153,9 +160,11 @@ class OrderMessageErrorConsumerUnitTest {
         //given
         when(consumer.endOffsets(any())).thenReturn(new HashMap<TopicPartition, Long>() {
             {
-                put(new TopicPartition("order-received-error", 0), 1L);
+                put(new TopicPartition("order-received-notification-error", 0), 1L);
             }
         });
+
+        when(loggingUtils.getLogger()).thenReturn(logger);
 
         //when
         orderMessageErrorConsumer.configureErrorRecoveryOffset(consumer);

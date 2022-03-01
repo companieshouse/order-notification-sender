@@ -1,27 +1,23 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
+import java.util.Map;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEvent;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Service
-public class OrderMessageHandler {
+public class OrderMessageHandler implements ApplicationEventPublisherAware {
 
-    private final OrderProcessorService orderProcessorService;
-    private final OrderProcessResponseHandler orderProcessResponseHandler;
-    private final MessageFilter<OrderReceived> messageFilter;
     private final Logger logger;
     private final LoggingUtils loggingUtils;
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderMessageHandler(final OrderProcessorService orderProcessorService,
-                               final OrderProcessResponseHandler orderProcessResponseHandler,
-                               final MessageFilter<OrderReceived> messageFilter,
-                               final Logger logger, final LoggingUtils loggingUtils) {
-        this.orderProcessorService = orderProcessorService;
-        this.orderProcessResponseHandler = orderProcessResponseHandler;
-        this.messageFilter = messageFilter;
+    public OrderMessageHandler(final Logger logger, final LoggingUtils loggingUtils) {
         this.logger = logger;
         this.loggingUtils = loggingUtils;
     }
@@ -32,15 +28,29 @@ public class OrderMessageHandler {
      * @param message received
      */
     public void handleMessage(Message<OrderReceived> message) {
-        if (messageFilter.include(message)) {
-            // Log message
-            logger.info("'order-received' message received", loggingUtils.getMessageHeadersAsMap(message));
+        String orderReceivedUri = message.getPayload().getOrderUri();
+        logMessageReceived(message, orderReceivedUri);
 
-            // Process message
-            OrderProcessResponse response = orderProcessorService.processOrderReceived(message.getPayload().getOrderUri());
+        applicationEventPublisher.publishEvent(new SendOrderNotificationEvent(orderReceivedUri,
+                message.getPayload().getAttempt()));
 
-            // Handle response
-            response.getStatus().accept(orderProcessResponseHandler, message);
-        }
+        logMessageProcessed(message, orderReceivedUri);
+    }
+
+    private void logMessageReceived(Message<?> message, String orderUri) {
+        Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
+        loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
+        loggingUtils.getLogger().info("'" + message.getHeaders().get("kafka_receivedTopic") + "' message received", logMap);
+    }
+
+    private void logMessageProcessed(Message<?> message, String orderUri) {
+        Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
+        loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
+        loggingUtils.getLogger().info("Order received message processing completed", logMap);
+    }
+
+    @Override
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 }
