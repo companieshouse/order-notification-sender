@@ -13,7 +13,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.event.ConsumerStoppedEvent;
-import org.springframework.kafka.listener.ConsumerSeekAware;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
@@ -27,7 +26,7 @@ import uk.gov.companieshouse.orders.OrderReceived;
  * ready to be processed.</p>
  */
 @Service
-public class OrdersKafkaConsumer implements ConsumerSeekAware {
+public class OrdersKafkaConsumer {
 
     private static final String ORDER_RECEIVED_TOPIC = "order-received";
     private static final String ORDER_RECEIVED_TOPIC_RETRY = "order-received-notification-retry";
