@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.messaging.Message;
@@ -10,13 +11,10 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @Service
 public class OrderMessageHandler implements ApplicationEventPublisherAware {
 
-    private MessageLogger messageLogger;
     private SendOrderNotificationEventFactory eventFactory;
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderMessageHandler(final MessageLogger messageLogger,
-                               final SendOrderNotificationEventFactory eventFactory) {
-        this.messageLogger = messageLogger;
+    public OrderMessageHandler(SendOrderNotificationEventFactory eventFactory) {
         this.eventFactory = eventFactory;
     }
 
@@ -26,11 +24,7 @@ public class OrderMessageHandler implements ApplicationEventPublisherAware {
      * @param message received
      */
     public void handleMessage(Message<OrderReceived> message) {
-        messageLogger.logMessageReceived(message);
-
         applicationEventPublisher.publishEvent(eventFactory.createEvent(message));
-
-        messageLogger.logMessageProcessed(message);
     }
 
     @Override

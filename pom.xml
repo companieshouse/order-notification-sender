@@ -28,6 +28,7 @@
         <private-api-sdk-java.version>2.0.103</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
         <testcontainers.version>1.16.0</testcontainers.version>
+        <org.hamcrest.version>2.2</org.hamcrest.version>
         <sonar.exclusions>
             **/config/ApplicationConfig.java,
             **/config/EmailConfiguration.java,
@@ -208,6 +209,13 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+            <version>${org.hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>

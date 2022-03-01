@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
 import java.util.Map;
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
@@ -18,16 +20,20 @@ class OrderReceivedLogger {
         this.loggingUtils = loggingUtils;
     }
 
-    @Pointcut("execution(public void uk.gov.companieshouse.itemhandler.kafka.OrderProcessResponseHandler.serviceUnavailable(..))")
-    void serviceUnavailable() {
+    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.ordersconsumer.OrderMessageHandler.handleMessage(..)) && args(message)")
+    void handleMessage(Message<OrderReceived> message) {
+        // Pointcut
     }
 
+    @Before(value = "handleMessage(message)", argNames = "message")
     public void logMessageReceived(Message<OrderReceived> message) {
         Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, message.getPayload().getOrderUri());
-        loggingUtils.getLogger().info("'" + message.getHeaders().get("kafka_receivedTopic") + "' message received", logMap);
+        loggingUtils.getLogger()
+                .info("'" + message.getHeaders().get("kafka_receivedTopic") + "' message received", logMap);
     }
 
+    @After(value = "handleMessage(message)", argNames = "message")
     public void logMessageProcessed(Message<OrderReceived> message) {
         Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, message.getPayload().getOrderUri());
