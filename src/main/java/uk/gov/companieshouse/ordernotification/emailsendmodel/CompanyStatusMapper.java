@@ -1,25 +1,20 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import static java.util.Objects.isNull;
-
-import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 
-@Component
+import java.util.Map;
+
 public class CompanyStatusMapper {
 
+    private final Map<String, StatusMappable> statusMappingCommands;
+    private final StatusMappable defaultMappingCommand;
+
+    public CompanyStatusMapper(Map<String, StatusMappable> statusMappingCommands, StatusMappable defaultMappingCommand) {
+        this.statusMappingCommands = statusMappingCommands;
+        this.defaultMappingCommand = defaultMappingCommand;
+    }
+
     public void map(CertificateItemOptionsApi source, CertificateOrderNotificationModel target) {
-        if (CompanyStatus.LIQUIDATION == CompanyStatus.getEnumValue(source.getCompanyStatus())) {
-            if (!isNull(source.getLiquidatorsDetails())) {
-                target.setLiquidatorsDetails(new Content<>(MapUtil.mapBoolean(source.getLiquidatorsDetails()
-                        .getIncludeBasicInformation())));
-            } else {
-                target.setLiquidatorsDetails(null);
-            }
-            target.setStatementOfGoodStanding(null);
-        } else {
-            target.setLiquidatorsDetails(null);
-            target.setStatementOfGoodStanding(new Content<>(MapUtil.mapBoolean(source.getIncludeGoodStandingInformation())));
-        }
+        this.statusMappingCommands.getOrDefault(source.getCompanyStatus(), defaultMappingCommand).map(source, target);
     }
 }

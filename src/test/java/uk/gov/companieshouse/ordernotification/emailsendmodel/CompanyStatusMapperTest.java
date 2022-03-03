@@ -1,122 +1,51 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
-import uk.gov.companieshouse.api.model.order.item.LiquidatorsDetailsApi;
-import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
+import java.util.Collections;
+
+@ExtendWith(MockitoExtension.class)
 class CompanyStatusMapperTest {
 
+    @Mock
+    private StatusMappable statusMapper;
+
+    @Mock
+    private CertificateItemOptionsApi certificateItemOptionsApi;
+
+    @Mock
+    private CertificateOrderNotificationModel certificateOrderNotificationModel;
+
     @Test
-    void testSetLiquidatorsDetailsToYesIfLiquidatorsDetailsTrue() {
+    void testMapWithLookedUpCommandIfCompanyStatusHandled() {
         //given
-        CompanyStatusMapper mapper = new CompanyStatusMapper();
-        LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
-        liquidatorsDetailsApi.setIncludeBasicInformation(Boolean.TRUE);
-        CertificateItemOptionsApi certificateItemOptionsApi = new CertificateItemOptionsApi();
-        certificateItemOptionsApi.setLiquidatorsDetails(liquidatorsDetailsApi);
-        certificateItemOptionsApi.setCompanyStatus("liquidation");
-
-        CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
+        CompanyStatusMapper mapper = new CompanyStatusMapper(Collections.singletonMap("liquidation", statusMapper), null);
+        when(certificateItemOptionsApi.getCompanyStatus()).thenReturn("liquidation");
 
         //when
-        mapper.map(certificateItemOptionsApi, model);
+        mapper.map(certificateItemOptionsApi, certificateOrderNotificationModel);
 
         //then
-        assertEquals(new Content<>(TestConstants.READABLE_TRUE), model.getLiquidatorsDetails());
-        assertNull(model.getStatementOfGoodStanding());
+        verify(statusMapper).map(certificateItemOptionsApi, certificateOrderNotificationModel);
     }
 
     @Test
-    void testSetLiquidatorsDetailsToNoIfLiquidatorsDetailsFalse() {
+    void testMapWithDefaultCommandIfCompanyStatusUnhandled() {
         //given
-        CompanyStatusMapper mapper = new CompanyStatusMapper();
-        LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
-        liquidatorsDetailsApi.setIncludeBasicInformation(Boolean.FALSE);
-        CertificateItemOptionsApi certificateItemOptionsApi = new CertificateItemOptionsApi();
-        certificateItemOptionsApi.setLiquidatorsDetails(liquidatorsDetailsApi);
-        certificateItemOptionsApi.setCompanyStatus("liquidation");
-
-        CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
+        CompanyStatusMapper mapper = new CompanyStatusMapper(Collections.emptyMap(), statusMapper);
+        when(certificateItemOptionsApi.getCompanyStatus()).thenReturn("active");
 
         //when
-        mapper.map(certificateItemOptionsApi, model);
+        mapper.map(certificateItemOptionsApi, certificateOrderNotificationModel);
 
         //then
-        assertEquals(new Content<>(TestConstants.READABLE_FALSE), model.getLiquidatorsDetails());
-        assertNull(model.getStatementOfGoodStanding());
-    }
-
-    @Test
-    void testSetLiquidatorsDetailsToNullIfLiquidatorsDetailsAbsent() {
-        //given
-        CompanyStatusMapper mapper = new CompanyStatusMapper();
-        CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
-        CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
-        certificateItemOptions.setCompanyStatus("liquidation");
-
-        //when
-        mapper.map(certificateItemOptions, model);
-
-        //then
-        assertNull(model.getLiquidatorsDetails());
-        assertNull(model.getStatementOfGoodStanding());
-    }
-
-    @Test
-    void testSetLiquidatorsDetailsToNoIfLiquidatorsDetailsBasicInformationNull() {
-        //given
-        CompanyStatusMapper mapper = new CompanyStatusMapper();
-        LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
-        CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
-        certificateItemOptions.setLiquidatorsDetails(liquidatorsDetailsApi);
-        certificateItemOptions.setCompanyStatus("liquidation");
-        CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
-
-        //when
-        mapper.map(certificateItemOptions, model);
-
-        //then
-        assertEquals(new Content<>(TestConstants.READABLE_FALSE), model.getLiquidatorsDetails());
-        assertNull(model.getStatementOfGoodStanding());
-    }
-
-    @Test
-    void testStatementOfGoodStandingRenderedAndSetToNoIfCompanyNotInLiquidationAndIncludeStatementOfGoodStandingIsFalse() {
-        CompanyStatusMapper mapper = new CompanyStatusMapper();
-        LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
-        CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
-        certificateItemOptions.setIncludeGoodStandingInformation(false);
-        certificateItemOptions.setCompanyStatus("active");
-        CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
-
-        //when
-        mapper.map(certificateItemOptions, model);
-
-        //then
-        assertNull(model.getLiquidatorsDetails());
-        assertEquals(new Content<>(TestConstants.READABLE_FALSE), model.getStatementOfGoodStanding());
-    }
-
-    @Test
-    void testStatementOfGoodStandingRenderedAndSetToYesIfCompanyNotInLiquidationAndIncludeStatementOfGoodStandingIsTrue() {
-        CompanyStatusMapper mapper = new CompanyStatusMapper();
-        LiquidatorsDetailsApi liquidatorsDetailsApi = new LiquidatorsDetailsApi();
-        CertificateItemOptionsApi certificateItemOptions = new CertificateItemOptionsApi();
-        certificateItemOptions.setIncludeGoodStandingInformation(true);
-        certificateItemOptions.setCompanyStatus("active");
-        CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
-
-        //when
-        mapper.map(certificateItemOptions, model);
-
-        //then
-        assertNull(model.getLiquidatorsDetails());
-        assertEquals(new Content<>(TestConstants.READABLE_TRUE), model.getStatementOfGoodStanding());
+        verify(statusMapper).map(certificateItemOptionsApi, certificateOrderNotificationModel);
     }
 }
