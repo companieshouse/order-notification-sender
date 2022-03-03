@@ -30,6 +30,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -41,6 +42,7 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @Import(KafkaConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed.properties",
         properties = {"uk.gov.companieshouse.order-notification-sender.error-consumer=true"})
+@ActiveProfiles("feature-flags-enabled")
 class OrderMessageErrorConsumerIntegrationTest {
 
     private static int orderId = 123456;
@@ -167,10 +169,8 @@ class OrderMessageErrorConsumerIntegrationTest {
         assertEquals(0, orderMessageErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_document",
-                actual.getMessageId());
-        assertEquals("order_notification_sender_document",
-                actual.getMessageType());
+        assertEquals("order_notification_sender_document", actual.getMessageId());
+        assertEquals("order_notification_sender_document", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
     }
@@ -205,10 +205,8 @@ class OrderMessageErrorConsumerIntegrationTest {
         assertEquals(0, orderMessageErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_missing_image",
-                actual.getMessageId());
-        assertEquals("order_notification_sender_missing_image",
-                actual.getMessageType());
+        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
+        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
     }

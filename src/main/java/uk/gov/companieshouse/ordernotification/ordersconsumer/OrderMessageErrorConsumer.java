@@ -30,7 +30,10 @@ public class OrderMessageErrorConsumer {
     private final ErrorConsumerController errorConsumerController;
     private final LoggingUtils loggingUtils;
 
-    public OrderMessageErrorConsumer(OrderMessageHandler orderMessageHandler, PartitionOffset errorRecoveryOffset, ErrorConsumerController errorConsumerController, LoggingUtils loggingUtils) {
+    public OrderMessageErrorConsumer(OrderMessageHandler orderMessageHandler,
+                                     PartitionOffset errorRecoveryOffset,
+                                     ErrorConsumerController errorConsumerController,
+                                     LoggingUtils loggingUtils) {
         this.orderMessageHandler = orderMessageHandler;
         this.errorRecoveryOffset = errorRecoveryOffset;
         this.errorConsumerController = errorConsumerController;
@@ -39,11 +42,14 @@ public class OrderMessageErrorConsumer {
 
     /**
      * Error (`-error`) topic listener/consumer is enabled when the application is launched in error
-     * mode (IS_ERROR_QUEUE_CONSUMER=true). Receives messages up to `errorRecoveryOffset` offset.
-     * Calls `handleMessage` method to process received message. If the `retryable` processor is
-     * unsuccessful with a `retryable` error, after maximum numbers of attempts allowed, the message
-     * is republished to `-retry` topic for failover processing. This listener stops accepting
-     * messages when the topic's offset reaches `errorRecoveryOffset`.
+     * mode (IS_ERROR_QUEUE_CONSUMER=true).
+     *
+     * <p>Consumes messages up to the `errorRecoveryOffset` offset. Calls `handleMessage` method to
+     * process received message. If an error occurs during message handling the message is
+     * republished to the retry topic.</p>
+     *
+     * <p></p>This listener stops accepting messages when the topic's offset reaches
+     * `errorRecoveryOffset`.</p>
      *
      * @param message to be processed
      * @param offset Kafka offset of the current message
