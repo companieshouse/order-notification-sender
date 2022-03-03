@@ -1,8 +1,9 @@
-package uk.gov.companieshouse.ordernotification.config;
+package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -14,6 +15,7 @@ import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
+import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
@@ -22,11 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaBrokerConfiguration {
+public class KafkaConfig {
 
     private final String brokerAddresses;
 
-    public KafkaBrokerConfiguration(@Value("${spring.kafka.bootstrap-servers}") String brokerAddresses) {
+    public KafkaConfig(@Value("${spring.kafka.bootstrap-servers}") String brokerAddresses) {
         this.brokerAddresses = brokerAddresses;
     }
 
@@ -76,5 +78,11 @@ public class KafkaBrokerConfiguration {
     @Bean
     public PartitionOffset errorRecoveryOffset() {
         return new PartitionOffset();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "kafka.topics")
+    KafkaTopics kafkaTopics() {
+        return new KafkaTopics();
     }
 }

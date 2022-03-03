@@ -13,13 +13,14 @@ public class KafkaTopicInitialiser implements InitializingBean {
 
     private EmbeddedKafkaBroker broker;
     private KafkaProducer<String, OrderReceived> kafkaProducer;
+    private KafkaTopics kafkaTopics;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        broker.addTopics(new NewTopic("email-send", 1, (short)1));
-        broker.addTopics(new NewTopic("order-received", 1, (short)1));
-        broker.addTopics(new NewTopic("order-received-notification-retry", 1, (short)1));
-        broker.addTopics(new NewTopic("order-received-notification-error", 1, (short)1));
+        broker.addTopics(new NewTopic(kafkaTopics.getEmailSend(), 1, (short)1));
+        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceived(), 1, (short)1));
+        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceivedRetry(), 1, (short)1));
+        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceivedError(), 1, (short)1));
     }
 
     @Autowired
@@ -30,5 +31,10 @@ public class KafkaTopicInitialiser implements InitializingBean {
     @Autowired
     public void setKafkaProducer(KafkaProducer<String, OrderReceived> kafkaProducer) {
         this.kafkaProducer = kafkaProducer;
+    }
+
+    @Autowired
+    public void setKafkaTopics(KafkaTopics kafkaTopics) {
+        this.kafkaTopics = kafkaTopics;
     }
 }

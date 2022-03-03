@@ -53,7 +53,7 @@ class OrderMessageErrorConsumerUnitTest {
     private Logger logger;
 
     @InjectMocks
-    private OrdersKafkaConsumer orderMessageErrorConsumer;
+    private OrderMessageErrorConsumer orderMessageErrorConsumer;
 
     @BeforeEach
     void beforeEach() {
@@ -68,7 +68,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceivedError(message, 1L, consumer);
+        orderMessageErrorConsumer.processOrderReceived(message, 1L, consumer);
 
         //then
         verify(orderMessageHandler, times(0)).handleMessage(message);
@@ -81,7 +81,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceivedError(message, 2L, consumer);
+        orderMessageErrorConsumer.processOrderReceived(message, 2L, consumer);
 
         //then
         verify(orderMessageHandler, times(0)).handleMessage(message);
@@ -94,7 +94,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceivedError(message, 0L, consumer);
+        orderMessageErrorConsumer.processOrderReceived(message, 0L, consumer);
 
         //then
         verify(orderMessageHandler).handleMessage(message);
@@ -107,7 +107,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(2L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceivedError(message, 0L, consumer);
+        orderMessageErrorConsumer.processOrderReceived(message, 0L, consumer);
 
         //then
         verify(orderMessageHandler).handleMessage(message);

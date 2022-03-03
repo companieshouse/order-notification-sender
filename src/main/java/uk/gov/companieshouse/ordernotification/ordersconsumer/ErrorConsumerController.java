@@ -19,8 +19,8 @@ public class ErrorConsumerController {
     private final KafkaListenerEndpointRegistry registry;
 
     public ErrorConsumerController(Logger logger, LoggingUtils loggingUtils,
-                                   @Value("${kafka.topics.order-received-notification-error-group}") String errorGroup,
-                                   @Value("${kafka.topics.order-received-notification-error}") String errorTopic,
+                                   @Value("${kafka.topics.order-received-error-group}") String errorGroup,
+                                   @Value("${kafka.topics.order-received-error}") String errorTopic,
                                    PartitionOffset partitionOffset,
                                    KafkaListenerEndpointRegistry registry) {
         this.logger = logger;
