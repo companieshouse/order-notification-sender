@@ -211,11 +211,10 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
+            <artifactId>hamcrest-all</artifactId>
             <version>${org.hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

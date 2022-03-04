@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
-import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetails;
 
 public interface OrderRetrievable {
-    OrdersApi getOrderData(String orderUri) throws OrdersResponseException;
+    OrdersApiDetails getOrderData(String orderUri) throws OrdersResponseException;
 }
