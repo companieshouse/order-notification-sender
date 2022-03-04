@@ -22,7 +22,7 @@ class MissingImageOrderModelFactory {
         this.commonFieldsMapper = commonFieldsMapper;
     }
 
-    OrderModel newInstance(OrdersApiDetails order) {
+    MissingImageOrderNotificationModel newInstance(OrdersApiDetails order) {
 
         MissingImageOrderNotificationModel model = new MissingImageOrderNotificationModel();
         commonFieldsMapper.mapCommonFields(model, order);

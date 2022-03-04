@@ -27,7 +27,7 @@ class DocumentOrderNotificationMapperTest {
     private DocumentOrderModelFactory orderModelFactory;
 
     @Mock
-    private OrderModel orderModel;
+    private DocumentOrderNotificationModel orderModel;
 
     @Mock
     private OrdersApiDetails ordersApiDetails;

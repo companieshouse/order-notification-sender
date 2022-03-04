@@ -32,7 +32,7 @@ class CertificateOrderNotificationMapperTest {
     private OrdersApiDetails ordersApiDetails;
 
     @Mock
-    private OrderModel orderModel;
+    private CertificateOrderNotificationModel orderModel;
 
     @BeforeEach
     void setup() {

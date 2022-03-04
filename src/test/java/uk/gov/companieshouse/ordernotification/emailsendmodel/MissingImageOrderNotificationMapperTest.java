@@ -30,7 +30,7 @@ class MissingImageOrderNotificationMapperTest {
     private OrdersApiDetails ordersApiDetails;
 
     @Mock
-    private OrderModel orderModel;
+    private MissingImageOrderNotificationModel orderModel;
 
     @InjectMocks
     private MissingImageOrderNotificationMapper mapper;

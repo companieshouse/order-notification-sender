@@ -25,7 +25,7 @@ class DocumentOrderModelFactory {
         this.commonFieldsMapper = commonFieldsMapper;
     }
 
-    OrderModel newInstance(OrdersApiDetails order) {
+    DocumentOrderNotificationModel newInstance(OrdersApiDetails order) {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
         commonFieldsMapper.mapCommonFields(model, order);
 

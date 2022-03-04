@@ -22,11 +22,11 @@ public class CertificateOrderModelFactory {
         this.commonFieldsMapper = commonFieldsMapper;
     }
 
-    public OrderModel newInstance(OrdersApiDetails ordersApiDetails) {
+    public CertificateOrderNotificationModel newInstance(OrdersApiDetails ordersApiDetails) {
         BaseItemApi baseItemApi = ordersApiDetails.getBaseItemApi();
         CertificateItemOptionsApi certificateItemOptionsApi =
                 (CertificateItemOptionsApi) baseItemApi.getItemOptions();
-        OrderModel orderModel = certificateOptionsMapperFactory
+        CertificateOrderNotificationModel orderModel = certificateOptionsMapperFactory
                 .getCertificateOptionsMapper(certificateItemOptionsApi.getCompanyType())
                 .generateEmailData(baseItemApi);
         commonFieldsMapper.mapCommonFields(orderModel, ordersApiDetails);
