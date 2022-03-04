@@ -19,8 +19,8 @@ class OrdersApiDetailsCommonFieldsMapper {
         orderModel.setTo(ordersApi.getOrderedBy().getEmail());
         orderModel.setSubject(MessageFormat.format(emailConfiguration.getConfirmationMessage(),
                 ordersApi.getReference()));
-        orderModel.setCompanyName(ordersApiDetails.getItems().get(0).getCompanyName());
-        orderModel.setCompanyNumber(ordersApiDetails.getItems().get(0).getCompanyNumber());
+        orderModel.setCompanyName(ordersApiDetails.getBaseItemApi().getCompanyName());
+        orderModel.setCompanyNumber(ordersApiDetails.getBaseItemApi().getCompanyNumber());
         orderModel.setOrderReferenceNumber(ordersApi.getReference());
         orderModel.setAmountPaid("£" + ordersApi.getTotalOrderCost());
         orderModel.setPaymentReference(ordersApi.getPaymentReference());

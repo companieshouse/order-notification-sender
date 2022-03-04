@@ -41,7 +41,7 @@ public class OrdersApiDetailsMapper {
         try {
             EmailSend emailSend = new EmailSend();
             emailSend.setEmailAddress(config.getSenderAddress());
-            emailSend.setData(this.objectMapper.writeValueAsString(orderDetails.getOrderModel()));
+            emailSend.setData(objectMapper.writeValueAsString(orderDetails.getOrderModel()));
             emailSend.setMessageId(orderDetails.getMessageId());
             emailSend.setAppId(config.getApplicationId());
             emailSend.setMessageType(orderDetails.getMessageType());
