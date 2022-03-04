@@ -1,6 +1,10 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,16 +14,10 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 class CertificateOrderNotificationMapperTest {
 
     private CertificateOrderNotificationMapper certificateOrderNotificationMapper;
-
-    @Mock
-    private DateGenerator dateGenerator;
 
     @Mock
     private EmailConfiguration config;
@@ -28,37 +26,34 @@ class CertificateOrderNotificationMapperTest {
     private EmailDataConfiguration emailDataConfig;
 
     @Mock
-    private CertificateOptionsMapperFactory certificateOptionsMapperFactory;
+    private CertificateOrderModelFactory orderModelFactory;
+
+    @Mock
+    private OrdersApiDetails ordersApiDetails;
+
+    @Mock
+    private OrderModel orderModel;
 
     @BeforeEach
     void setup() {
-        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, new ObjectMapper(), certificateOptionsMapperFactory);
+        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(config,
+                orderModelFactory);
     }
 
     @Test
-    void testCertificateOrderNotificationMapperReturnsMessageId() {
+    void testCorrectlyMapsCertificateOrderApiMapsToOrderDetails() {
         //given
         when(config.getCertificate()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
-
-        //when
-        String actual = certificateOrderNotificationMapper.getMessageId();
-
-        //then
-        assertEquals(TestConstants.MESSAGE_ID, actual);
-    }
-
-    @Test
-    void testCertificateOrderNotificationMapperReturnsMessageType() {
-        //given
-        when(config.getCertificate()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+        when(orderModelFactory.newInstance(any())).thenReturn(orderModel);
 
         //when
-        String actual = certificateOrderNotificationMapper.getMessageType();
+        OrderDetails orderDetails = certificateOrderNotificationMapper.map(ordersApiDetails);
 
         //then
-        assertEquals(TestConstants.MESSAGE_TYPE, actual);
+        assertThat(orderDetails.getOrderModel(), is(orderModel));
+        assertThat(orderDetails.getMessageId(), is(TestConstants.MESSAGE_ID));
+        assertThat(orderDetails.getMessageType(), is(TestConstants.MESSAGE_TYPE));
     }
 }

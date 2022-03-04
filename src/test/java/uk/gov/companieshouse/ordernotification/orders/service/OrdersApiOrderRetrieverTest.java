@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
 import com.google.api.client.http.HttpStatusCodes;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -14,7 +15,9 @@ import uk.gov.companieshouse.api.handler.order.PrivateOrderResourceHandler;
 import uk.gov.companieshouse.api.handler.order.request.OrdersGet;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetails;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 import java.util.HashMap;
@@ -66,6 +69,12 @@ class OrdersApiOrderRetrieverTest {
     @Mock
     ApiErrorResponseException apiErrorResponseException;
 
+    @Mock
+    private List<BaseItemApi> baseItems;
+
+    @Mock
+    private BaseItemApi baseItemApi;
+
     @Test
     void getOrderData() throws Exception {
         //given
@@ -79,10 +88,10 @@ class OrdersApiOrderRetrieverTest {
         when(loggingUtils.createLogMap()).thenReturn(logMap);
 
         //when
-        OrdersApi actual = serviceUnderTest.getOrderData(ORDER_URL);
+        OrdersApiDetails actual = serviceUnderTest.getOrderData(ORDER_URL);
 
         //then
-        assertThat(actual, is(ordersApi));
+        assertThat(actual.getOrdersApi(), is(ordersApi));
         verify(logger).debug("Order data returned from API client", logMap);
         verify(ordersGet).execute();
     }
