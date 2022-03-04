@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MappingException;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapper;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;

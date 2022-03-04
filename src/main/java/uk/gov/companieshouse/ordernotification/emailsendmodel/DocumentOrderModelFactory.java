@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @Component
 class DocumentOrderModelFactory {

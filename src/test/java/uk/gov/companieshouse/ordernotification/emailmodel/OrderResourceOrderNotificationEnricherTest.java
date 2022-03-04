@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapper;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;

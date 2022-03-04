@@ -1,28 +1,27 @@
-package uk.gov.companieshouse.ordernotification.emailsendmodel;
+package uk.gov.companieshouse.ordernotification.orders.service;
 
-import java.util.List;
 import java.util.Optional;
 import uk.gov.companieshouse.api.model.order.AbstractOrderDataApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemOptionsApi;
 
-public class OrdersApiDetailsBuilder {
+final class OrdersApiDetailsBuilder {
     private OrdersApi ordersApi;
 
     private OrdersApiDetailsBuilder() {
     }
 
-    public static OrdersApiDetailsBuilder newBuilder() {
+    static OrdersApiDetailsBuilder newBuilder() {
         return new OrdersApiDetailsBuilder();
     }
 
-    public OrdersApiDetailsBuilder withOrdersApi(OrdersApi ordersApi) {
+    OrdersApiDetailsBuilder withOrdersApi(OrdersApi ordersApi) {
         this.ordersApi = ordersApi;
         return this;
     }
 
-    public OrdersApiDetails build() {
+    OrdersApiDetails build() {
         return new OrdersApiDetailsObject(this);
     }
 
@@ -42,12 +41,6 @@ public class OrdersApiDetailsBuilder {
         public String getKind() {
             return Optional.ofNullable(getBaseItemApi())
                     .map(BaseItemApi::getKind).orElse(null);
-        }
-
-        @Override
-        public List<BaseItemApi> getItems() {
-            return Optional.ofNullable(getOrdersApi())
-                    .map(AbstractOrderDataApi::getItems).orElse(null);
         }
 
         @Override

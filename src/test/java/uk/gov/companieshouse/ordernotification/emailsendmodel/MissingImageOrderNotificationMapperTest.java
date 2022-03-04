@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @ExtendWith(MockitoExtension.class)
 class MissingImageOrderNotificationMapperTest {

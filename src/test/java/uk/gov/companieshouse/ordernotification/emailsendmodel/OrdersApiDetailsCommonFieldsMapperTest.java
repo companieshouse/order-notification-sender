@@ -15,6 +15,10 @@ import uk.gov.companieshouse.api.model.order.ActionedByApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+<<<<<<< Updated upstream
+=======
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
+>>>>>>> Stashed changes
 
 @ExtendWith(MockitoExtension.class)
 public class OrdersApiDetailsCommonFieldsMapperTest {

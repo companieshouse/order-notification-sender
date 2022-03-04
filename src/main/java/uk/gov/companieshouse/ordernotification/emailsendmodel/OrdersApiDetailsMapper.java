@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 /**
  * Map an {@link OrdersApi} object to an {@link EmailSend} object.
