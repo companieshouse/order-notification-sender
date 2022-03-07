@@ -30,6 +30,8 @@ class LLPCertificateOptionsMapperTest {
     private MembersDetailsApiMapper membersDetailsApiMapper;
     @Mock
     private CompanyStatusMapper companyStatusMapper;
+    @Mock
+    private OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
 
     @InjectMocks
     private LLPCertificateOptionsMapper llpCertificateOptionsMapper;

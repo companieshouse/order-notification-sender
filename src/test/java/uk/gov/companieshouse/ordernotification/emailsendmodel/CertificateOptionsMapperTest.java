@@ -18,6 +18,7 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,6 +34,10 @@ class CertificateOptionsMapperTest {
     private DeliveryMethodMapper deliveryMethodMapper;
     @Mock
     private DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper;
+    @Mock
+    private OrdersApiDetails ordersApiDetails;
+    @Mock
+    private OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
 
     private OtherCertificateOptionsMapper otherCertificateOptionsMapper;
 
@@ -40,7 +45,7 @@ class CertificateOptionsMapperTest {
     void setUp() {
         otherCertificateOptionsMapper = new OtherCertificateOptionsMapper(null, certificateTypeMapper,
                 addressRecordTypeMapper, deliveryMethodMapper, directorOrSecretaryDetailsApiMapper,
-                new CompanyStatusMapper(Collections.emptyMap(), new DefaultStatusMapper()));
+                new CompanyStatusMapper(Collections.emptyMap(), new DefaultStatusMapper()), commonFieldsMapper);
     }
 
     @Test
@@ -83,9 +88,10 @@ class CertificateOptionsMapperTest {
         when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
 
         when(directorOrSecretaryDetailsApiMapper.map(any())).thenReturn(getCertificateDetailsModel());
+        when(ordersApiDetails.getBaseItemApi()).thenReturn(item);
 
         // when
-        CertificateOrderNotificationModel result = otherCertificateOptionsMapper.generateEmailData(item);
+        CertificateOrderNotificationModel result = otherCertificateOptionsMapper.generateEmailData(ordersApiDetails);
 
         // then
         CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();

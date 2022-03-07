@@ -13,8 +13,9 @@ public class LPCertificateOptionsMapper extends CertificateOptionsMapper {
     public LPCertificateOptionsMapper(FeatureOptions featureOptions,
                                       CertificateTypeMapper certificateTypeMapper,
                                       AddressRecordTypeMapper addressRecordTypeMapper,
-                                      DeliveryMethodMapper deliveryMethodMapper) {
-        super(featureOptions, certificateTypeMapper, deliveryMethodMapper);
+                                      DeliveryMethodMapper deliveryMethodMapper,
+                                      OrdersApiDetailsCommonFieldsMapper commonFieldsMapper) {
+        super(featureOptions, certificateTypeMapper, deliveryMethodMapper, commonFieldsMapper);
         this.addressRecordTypeMapper = addressRecordTypeMapper;
     }
 

@@ -8,21 +8,21 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @Component
-class MissingImageOrderModelFactory {
+class MissingImageOrderDetailsMapper {
 
     private final FilingHistoryDescriptionProviderService providerService;
     private final EmailConfiguration emailConfiguration;
     private final OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
 
-    public MissingImageOrderModelFactory(FilingHistoryDescriptionProviderService providerService,
-                                         EmailConfiguration emailConfiguration,
-                                         OrdersApiDetailsCommonFieldsMapper commonFieldsMapper) {
+    public MissingImageOrderDetailsMapper(FilingHistoryDescriptionProviderService providerService,
+                                          EmailConfiguration emailConfiguration,
+                                          OrdersApiDetailsCommonFieldsMapper commonFieldsMapper) {
         this.providerService = providerService;
         this.emailConfiguration = emailConfiguration;
         this.commonFieldsMapper = commonFieldsMapper;
     }
 
-    MissingImageOrderNotificationModel newInstance(OrdersApiDetails order) {
+    MissingImageOrderNotificationModel map(OrdersApiDetails order) {
 
         MissingImageOrderNotificationModel model = new MissingImageOrderNotificationModel();
         commonFieldsMapper.mapCommonFields(model, order);

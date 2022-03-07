@@ -17,10 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-<<<<<<< Updated upstream
-=======
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
->>>>>>> Stashed changes
 
 @ExtendWith(MockitoExtension.class)
 class OrdersApiDetailsMapperTest {

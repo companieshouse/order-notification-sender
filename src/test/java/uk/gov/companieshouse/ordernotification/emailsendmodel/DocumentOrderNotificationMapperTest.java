@@ -25,7 +25,7 @@ class DocumentOrderNotificationMapperTest {
     private EmailDataConfiguration emailDataConfig;
 
     @Mock
-    private DocumentOrderModelFactory orderModelFactory;
+    private DocumentOrderDetailsMapper orderModelFactory;
 
     @Mock
     private DocumentOrderNotificationModel orderModel;
@@ -39,7 +39,7 @@ class DocumentOrderNotificationMapperTest {
     @Test
     void testMapCertifiedDocument() {
         // given
-        when(orderModelFactory.newInstance(any())).thenReturn(orderModel);
+        when(orderModelFactory.map(any())).thenReturn(orderModel);
         when(config.getDocument()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);

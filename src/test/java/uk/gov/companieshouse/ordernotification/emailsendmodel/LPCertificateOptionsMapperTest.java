@@ -24,6 +24,9 @@ class LPCertificateOptionsMapperTest {
     @Mock
     private AddressRecordTypeMapper addressRecordTypeMapper;
 
+    @Mock
+    private OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
+
     @InjectMocks
     private LPCertificateOptionsMapper lpCertificateOptionsMapper;
 

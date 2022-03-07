@@ -10,23 +10,23 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @Component
-class DocumentOrderModelFactory {
+class DocumentOrderDetailsMapper {
     private final EmailConfiguration emailConfiguration;
     private final DeliveryMethodMapper deliveryMethodMapper;
     private final FilingHistoryDescriptionProviderService providerService;
     private final OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
 
-    DocumentOrderModelFactory(EmailConfiguration emailConfiguration,
-                              DeliveryMethodMapper deliveryMethodMapper,
-                              FilingHistoryDescriptionProviderService providerService,
-                              OrdersApiDetailsCommonFieldsMapper commonFieldsMapper) {
+    DocumentOrderDetailsMapper(EmailConfiguration emailConfiguration,
+                               DeliveryMethodMapper deliveryMethodMapper,
+                               FilingHistoryDescriptionProviderService providerService,
+                               OrdersApiDetailsCommonFieldsMapper commonFieldsMapper) {
         this.emailConfiguration = emailConfiguration;
         this.deliveryMethodMapper = deliveryMethodMapper;
         this.providerService = providerService;
         this.commonFieldsMapper = commonFieldsMapper;
     }
 
-    DocumentOrderNotificationModel newInstance(OrdersApiDetails order) {
+    DocumentOrderNotificationModel map(OrdersApiDetails order) {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
         commonFieldsMapper.mapCommonFields(model, order);
 

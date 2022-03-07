@@ -7,10 +7,10 @@ import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 @Component
 class MissingImageOrderNotificationMapper implements KindMapper {
 
-    private final MissingImageOrderModelFactory orderModelFactory;
+    private final MissingImageOrderDetailsMapper orderModelFactory;
     private final EmailConfiguration emailConfiguration;
 
-    public MissingImageOrderNotificationMapper(MissingImageOrderModelFactory orderModelFactory,
+    public MissingImageOrderNotificationMapper(MissingImageOrderDetailsMapper orderModelFactory,
                                                EmailConfiguration emailConfiguration) {
         this.orderModelFactory = orderModelFactory;
         this.emailConfiguration = emailConfiguration;
@@ -21,7 +21,7 @@ class MissingImageOrderNotificationMapper implements KindMapper {
         return OrderDetailsBuilder.newBuilder()
                 .withMessageId(emailConfiguration.getMissingImage().getMessageId())
                 .withMessageType(emailConfiguration.getMissingImage().getMessageType())
-                .withOrderModel(orderModelFactory.newInstance(ordersApi))
+                .withOrderModel(orderModelFactory.map(ordersApi))
                 .build();
     }
 }

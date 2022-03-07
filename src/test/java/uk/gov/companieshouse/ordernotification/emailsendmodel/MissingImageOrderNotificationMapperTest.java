@@ -25,7 +25,7 @@ class MissingImageOrderNotificationMapperTest {
     private EmailDataConfiguration emailDataConfig;
 
     @Mock
-    private MissingImageOrderModelFactory orderModelFactory;
+    private MissingImageOrderDetailsMapper orderModelFactory;
 
     @Mock
     private OrdersApiDetails ordersApiDetails;
@@ -39,7 +39,7 @@ class MissingImageOrderNotificationMapperTest {
     @Test
     void testMapMissingImageItemToMissingItemNotificationModel() {
         // given
-        when(orderModelFactory.newInstance(any())).thenReturn(orderModel);
+        when(orderModelFactory.map(any())).thenReturn(orderModel);
         when(config.getMissingImage()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);

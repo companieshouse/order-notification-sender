@@ -8,10 +8,10 @@ import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 class DocumentOrderNotificationMapper implements KindMapper {
 
     private final EmailConfiguration emailConfiguration;
-    private final DocumentOrderModelFactory orderModelFactory;
+    private final DocumentOrderDetailsMapper orderModelFactory;
 
     public DocumentOrderNotificationMapper(EmailConfiguration emailConfiguration,
-                                           DocumentOrderModelFactory orderModelFactory) {
+                                           DocumentOrderDetailsMapper orderModelFactory) {
         this.emailConfiguration = emailConfiguration;
         this.orderModelFactory = orderModelFactory;
     }
@@ -21,7 +21,7 @@ class DocumentOrderNotificationMapper implements KindMapper {
         return OrderDetailsBuilder.newBuilder()
                 .withMessageId(emailConfiguration.getDocument().getMessageId())
                 .withMessageType(emailConfiguration.getDocument().getMessageType())
-                .withOrderModel(orderModelFactory.newInstance(ordersApiDetails))
+                .withOrderModel(orderModelFactory.map(ordersApiDetails))
                 .build();
     }
 }
