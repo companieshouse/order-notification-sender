@@ -47,6 +47,7 @@ import uk.gov.companieshouse.orders.OrderReceived;
 class OrdersKafkaConsumerIntegrationTest {
 
     private static MockServerContainer container;
+    private static int attempt;
     @Autowired
     private KafkaProducer<String, OrderReceived> orderReceivedProducer;
     @Autowired
@@ -76,12 +77,13 @@ class OrdersKafkaConsumerIntegrationTest {
     private static OrderReceived getOrderReceived() {
         OrderReceived orderReceived = new OrderReceived();
         orderReceived.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        orderReceived.setAttempt(attempt++);
         return orderReceived;
     }
 
     private static OrderReceived getOrderReceivedRetry() {
         OrderReceived orderReceivedRetry = new OrderReceived();
-        orderReceivedRetry.setAttempt(2);
+        orderReceivedRetry.setAttempt(attempt++);
         orderReceivedRetry.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         return orderReceivedRetry;
     }
