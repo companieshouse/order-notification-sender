@@ -12,18 +12,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class KindMapperFactoryBuilderTest {
+class OrderKindMapperFactoryBuilderTest {
     @Mock
-    private KindMapper kindMapper;
+    private OrderKindMapper orderKindMapper;
 
     @Test
     @DisplayName("Factory should throw IllegalArgumentException if kind is not recognised")
     void testThrowsIllegalArgumentExceptionIfKindNotHandled() {
         //given
-        KindMapperFactory factory = KindMapperFactoryBuilder.newBuilder().build();
+        OrderKindMapperFactory factory = OrderKindMapperFactoryBuilder.newBuilder().build();
 
         //when
-        Executable executable = () -> factory.getInstance("mykind");
+        Executable executable = () -> factory.getInstance("my-kind");
 
         //then
         Exception exception = assertThrows(IllegalArgumentException.class, executable);
@@ -34,15 +34,15 @@ class KindMapperFactoryBuilderTest {
     @DisplayName("Factory should return my KindMapper if kind is recognised")
     void testReturnsMyKindMapper() {
         //given
-        KindMapperFactory factory = KindMapperFactoryBuilder
+        OrderKindMapperFactory factory = OrderKindMapperFactoryBuilder
                 .newBuilder()
-                .putKindMapper("mykind", kindMapper)
+                .putKindMapper("my-kind", orderKindMapper)
                 .build();
 
         //when
-        KindMapper result = factory.getInstance("mykind");
+        OrderKindMapper result = factory.getInstance("my-kind");
 
         //then
-        assertThat(result, is(kindMapper));
+        assertThat(result, is(orderKindMapper));
     }
 }

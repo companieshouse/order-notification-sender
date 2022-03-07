@@ -5,7 +5,7 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @Component
-class MissingImageOrderNotificationMapper implements KindMapper {
+class MissingImageOrderNotificationMapper implements OrderKindMapper {
 
     private final MissingImageOrderDetailsMapper orderModelFactory;
     private final EmailConfiguration emailConfiguration;

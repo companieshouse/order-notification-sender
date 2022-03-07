@@ -10,9 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.companieshouse.api.model.order.ActionedByApi;
-import uk.gov.companieshouse.api.model.order.OrdersApi;
-import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
@@ -28,40 +25,29 @@ class OrdersApiDetailsCommonFieldsMapperTest {
     @Mock
     private OrdersApiDetails ordersApiDetails;
 
-    @Mock
-    private OrdersApi ordersApi;
-
-    @Mock
-    private ActionedByApi actionedByApi;
-
-    @Mock
-    private BaseItemApi baseItemApi;
-
     @Test
     void testMapCommonFieldsMapsSuccessfully() {
         // given
         OrderModel orderModel = new OrderModel();
 
-        when(ordersApiDetails.getOrdersApi()).thenReturn(ordersApi);
-        when(ordersApi.getOrderedBy()).thenReturn(actionedByApi);
-        when(actionedByApi.getEmail()).thenReturn("demo@ch.gov.uk");
-        when(ordersApi.getReference()).thenReturn("reference");
-        when(emailConfiguration.getConfirmationMessage()).thenReturn("confirmed %s");
-        when(ordersApiDetails.getBaseItemApi()).thenReturn(baseItemApi);
-        when(baseItemApi.getCompanyName()).thenReturn("company name");
-        when(baseItemApi.getCompanyNumber()).thenReturn("12345678");
-        when(ordersApi.getTotalOrderCost()).thenReturn("15");
-        when(ordersApi.getPaymentReference()).thenReturn("pay ref");
-        when(emailConfiguration.getPaymentDateFormat()).thenReturn("dd/MM/yy");
-        when(ordersApi.getOrderedAt()).thenReturn(LocalDateTime.parse("04/03/22 12:00:00",
+        when(ordersApiDetails.getOrderEmail()).thenReturn("demo@ch.gov.uk");
+        when(ordersApiDetails.getCompanyName()).thenReturn("company name");
+        when(ordersApiDetails.getCompanyNumber()).thenReturn("12345678");
+        when(ordersApiDetails.getOrderReference()).thenReturn("reference");
+        when(ordersApiDetails.getTotalOrderCost()).thenReturn("15");
+        when(ordersApiDetails.getPaymentReference()).thenReturn("pay ref");
+        when(ordersApiDetails.getOrderedAt()).thenReturn(LocalDateTime.parse("04/03/22 12:00:00",
                 DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss")));
+
+        when(emailConfiguration.getConfirmationMessage()).thenReturn("confirmed {0}");
+        when(emailConfiguration.getPaymentDateFormat()).thenReturn("dd/MM/yy");
 
         // when
         ordersApiDetailsCommonFieldsMapper.mapCommonFields(orderModel, ordersApiDetails);
 
         // then
         assertEquals("demo@ch.gov.uk", orderModel.getTo());
-        //assertEquals("confirmed reference", orderModel.getSubject());
+        assertEquals("confirmed reference", orderModel.getSubject());
         assertEquals("company name", orderModel.getCompanyName());
         assertEquals("12345678", orderModel.getCompanyNumber());
         assertEquals("reference", orderModel.getOrderReferenceNumber());

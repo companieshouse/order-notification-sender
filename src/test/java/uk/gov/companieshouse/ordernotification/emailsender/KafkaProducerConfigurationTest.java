@@ -55,5 +55,4 @@ class KafkaProducerConfigurationTest {
         assertEquals(Acks.WAIT_FOR_ALL, producerConfig.getAcks());
         assertEquals(10, producerConfig.getRetries());
     }
-
 }

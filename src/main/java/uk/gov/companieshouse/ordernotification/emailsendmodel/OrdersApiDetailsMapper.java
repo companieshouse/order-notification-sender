@@ -18,12 +18,12 @@ public class OrdersApiDetailsMapper {
     private final DateGenerator dateGenerator;
     private final EmailConfiguration config;
     private final ObjectMapper objectMapper;
-    private final KindMapperFactory kindMapperFactory;
+    private final OrderKindMapperFactory kindMapperFactory;
 
     public OrdersApiDetailsMapper(DateGenerator dateGenerator,
                                   EmailConfiguration config,
                                   ObjectMapper objectMapper,
-                                  KindMapperFactory kindMapperFactory) {
+                                  OrderKindMapperFactory kindMapperFactory) {
         this.dateGenerator = dateGenerator;
         this.config = config;
         this.objectMapper = objectMapper;
@@ -50,7 +50,7 @@ public class OrdersApiDetailsMapper {
                     .format(DateTimeFormatter.ofPattern(config.getDateFormat())));
             return emailSend;
         } catch (JsonProcessingException e) {
-            throw new MappingException("Failed to map orderDetails: " + ordersApiDetails.getReference(), e);
+            throw new MappingException("Failed to map orderDetails: " + ordersApiDetails.getOrderReference(), e);
         }
     }
 }

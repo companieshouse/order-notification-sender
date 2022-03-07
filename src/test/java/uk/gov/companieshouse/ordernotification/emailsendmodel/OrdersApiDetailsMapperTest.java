@@ -31,7 +31,7 @@ class OrdersApiDetailsMapperTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private KindMapperFactory kindMapperFactory;
+    private OrderKindMapperFactory orderKindMapperFactory;
 
     @InjectMocks
     private OrdersApiDetailsMapper ordersApiDetailsMapper;
@@ -40,7 +40,7 @@ class OrdersApiDetailsMapperTest {
     private OrdersApiDetails ordersApiDetails;
 
     @Mock
-    private KindMapper kindMapper;
+    private OrderKindMapper kindMapper;
 
     @Mock
     private OrderDetails orderDetails;
@@ -55,7 +55,7 @@ class OrdersApiDetailsMapperTest {
     void testSuccessfullyMapsOrdersApiToEmailSendObject() throws JsonProcessingException {
         // given
         when(ordersApiDetails.getKind()).thenReturn("item#certificate");
-        when(kindMapperFactory.getInstance("item#certificate")).thenReturn(kindMapper);
+        when(orderKindMapperFactory.getInstance("item#certificate")).thenReturn(kindMapper);
         when(kindMapper.map(ordersApiDetails)).thenReturn(orderDetails);
         when(emailConfiguration.getSenderAddress()).thenReturn("address");
         when(objectMapper.writeValueAsString(orderModel)).thenReturn("json string");
@@ -84,8 +84,8 @@ class OrdersApiDetailsMapperTest {
     void testShouldThrowMappingExceptionWhenObjectMapperThrowsJSonProcessingException() throws JsonProcessingException {
         //given
         when(ordersApiDetails.getKind()).thenReturn("item#certificate");
-        when(ordersApiDetails.getReference()).thenReturn("123456");
-        when(kindMapperFactory.getInstance("item#certificate")).thenReturn(kindMapper);
+        when(ordersApiDetails.getOrderReference()).thenReturn("123456");
+        when(orderKindMapperFactory.getInstance("item#certificate")).thenReturn(kindMapper);
         when(kindMapper.map(ordersApiDetails)).thenReturn(orderDetails);
         when(emailConfiguration.getSenderAddress()).thenReturn("address");
         when(orderDetails.getOrderModel()).thenReturn(orderModel);

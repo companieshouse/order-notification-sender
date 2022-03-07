@@ -72,6 +72,7 @@ class OrdersApiOrderRetrieverTest {
         when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
         when(ordersGet.execute()).thenReturn(ordersResponse);
         when(ordersResponse.getData()).thenReturn(ordersApi);
+        when(ordersApi.getReference()).thenReturn("order-reference");
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
 
@@ -79,9 +80,9 @@ class OrdersApiOrderRetrieverTest {
         OrdersApiDetails actual = serviceUnderTest.getOrderData(ORDER_URL);
 
         //then
-        assertThat(actual.getOrdersApi(), is(ordersApi));
-        verify(logger).debug("Order data returned from API client", logMap);
         verify(ordersGet).execute();
+        verify(logger).debug("Order data returned from API client", logMap);
+        assertThat(actual.getOrderReference(), is("order-reference"));
     }
 
     @Test

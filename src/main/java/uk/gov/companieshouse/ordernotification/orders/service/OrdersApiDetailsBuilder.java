@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import uk.gov.companieshouse.api.model.order.AbstractOrderDataApi;
+import uk.gov.companieshouse.api.model.order.ActionedByApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemOptionsApi;
@@ -32,8 +34,7 @@ final class OrdersApiDetailsBuilder {
             ordersApi = builder.ordersApi;
         }
 
-        @Override
-        public OrdersApi getOrdersApi() {
+        private OrdersApi getOrdersApi() {
             return ordersApi;
         }
 
@@ -59,9 +60,52 @@ final class OrdersApiDetailsBuilder {
         }
 
         @Override
-        public String getReference() {
+        public String getOrderEmail() {
             return Optional.ofNullable(getOrdersApi())
-                    .map(AbstractOrderDataApi::getReference)
+                    .map(OrdersApi::getOrderedBy).map(
+                    ActionedByApi::getEmail)
+                    .orElse(null);
+        }
+
+        @Override
+        public String getOrderReference() {
+            return Optional.ofNullable(getOrdersApi())
+                    .map(OrdersApi::getReference)
+                    .orElse(null);
+        }
+
+        @Override
+        public String getCompanyName() {
+            return Optional.ofNullable(getBaseItemApi())
+                    .map(BaseItemApi::getCompanyName)
+                    .orElse(null);
+        }
+
+        @Override
+        public String getCompanyNumber() {
+            return Optional.ofNullable(getBaseItemApi())
+                    .map(BaseItemApi::getCompanyNumber)
+                    .orElse(null);
+        }
+
+        @Override
+        public String getTotalOrderCost() {
+            return Optional.ofNullable(getOrdersApi())
+                    .map(OrdersApi::getTotalOrderCost)
+                    .orElse(null);
+        }
+
+        @Override
+        public String getPaymentReference() {
+            return Optional.ofNullable(getOrdersApi())
+                    .map(OrdersApi::getPaymentReference)
+                    .orElse(null);
+        }
+
+        @Override
+        public LocalDateTime getOrderedAt() {
+            return Optional.ofNullable(getOrdersApi())
+                    .map(OrdersApi::getOrderedAt)
                     .orElse(null);
         }
     }
