@@ -82,7 +82,7 @@ class OrdersKafkaConsumerIntegrationTest {
     void setup() {
         client = new MockServerClient(container.getHost(), container.getServerPort());
         eventLatch = new CountDownLatch(1);
-        OrdersKafkaConsumer.setEventLatch(eventLatch);
+        OrdersKafkaConsumerAspect.setEventLatch(eventLatch);
     }
 
     @AfterEach

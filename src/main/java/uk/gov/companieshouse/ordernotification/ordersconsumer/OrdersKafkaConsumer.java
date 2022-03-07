@@ -1,6 +1,5 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
-import java.util.concurrent.CountDownLatch;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
@@ -13,15 +12,10 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @Service
 public class OrdersKafkaConsumer {
 
-    private static CountDownLatch eventLatch = new CountDownLatch(0);
     private final OrderMessageHandler orderMessageHandler;
 
     public OrdersKafkaConsumer(OrderMessageHandler orderMessageHandler) {
         this.orderMessageHandler = orderMessageHandler;
-    }
-
-    static void setEventLatch(CountDownLatch eventLatch) {
-        OrdersKafkaConsumer.eventLatch = eventLatch;
     }
 
     /**
@@ -38,7 +32,6 @@ public class OrdersKafkaConsumer {
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceived(Message<OrderReceived> message) {
         orderMessageHandler.handleMessage(message);
-        eventLatch.countDown();
     }
 
     /**
@@ -55,6 +48,5 @@ public class OrdersKafkaConsumer {
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceivedRetry(Message<OrderReceived> message) {
         orderMessageHandler.handleMessage(message);
-        eventLatch.countDown();
     }
 }
