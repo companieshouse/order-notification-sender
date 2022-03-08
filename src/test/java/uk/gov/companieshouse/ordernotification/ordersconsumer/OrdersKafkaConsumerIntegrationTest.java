@@ -74,20 +74,6 @@ class OrdersKafkaConsumerIntegrationTest {
         container.stop();
     }
 
-    private static OrderReceived getOrderReceived() {
-        OrderReceived orderReceived = new OrderReceived();
-        orderReceived.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
-        orderReceived.setAttempt(attempt++);
-        return orderReceived;
-    }
-
-    private static OrderReceived getOrderReceivedRetry() {
-        OrderReceived orderReceivedRetry = new OrderReceived();
-        orderReceivedRetry.setAttempt(attempt++);
-        orderReceivedRetry.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
-        return orderReceivedRetry;
-    }
-
     @BeforeEach
     void setup() {
         client = new MockServerClient(container.getHost(), container.getServerPort());
@@ -104,8 +90,8 @@ class OrdersKafkaConsumerIntegrationTest {
     void testHandlesCertificateOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
         //given
         client.when(request()
-                        .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                        .withMethod(HttpMethod.GET.toString()))
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -135,8 +121,8 @@ class OrdersKafkaConsumerIntegrationTest {
     void testHandlesCertifiedCopyOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
         // given
         client.when(request()
-                        .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                        .withMethod(HttpMethod.GET.toString()))
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -165,8 +151,8 @@ class OrdersKafkaConsumerIntegrationTest {
     void testHandlesMissingImageOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
         // given
         client.when(request()
-                        .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                        .withMethod(HttpMethod.GET.toString()))
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -196,8 +182,8 @@ class OrdersKafkaConsumerIntegrationTest {
     void testHandlesOrderReceivedRetryMessage() throws ExecutionException, InterruptedException, IOException {
         // given
         client.when(request()
-                        .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                        .withMethod(HttpMethod.GET.toString()))
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
@@ -221,5 +207,19 @@ class OrdersKafkaConsumerIntegrationTest {
         assertEquals("order_notification_sender_missing_image", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
+    }
+
+    private static OrderReceived getOrderReceived() {
+        OrderReceived orderReceived = new OrderReceived();
+        orderReceived.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        orderReceived.setAttempt(attempt++);
+        return orderReceived;
+    }
+
+    private static OrderReceived getOrderReceivedRetry() {
+        OrderReceived orderReceivedRetry = new OrderReceived();
+        orderReceivedRetry.setAttempt(attempt++);
+        orderReceivedRetry.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        return orderReceivedRetry;
     }
 }

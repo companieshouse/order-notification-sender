@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -48,7 +49,8 @@ class CertificateOrderNotificationMapperTest {
     }
 
     @Test
-    void testCorrectlyMapsCertificateOrderApiMapsToOrderDetails() {
+    @DisplayName("Test certificate order notification mapper correctly maps orders API details to order details model")
+    void testCorrectlyMapsCertificateOrderApiToOrderDetails() {
         //given
         when(ordersApiDetails.getItemOptions()).thenReturn(certificateItemOptionsApi);
         when(config.getCertificate()).thenReturn(emailDataConfig);
@@ -59,8 +61,7 @@ class CertificateOrderNotificationMapperTest {
         when(certificateOptionsMapper.generateEmailData(ordersApiDetails)).thenReturn(orderModel);
 
         //when
-        uk.gov.companieshouse.ordernotification.emailsendmodel.OrderDetails orderDetails = certificateOrderNotificationMapper.map(
-                this.ordersApiDetails);
+        OrderDetails orderDetails = certificateOrderNotificationMapper.map(ordersApiDetails);
 
         //then
         assertThat(orderDetails.getOrderModel(), is(orderModel));
