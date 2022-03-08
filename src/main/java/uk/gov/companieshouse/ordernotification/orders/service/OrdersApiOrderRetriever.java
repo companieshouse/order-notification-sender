@@ -36,18 +36,26 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
             InternalApiClient internalApiClient = apiClient.getInternalApiClient();
             PrivateOrderResourceHandler privateOrderResourceHandler = internalApiClient.privateOrderResourceHandler();
             ApiResponse<OrdersApi> response = privateOrderResourceHandler.getOrder(orderUri).execute();
-            if(response.getStatusCode() != HttpStatus.SC_OK) {
-                throw new OrdersResponseException("Orders API returned status code " + response.getStatusCode());
+
+            OrdersApi ordersApi = response.getData();
+            loggingUtils.getLogger().debug("Order data returned from API client", logMap);
+            return ordersApi;
+        } catch (ApiErrorResponseException exception) {
+            String message = String.format("Order URI %s, API exception %s, HTTP status %d",
+                    orderUri,
+                    exception.getMessage(),
+                    exception.getStatusCode()
+            );
+            if (exception.getStatusCode() != HttpStatus.SC_NOT_FOUND) {
+                loggingUtils.getLogger().info(message, logMap);
+                throw new OrdersResponseException(message, exception);
             } else {
-                OrdersApi ordersApi = response.getData();
-                loggingUtils.getLogger().debug("Order data returned from API client", logMap);
-                return ordersApi;
+                loggingUtils.getLogger().error(message, exception);
+                throw new OrdersServiceException(message, exception);
             }
-        } catch(URIValidationException e) {
-            loggingUtils.getLogger().error("Unrecognised URI pattern", e, logMap);
-            throw new OrdersServiceException("Unrecognised uri pattern: "+orderUri, e);
-        } catch (ApiErrorResponseException e) {
-            throw new OrdersResponseException("Error fetching data from Orders API", e);
+        } catch(URIValidationException exception) {
+            loggingUtils.getLogger().error("Unrecognised URI pattern", exception, logMap);
+            throw new OrdersServiceException("Unrecognised uri pattern: "+orderUri, exception);
         }
     }
 }
