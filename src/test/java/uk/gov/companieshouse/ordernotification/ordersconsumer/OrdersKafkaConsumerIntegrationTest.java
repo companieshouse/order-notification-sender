@@ -61,7 +61,7 @@ class OrdersKafkaConsumerIntegrationTest {
     private KafkaProducer<String, OrderReceived> orderReceivedRetryProducer;
 
     @Autowired
-    private KafkaConsumer<String, email_send> consumer;
+    private KafkaConsumer<String, email_send> emailSendConsumer;
 
     private MockServerClient client;
 
@@ -107,10 +107,9 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withBody(JsonBody.json(IOUtils.resourceToString("/certified-certificate.json", StandardCharsets.UTF_8))));
 
         // when
-        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -132,10 +131,9 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withBody(JsonBody.json(IOUtils.resourceToString("/certified-copy.json", StandardCharsets.UTF_8))));
 
         // when
-        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -157,10 +155,9 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
 
         // when
-        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -182,10 +179,9 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
 
         // when
-        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(consumer, "email-send");
         orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry", "order-received-notification-retry", getOrderReceivedRetry())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = consumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());

@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
-import uk.gov.companieshouse.ordernotification.config.KafkaBrokerConfiguration;
+import uk.gov.companieshouse.ordernotification.ordersconsumer.KafkaConfig;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -30,7 +30,7 @@ class KafkaProducerConfigurationTest {
     @Test
     void afterPropertiesSetThrowsExceptionIfNoBrokersConfigured() {
         // Given
-        KafkaBrokerConfiguration configuration = new KafkaBrokerConfiguration(null);
+        KafkaConfig configuration = new KafkaConfig(null);
 
         // When
         ProducerConfigException exception = Assertions.assertThrows(ProducerConfigException.class, configuration::producerConfig);
@@ -45,7 +45,7 @@ class KafkaProducerConfigurationTest {
 
         // Given
         String brokerAddress = "broker-address";
-        KafkaBrokerConfiguration configuration = new KafkaBrokerConfiguration(brokerAddress);
+        KafkaConfig configuration = new KafkaConfig(brokerAddress);
 
         // When
         ProducerConfig producerConfig = configuration.producerConfig();

@@ -11,6 +11,7 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 import java.util.Map;
+import uk.gov.companieshouse.ordernotification.ordersconsumer.RetryableErrorException;
 
 /**
  * Handles an order notification by enriching it with data fetched from the orders API.
@@ -41,7 +42,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderURI());
             loggingUtils.getLogger().debug("Successfully enriched order; notifying email sender", loggerArgs);
             applicationEventPublisher.publishEvent(new SendEmailEvent(sendOrderNotificationEvent.getOrderURI(), sendOrderNotificationEvent.getRetryCount(), emailSend));
-        } catch (OrdersResponseException e) {
+        } catch (RetryableErrorException e) {
             loggingUtils.getLogger().error("Failed to enrich order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));
         }
