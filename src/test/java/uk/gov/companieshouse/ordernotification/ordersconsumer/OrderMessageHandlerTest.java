@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,9 @@ class OrderMessageHandlerTest {
     @Mock
     private SendOrderNotificationEventFactory eventFactory;
 
+    @Mock
+    private MessageFilter<OrderReceived> messageFilter;
+
     @InjectMocks
     private OrderMessageHandler orderMessageHandler;
 
@@ -40,11 +44,24 @@ class OrderMessageHandlerTest {
         // given
         SendOrderNotificationEvent event = new SendOrderNotificationEvent("ORD-12345-678", 1);
         when(eventFactory.createEvent(message)).thenReturn(event);
+        when(messageFilter.include(message)).thenReturn(true);
 
         // when
         orderMessageHandler.handleMessage(message);
 
         // then
         verify(applicationEventPublisher).publishEvent(event);
+    }
+
+    @Test
+    void testHandleMessageDoesNotPublishEventOnDuplicateMessage() {
+        // given
+        when(messageFilter.include(message)).thenReturn(false);
+
+        // when
+        orderMessageHandler.handleMessage(message);
+
+        // then
+        verifyNoInteractions(applicationEventPublisher);
     }
 }

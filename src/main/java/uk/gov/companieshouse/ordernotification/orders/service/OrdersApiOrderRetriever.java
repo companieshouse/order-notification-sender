@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
+import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,12 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
-import java.util.Map;
-
 /**
  * Retrieves order data using the provided order reference number.
  */
 @Service
 class OrdersApiOrderRetriever implements OrderRetrievable {
-    
+
     private final ApiClient apiClient;
     private final LoggingUtils loggingUtils;
 
@@ -29,17 +28,20 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
     }
 
     @Override
-    public OrdersApi getOrderData(String orderUri) throws OrdersResponseException {
+    public OrdersApiDetails getOrderData(String orderUri) {
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
         try {
             InternalApiClient internalApiClient = apiClient.getInternalApiClient();
             PrivateOrderResourceHandler privateOrderResourceHandler = internalApiClient.privateOrderResourceHandler();
-            ApiResponse<OrdersApi> response = privateOrderResourceHandler.getOrder(orderUri).execute();
+            ApiResponse<OrdersApi> response = privateOrderResourceHandler.getOrder(orderUri)
+                    .execute();
 
             OrdersApi ordersApi = response.getData();
             loggingUtils.getLogger().debug("Order data returned from API client", logMap);
-            return ordersApi;
+            return OrdersApiDetailsBuilder.newBuilder()
+                    .withOrdersApi(ordersApi)
+                    .build();
         } catch (ApiErrorResponseException exception) {
             String message = String.format("Order URI %s, API exception %s, HTTP status %d",
                     orderUri,
@@ -53,9 +55,9 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
                 loggingUtils.getLogger().error(message, exception);
                 throw new OrdersServiceException(message, exception);
             }
-        } catch(URIValidationException exception) {
+        } catch (URIValidationException exception) {
             loggingUtils.getLogger().error("Unrecognised URI pattern", exception, logMap);
-            throw new OrdersServiceException("Unrecognised uri pattern: "+orderUri, exception);
+            throw new OrdersServiceException("Unrecognised uri pattern: " + orderUri, exception);
         }
     }
 }

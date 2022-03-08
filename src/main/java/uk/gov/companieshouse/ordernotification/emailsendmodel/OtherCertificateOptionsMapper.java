@@ -18,8 +18,9 @@ public class OtherCertificateOptionsMapper extends CertificateOptionsMapper {
                                          AddressRecordTypeMapper addressRecordTypeMapper,
                                          DeliveryMethodMapper deliveryMethodMapper,
                                          DirectorOrSecretaryDetailsApiMapper directorOrSecretaryDetailsApiMapper,
-                                         CompanyStatusMapper companyStatusMapper) {
-        super(featureOptions, certificateTypeMapper, deliveryMethodMapper);
+                                         CompanyStatusMapper companyStatusMapper,
+                                         OrdersApiDetailsCommonFieldsMapper commonFieldsMapper) {
+        super(featureOptions, certificateTypeMapper, deliveryMethodMapper, commonFieldsMapper);
         this.addressRecordTypeMapper = addressRecordTypeMapper;
         this.directorOrSecretaryDetailsApiMapper = directorOrSecretaryDetailsApiMapper;
         this.companyStatusMapper = companyStatusMapper;

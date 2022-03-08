@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -17,11 +18,14 @@ import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Configuration
 public class KafkaConfig {
+    @Value("${duplicate-message-cache-size}")
+    private int duplicateMessageCacheSize;
 
     private final String brokerAddresses;
 
@@ -81,5 +85,12 @@ public class KafkaConfig {
     @ConfigurationProperties(prefix = "kafka.topics")
     KafkaTopics kafkaTopics() {
         return new KafkaTopics();
+    }
+
+    @Bean
+    @Scope("prototype")
+    MessageFilter<OrderReceived> duplicateMessageFilter(Logger logger) {
+        logger.info(String.format("DuplicateMessageFilter duplicate-message-cache-size: %d", duplicateMessageCacheSize));
+        return new DuplicateMessageFilter(duplicateMessageCacheSize, logger);
     }
 }

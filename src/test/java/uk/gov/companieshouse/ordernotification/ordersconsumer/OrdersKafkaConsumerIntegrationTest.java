@@ -1,6 +1,17 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
+
 import email.email_send;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -18,8 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
@@ -29,70 +38,50 @@ import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.orders.OrderReceived;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
-
 @SpringBootTest
-@DirtiesContext
 @Import(TestConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @ActiveProfiles("feature-flags-disabled")
 class OrdersKafkaConsumerIntegrationTest {
 
-    @Autowired
-    private EmbeddedKafkaBroker embeddedKafkaBroker;
-
-    @Autowired
-    private OrdersKafkaConsumer ordersKafkaConsumer;
-
+    private static MockServerContainer container;
+    private static int attempt;
     @Autowired
     private KafkaProducer<String, OrderReceived> orderReceivedProducer;
-
     @Autowired
     private KafkaProducer<String, OrderReceived> orderReceivedRetryProducer;
-
     @Autowired
     private KafkaConsumer<String, email_send> emailSendConsumer;
-
     private MockServerClient client;
-
-    private static MockServerContainer container;
-
     private CountDownLatch eventLatch;
 
     @BeforeAll
     static void before() {
-        container = new MockServerContainer(DockerImageName.parse("jamesdbloom/mockserver:mockserver-5.5.4"));
+        container = new MockServerContainer(DockerImageName.parse(
+                "jamesdbloom/mockserver:mockserver-5.5.4"));
         container.start();
-        TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL", "http://"+container.getHost()+":"+container.getServerPort());
+        TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
+                "http://" + container.getHost() + ":" + container.getServerPort());
         TestEnvironmentSetupHelper.setEnvironmentVariable("CHS_API_KEY", "123");
-        TestEnvironmentSetupHelper.setEnvironmentVariable("PAYMENTS_API_URL", "http://"+container.getHost()+":"+container.getServerPort());
+        TestEnvironmentSetupHelper.setEnvironmentVariable("PAYMENTS_API_URL",
+                "http://" + container.getHost() + ":" + container.getServerPort());
+    }
+
+    @AfterAll
+    static void after() {
+        container.stop();
     }
 
     @BeforeEach
     void setup() {
         client = new MockServerClient(container.getHost(), container.getServerPort());
         eventLatch = new CountDownLatch(1);
-        OrdersKafkaConsumer.setEventLatch(eventLatch);
+        OrdersKafkaConsumerAspect.setEventLatch(eventLatch);
     }
 
     @AfterEach
     void teardown() {
         client.reset();
-    }
-
-    @AfterAll
-    static void after() {
-        container.stop();
     }
 
     @Test
@@ -104,12 +93,19 @@ class OrdersKafkaConsumerIntegrationTest {
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/certified-certificate.json", StandardCharsets.UTF_8))));
+                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                                "/certified-certificate.json",
+                                StandardCharsets.UTF_8))));
 
         // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
+        orderReceivedProducer.send(new ProducerRecord<>("order-received",
+                "order-received",
+                getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+                .iterator()
+                .next()
+                .value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -128,12 +124,18 @@ class OrdersKafkaConsumerIntegrationTest {
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/certified-copy.json", StandardCharsets.UTF_8))));
+                        .withBody(JsonBody.json(IOUtils.resourceToString("/certified-copy.json",
+                                StandardCharsets.UTF_8))));
 
         // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
+        orderReceivedProducer.send(new ProducerRecord<>("order-received",
+                "order-received",
+                getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+                .iterator()
+                .next()
+                .value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -152,12 +154,19 @@ class OrdersKafkaConsumerIntegrationTest {
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
+                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                                "/missing-image-delivery.json",
+                                StandardCharsets.UTF_8))));
 
         // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received", "order-received", getOrderReceived())).get();
+        orderReceivedProducer.send(new ProducerRecord<>("order-received",
+                "order-received",
+                getOrderReceived())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+                .iterator()
+                .next()
+                .value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -176,12 +185,19 @@ class OrdersKafkaConsumerIntegrationTest {
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/missing-image-delivery.json", StandardCharsets.UTF_8))));
+                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                                "/missing-image-delivery.json",
+                                StandardCharsets.UTF_8))));
 
         // when
-        orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry", "order-received-notification-retry", getOrderReceivedRetry())).get();
+        orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry",
+                "order-received-notification-retry",
+                getOrderReceivedRetry())).get();
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15)).iterator().next().value();
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+                .iterator()
+                .next()
+                .value();
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
@@ -194,12 +210,13 @@ class OrdersKafkaConsumerIntegrationTest {
     private static OrderReceived getOrderReceived() {
         OrderReceived orderReceived = new OrderReceived();
         orderReceived.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        orderReceived.setAttempt(attempt++);
         return orderReceived;
     }
 
     private static OrderReceived getOrderReceivedRetry() {
         OrderReceived orderReceivedRetry = new OrderReceived();
-        orderReceivedRetry.setAttempt(2);
+        orderReceivedRetry.setAttempt(attempt++);
         orderReceivedRetry.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         return orderReceivedRetry;
     }

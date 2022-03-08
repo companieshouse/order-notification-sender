@@ -1,25 +1,25 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateOrderNotificationMapperTest {
 
     private CertificateOrderNotificationMapper certificateOrderNotificationMapper;
-
-    @Mock
-    private DateGenerator dateGenerator;
 
     @Mock
     private EmailConfiguration config;
@@ -28,37 +28,44 @@ class CertificateOrderNotificationMapperTest {
     private EmailDataConfiguration emailDataConfig;
 
     @Mock
-    private CertificateOptionsMapperFactory certificateOptionsMapperFactory;
+    private CertificateOptionsMapperFactory mapperFactory;
+
+    @Mock
+    private OrdersApiDetails ordersApiDetails;
+
+    @Mock
+    private CertificateOrderNotificationModel orderModel;
+
+    @Mock
+    private CertificateOptionsMapper certificateOptionsMapper;
+
+    @Mock
+    private CertificateItemOptionsApi certificateItemOptionsApi;
 
     @BeforeEach
     void setup() {
-        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(dateGenerator,
-                config, new ObjectMapper(), certificateOptionsMapperFactory);
+        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(config,
+                mapperFactory);
     }
 
     @Test
-    void testCertificateOrderNotificationMapperReturnsMessageId() {
+    @DisplayName("Test certificate order notification mapper correctly maps orders API details to order details model")
+    void testCorrectlyMapsCertificateOrderApiToOrderDetails() {
         //given
+        when(ordersApiDetails.getItemOptions()).thenReturn(certificateItemOptionsApi);
         when(config.getCertificate()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
-
-        //when
-        String actual = certificateOrderNotificationMapper.getMessageId();
-
-        //then
-        assertEquals(TestConstants.MESSAGE_ID, actual);
-    }
-
-    @Test
-    void testCertificateOrderNotificationMapperReturnsMessageType() {
-        //given
-        when(config.getCertificate()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
+        when(certificateItemOptionsApi.getCompanyType()).thenReturn("ltd");
+        when(mapperFactory.getCertificateOptionsMapper("ltd")).thenReturn(certificateOptionsMapper);
+        when(certificateOptionsMapper.generateEmailData(ordersApiDetails)).thenReturn(orderModel);
 
         //when
-        String actual = certificateOrderNotificationMapper.getMessageType();
+        OrderDetails orderDetails = certificateOrderNotificationMapper.map(ordersApiDetails);
 
         //then
-        assertEquals(TestConstants.MESSAGE_TYPE, actual);
+        assertThat(orderDetails.getOrderModel(), is(orderModel));
+        assertThat(orderDetails.getMessageId(), is(TestConstants.MESSAGE_ID));
+        assertThat(orderDetails.getMessageType(), is(TestConstants.MESSAGE_TYPE));
     }
 }

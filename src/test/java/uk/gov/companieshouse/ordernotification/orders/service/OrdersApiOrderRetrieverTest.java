@@ -1,6 +1,18 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.api.client.http.HttpStatusCodes;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
@@ -16,19 +28,6 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -59,12 +58,10 @@ class OrdersApiOrderRetrieverTest {
 
     @Mock
     LoggingUtils loggingUtils;
-
-    @Mock
-    private Logger logger;
-
     @Mock
     ApiErrorResponseException apiErrorResponseException;
+    @Mock
+    private Logger logger;
 
     @Test
     void getOrderData() throws Exception {
@@ -75,16 +72,17 @@ class OrdersApiOrderRetrieverTest {
         when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
         when(ordersGet.execute()).thenReturn(ordersResponse);
         when(ordersResponse.getData()).thenReturn(ordersApi);
+        when(ordersApi.getReference()).thenReturn("order-reference");
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(logMap);
 
         //when
-        OrdersApi actual = serviceUnderTest.getOrderData(ORDER_URL);
+        OrdersApiDetails actual = serviceUnderTest.getOrderData(ORDER_URL);
 
         //then
-        assertThat(actual, is(ordersApi));
-        verify(logger).debug("Order data returned from API client", logMap);
         verify(ordersGet).execute();
+        verify(logger).debug("Order data returned from API client", logMap);
+        assertThat(actual.getOrderReference(), is("order-reference"));
     }
 
     @Test
@@ -104,7 +102,8 @@ class OrdersApiOrderRetrieverTest {
 
         // then
         OrdersResponseException exception = assertThrows(OrdersResponseException.class, actual);
-        assertEquals("Order URI /orders/1234, API exception Orders API unavailable, HTTP status 500", exception.getMessage());
+        assertEquals("Order URI /orders/1234, API exception Orders API unavailable, HTTP status 500",
+                exception.getMessage());
     }
 
     @Test
@@ -124,7 +123,8 @@ class OrdersApiOrderRetrieverTest {
 
         //then
         OrdersServiceException exception = assertThrows(OrdersServiceException.class, actual);
-        assertEquals("Order URI /orders/1234, API exception Resource not found, HTTP status 404", exception.getMessage());
+        assertEquals("Order URI /orders/1234, API exception Resource not found, HTTP status 404",
+                exception.getMessage());
     }
 
     @Test

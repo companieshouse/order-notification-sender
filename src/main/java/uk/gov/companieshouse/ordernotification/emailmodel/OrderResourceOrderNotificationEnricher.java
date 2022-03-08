@@ -1,16 +1,15 @@
 package uk.gov.companieshouse.ordernotification.emailmodel;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MappingException;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.OrderMapperFactory;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapper;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
-
-import java.util.Map;
 
 /**
  * This service does the following:
@@ -26,13 +25,15 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
 
     private final OrderRetrievable orderRetrievable;
     private final LoggingUtils loggingUtils;
-    private final OrderMapperFactory orderMapperFactory;
+    private final OrdersApiDetailsMapper ordersApiMapper;
 
     @Autowired
-    public OrderResourceOrderNotificationEnricher(final OrderRetrievable orderRetrievable, OrderMapperFactory orderMapperFactory, LoggingUtils loggingUtils) {
+    public OrderResourceOrderNotificationEnricher(OrderRetrievable orderRetrievable,
+                                                  LoggingUtils loggingUtils,
+                                                  OrdersApiDetailsMapper ordersApiMapper) {
         this.orderRetrievable = orderRetrievable;
-        this.orderMapperFactory = orderMapperFactory;
         this.loggingUtils = loggingUtils;
+        this.ordersApiMapper = ordersApiMapper;
     }
 
     /**
@@ -42,10 +43,10 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
      */
     public EmailSend enrich(final String orderUri) throws OrdersResponseException {
         Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order", orderUri);
-        OrdersApi order = orderRetrievable.getOrderData(orderUri);
+        OrdersApiDetails order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order", logArgs);
         try {
-            return orderMapperFactory.getOrderMapper(order.getItems().get(0).getKind()).map(order);
+            return ordersApiMapper.mapToEmailSend(order);
         } catch (IllegalArgumentException | MappingException e) {
             loggingUtils.getLogger().error("Failed to map order resource", e, logArgs);
             throw e;
