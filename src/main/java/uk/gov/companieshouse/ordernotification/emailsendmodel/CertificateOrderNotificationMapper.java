@@ -18,7 +18,7 @@ public class CertificateOrderNotificationMapper implements OrderKindMapper {
 
     @Override
     public OrderDetails map(OrdersApiDetails ordersApiDetails) {
-        CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) ordersApiDetails.getBaseItemOptions();
+        CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) ordersApiDetails.getItemOptions();
         return OrderDetailsBuilder.newBuilder()
                 .withMessageId(emailConfiguration.getCertificate().getMessageId())
                 .withMessageType(emailConfiguration.getCertificate().getMessageType())

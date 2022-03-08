@@ -18,7 +18,7 @@ import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemOptionsApi;
 
 @ExtendWith(MockitoExtension.class)
-class OrdersApiDetailsBuilderTest {
+class OrderDetailsBuilderTest {
     @Mock
     private OrdersApi ordersApi;
 
@@ -49,8 +49,7 @@ class OrdersApiDetailsBuilderTest {
         assertThat(result.getTotalOrderCost(), is(nullValue()));
         assertThat(result.getPaymentReference(), is(nullValue()));
         assertThat(result.getOrderedAt(), is(nullValue()));
-        assertThat(result.getBaseItemApi(), is(nullValue()));
-        assertThat(result.getBaseItemOptions(), is(nullValue()));
+        assertThat(result.getItemOptions(), is(nullValue()));
     }
 
     @Test
@@ -75,29 +74,14 @@ class OrdersApiDetailsBuilderTest {
                 .build();
 
         //then
-        assertThat(result.getBaseItemApi(), is(baseItemApi));
         assertThat(result.getKind(), is("kind"));
         assertThat(result.getOrderEmail(), is("actionedby-email"));
-        assertThat(result.getBaseItemOptions(), is(baseItemOptionsApi));
+        assertThat(result.getItemOptions(), is(baseItemOptionsApi));
         assertThat(result.getOrderReference(), is("order-reference"));
         assertThat(result.getCompanyName(), is("company-name"));
         assertThat(result.getCompanyNumber(), is("company-number"));
         assertThat(result.getTotalOrderCost(), is("total-order-cost"));
         assertThat(result.getPaymentReference(), is("payment-reference"));
         assertThat(result.getOrderedAt(),is(LocalDateTime.of(2022, 3, 7, 15, 4, 0)));
-    }
-
-    @Test
-    @DisplayName("getBaseItemApi [ordersApi.getItems().get(0)] returns null if OrderApi items list is empty")
-    void testBaseItemApiReturnsNull() {
-        when(ordersApi.getItems()).thenReturn(baseItemApis);
-
-        //when
-        OrdersApiDetails result = OrdersApiDetailsBuilder.newBuilder()
-                .withOrdersApi(ordersApi)
-                .build();
-
-        //then
-        assertThat(result.getBaseItemApi(), is(nullValue()));
     }
 }

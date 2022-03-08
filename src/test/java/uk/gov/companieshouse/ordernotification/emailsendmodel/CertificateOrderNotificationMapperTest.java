@@ -50,7 +50,7 @@ class CertificateOrderNotificationMapperTest {
     @Test
     void testCorrectlyMapsCertificateOrderApiMapsToOrderDetails() {
         //given
-        when(ordersApiDetails.getBaseItemOptions()).thenReturn(certificateItemOptionsApi);
+        when(ordersApiDetails.getItemOptions()).thenReturn(certificateItemOptionsApi);
         when(config.getCertificate()).thenReturn(emailDataConfig);
         when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
         when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
@@ -59,7 +59,8 @@ class CertificateOrderNotificationMapperTest {
         when(certificateOptionsMapper.generateEmailData(ordersApiDetails)).thenReturn(orderModel);
 
         //when
-        OrderDetails orderDetails = certificateOrderNotificationMapper.map(ordersApiDetails);
+        uk.gov.companieshouse.ordernotification.emailsendmodel.OrderDetails orderDetails = certificateOrderNotificationMapper.map(
+                this.ordersApiDetails);
 
         //then
         assertThat(orderDetails.getOrderModel(), is(orderModel));

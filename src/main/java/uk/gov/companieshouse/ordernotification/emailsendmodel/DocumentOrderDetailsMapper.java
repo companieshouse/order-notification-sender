@@ -30,7 +30,7 @@ class DocumentOrderDetailsMapper {
         DocumentOrderNotificationModel model = new DocumentOrderNotificationModel();
         commonFieldsMapper.mapCommonFields(model, order);
 
-        CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getBaseItemOptions();
+        CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getItemOptions();
         model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod(),
                 itemOptions.getDeliveryTimescale()));
 

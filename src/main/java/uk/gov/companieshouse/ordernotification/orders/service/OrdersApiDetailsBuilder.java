@@ -45,17 +45,9 @@ final class OrdersApiDetailsBuilder {
         }
 
         @Override
-        public BaseItemOptionsApi getBaseItemOptions() {
+        public BaseItemOptionsApi getItemOptions() {
             return Optional.ofNullable(getBaseItemApi())
                     .map(BaseItemApi::getItemOptions)
-                    .orElse(null);
-        }
-
-        @Override
-        public BaseItemApi getBaseItemApi() {
-            return Optional.ofNullable(getOrdersApi())
-                    .map(AbstractOrderDataApi::getItems)
-                    .map(baseItemApis -> baseItemApis.get(0))
                     .orElse(null);
         }
 
@@ -106,6 +98,13 @@ final class OrdersApiDetailsBuilder {
         public LocalDateTime getOrderedAt() {
             return Optional.ofNullable(getOrdersApi())
                     .map(OrdersApi::getOrderedAt)
+                    .orElse(null);
+        }
+
+        private BaseItemApi getBaseItemApi() {
+            return Optional.ofNullable(getOrdersApi())
+                    .map(AbstractOrderDataApi::getItems)
+                    .map(baseItemApis -> baseItemApis.get(0))
                     .orElse(null);
         }
     }

@@ -27,7 +27,7 @@ class MissingImageOrderDetailsMapper {
         MissingImageOrderNotificationModel model = new MissingImageOrderNotificationModel();
         commonFieldsMapper.mapCommonFields(model, order);
         MissingImageDeliveryItemOptionsApi itemOptions =
-                (MissingImageDeliveryItemOptionsApi) order.getBaseItemOptions();
+                (MissingImageDeliveryItemOptionsApi) order.getItemOptions();
         FilingHistoryDetailsModel filingHistoryDetailsModel = new FilingHistoryDetailsModel();
         filingHistoryDetailsModel.setFilingHistoryDate(
                 LocalDate.parse(itemOptions.getFilingHistoryDate()).format(DateTimeFormatter.ofPattern(emailConfiguration.getMissingImage().getFilingHistoryDateFormat()))

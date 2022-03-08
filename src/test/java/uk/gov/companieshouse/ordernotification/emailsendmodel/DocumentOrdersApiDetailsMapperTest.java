@@ -27,7 +27,7 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
 @ExtendWith(MockitoExtension.class)
-class DocumentOrderDetailsMapperTest {
+class DocumentOrdersApiDetailsMapperTest {
 
     @Mock
     private EmailConfiguration config;
@@ -54,7 +54,7 @@ class DocumentOrderDetailsMapperTest {
     void testMapCertifiedDocument() {
         // given
         OrdersApi order = getOrder();
-        when(ordersApiDetails.getBaseItemOptions()).thenReturn(order.getItems().get(0).getItemOptions());
+        when(ordersApiDetails.getItemOptions()).thenReturn(order.getItems().get(0).getItemOptions());
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any())).thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
 

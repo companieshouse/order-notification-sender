@@ -86,12 +86,14 @@ class CertificateOptionsMapperTest {
         when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
         when(addressRecordTypeMapper.mapAddressRecordType(any())).thenReturn(TestConstants.EXPECTED_ADDRESS_TYPE);
         when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
-
         when(directorOrSecretaryDetailsApiMapper.map(any())).thenReturn(getCertificateDetailsModel());
-        when(ordersApiDetails.getBaseItemApi()).thenReturn(item);
+        when(ordersApiDetails.getCompanyName()).thenReturn(TestConstants.COMPANY_NAME);
+        when(ordersApiDetails.getCompanyNumber()).thenReturn(TestConstants.COMPANY_NUMBER);
+        when(ordersApiDetails.getItemOptions()).thenReturn(itemOptions);
 
         // when
-        CertificateOrderNotificationModel result = otherCertificateOptionsMapper.generateEmailData(ordersApiDetails);
+        CertificateOrderNotificationModel result = otherCertificateOptionsMapper.generateEmailData(
+                ordersApiDetails);
 
         // then
         CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();

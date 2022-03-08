@@ -47,7 +47,7 @@ class MissingImageOrderDetailsMapperTest {
     void testMapMissingImageItemToMissingItemNotificationModel() {
         // given
         OrdersApi order = getOrder();
-        when(ordersApiDetails.getBaseItemOptions()).thenReturn(order.getItems().get(0).getItemOptions());
+        when(ordersApiDetails.getItemOptions()).thenReturn(order.getItems().get(0).getItemOptions());
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
                 .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
         when(config.getMissingImage()).thenReturn(emailDataConfig);
