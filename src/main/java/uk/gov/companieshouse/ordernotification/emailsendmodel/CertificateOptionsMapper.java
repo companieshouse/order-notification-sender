@@ -10,6 +10,7 @@ public abstract class CertificateOptionsMapper {
     private final CertificateTypeMapper certificateTypeMapper;
     private final DeliveryMethodMapper deliveryMethodMapper;
     private final OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
+    private final String COMPANY_STATUS_DISSOLVED = "dissolved";
 
     protected CertificateOptionsMapper(FeatureOptions featureOptions,
                                        CertificateTypeMapper certificateTypeMapper,
@@ -25,6 +26,7 @@ public abstract class CertificateOptionsMapper {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) ordersApiDetails.getItemOptions();
         model.setCompanyType(itemOptions.getCompanyType());
+        model.setCompanyStatus(itemOptions.getCompanyStatus());
         model.setCompanyName(ordersApiDetails.getCompanyName());
         model.setCompanyNumber(ordersApiDetails.getCompanyNumber());
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
@@ -32,7 +34,9 @@ public abstract class CertificateOptionsMapper {
         model.setFeatureOptions(featureOptions);
         commonFieldsMapper.mapCommonFields(model, ordersApiDetails);
 
-        doMapCustomData(itemOptions, model);
+        if (!COMPANY_STATUS_DISSOLVED.equals(itemOptions.getCompanyStatus())) {
+            doMapCustomData(itemOptions, model);
+        }
 
         return model;
     }
