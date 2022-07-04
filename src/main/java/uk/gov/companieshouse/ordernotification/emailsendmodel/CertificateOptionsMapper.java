@@ -29,6 +29,8 @@ public abstract class CertificateOptionsMapper {
         model.setCompanyNumber(ordersApiDetails.getCompanyNumber());
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
         model.setDeliveryMethod(getDeliveryMethodMapper().mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()));
+        model.setDeliveryTimescale(itemOptions.getDeliveryTimescale().toString());
+        model.setEmailCopyRequired(EmailRequiredMapper.mapIsEmailRequired(itemOptions));
         model.setFeatureOptions(featureOptions);
         commonFieldsMapper.mapCommonFields(model, ordersApiDetails);
 

@@ -71,7 +71,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
         mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.STANDARD),
                 "Standard delivery (aim to dispatch within "+dispatchDays+" working days)");
         mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.SAME_DAY),
-                "Same Day");
+                "Express (Orders received before 11am will be dispatched the same day. Orders received after 11am will be dispatched the next working day)");
         return mappings;
     }
 
