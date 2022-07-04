@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
+import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
@@ -8,9 +9,6 @@ import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnric
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
-
-import java.util.Map;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.RetryableErrorException;
 
 /**

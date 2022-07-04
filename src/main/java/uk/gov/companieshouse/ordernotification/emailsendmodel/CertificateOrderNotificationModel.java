@@ -9,6 +9,8 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private String certificateType;
     private Content<String> statementOfGoodStanding;
     private String deliveryMethod;
+    private String deliveryTimescale;
+    private String emailCopyRequired;
     private String registeredOfficeAddressDetails;
     private CertificateDetailsModel directorDetailsModel;
     private CertificateDetailsModel secretaryDetailsModel;
@@ -46,6 +48,22 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     public void setDeliveryMethod(String deliveryMethod) {
         this.deliveryMethod = deliveryMethod;
+    }
+
+    public String getDeliveryTimescale() {
+        return deliveryTimescale;
+    }
+
+    public void setDeliveryTimescale(String deliveryTimescale) {
+        this.deliveryTimescale = deliveryTimescale;
+    }
+
+    public String getEmailCopyRequired() {
+        return emailCopyRequired;
+    }
+
+    public void setEmailCopyRequired(String emailCopyRequired) {
+        this.emailCopyRequired = emailCopyRequired;
     }
 
     public String getRegisteredOfficeAddressDetails() {
@@ -175,6 +193,8 @@ public class CertificateOrderNotificationModel extends OrderModel {
         return Objects.equals(certificateType, that.certificateType) &&
                 Objects.equals(statementOfGoodStanding, that.statementOfGoodStanding) &&
                 Objects.equals(deliveryMethod, that.deliveryMethod) &&
+                Objects.equals(deliveryTimescale, that.deliveryTimescale) &&
+                Objects.equals(emailCopyRequired, that.emailCopyRequired) &&
                 Objects.equals(registeredOfficeAddressDetails, that.registeredOfficeAddressDetails) &&
                 Objects.equals(directorDetailsModel, that.directorDetailsModel) &&
                 Objects.equals(secretaryDetailsModel, that.secretaryDetailsModel) &&
@@ -193,8 +213,8 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), certificateType, statementOfGoodStanding, deliveryMethod,
-                registeredOfficeAddressDetails, directorDetailsModel, secretaryDetailsModel, companyObjects,
+        return Objects.hash(super.hashCode(), certificateType, statementOfGoodStanding, deliveryMethod, deliveryTimescale,
+                emailCopyRequired, registeredOfficeAddressDetails, directorDetailsModel, secretaryDetailsModel, companyObjects,
                 companyType, designatedMembersDetails, membersDetails, generalPartnerDetails, limitedPartnerDetails,
                 principalPlaceOfBusinessDetails, generalNatureOfBusinessInformation, featureOptions, liquidatorsDetails,
                 administratorsDetails);
