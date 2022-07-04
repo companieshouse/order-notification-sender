@@ -23,6 +23,7 @@ public final class TestConstants {
     public static final String SENDER_EMAIL_ADDRESS = "noreply@companieshouse.gov.uk";
     public static final String ORDER_CREATED_AT = "27 July 2021";
     public static final String EMAIL_COPY_EXPRESS_ONLY = "Email only available for express delivery method";
+    public static final String DELIVERY_TIMESCALE = "STANDARD";
 
     //certificate order constants
     public static final String LIMITED_COMPANY_TYPE = "ltd";
