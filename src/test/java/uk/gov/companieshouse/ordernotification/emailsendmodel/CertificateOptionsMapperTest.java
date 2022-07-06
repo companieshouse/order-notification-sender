@@ -2,6 +2,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -123,8 +124,7 @@ class CertificateOptionsMapperTest {
         CertificateItemOptionsApi itemOptions = new CertificateItemOptionsApi();
         itemOptions.setCompanyType(TestConstants.LIMITED_COMPANY_TYPE);
         itemOptions.setCompanyStatus(TestConstants.DISSOLVED_STATUS);
-        CertificateTypeApi certificateType = CertificateTypeApi.DISSOLUTION;
-        itemOptions.setCertificateType(certificateType);
+        itemOptions.setCertificateType(CertificateTypeApi.DISSOLUTION);
         itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
         itemOptions.setDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
         item.setItemOptions(itemOptions);
@@ -146,6 +146,8 @@ class CertificateOptionsMapperTest {
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
+        expected.setDeliveryTimescale(TestConstants.DELIVERY_TIMESCALE);
+        expected.setEmailCopyRequired("Email only available for express delivery method");
 
         assertEquals(expected, result);
         verifyNoInteractions(directorOrSecretaryDetailsApiMapper);
