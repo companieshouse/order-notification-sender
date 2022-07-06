@@ -2,6 +2,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -112,6 +113,47 @@ class CertificateOptionsMapperTest {
 
         assertEquals(expected, result);
     }
+
+    @Test
+    void testCertificateOrderNotificationMapperMapsSuccessfullyWhenStatusIsDissolved() {
+        // given
+        CertificateApi item = new CertificateApi();
+        item.setCompanyName(TestConstants.COMPANY_NAME);
+        item.setCompanyNumber(TestConstants.COMPANY_NUMBER);
+
+        CertificateItemOptionsApi itemOptions = new CertificateItemOptionsApi();
+        itemOptions.setCompanyType(TestConstants.LIMITED_COMPANY_TYPE);
+        itemOptions.setCompanyStatus(TestConstants.DISSOLVED_STATUS);
+        itemOptions.setCertificateType(CertificateTypeApi.DISSOLUTION);
+        itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
+        itemOptions.setDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
+        item.setItemOptions(itemOptions);
+
+        when(certificateTypeMapper.mapCertificateType(any())).thenReturn(TestConstants.CERTIFICATE_TYPE);
+        when(deliveryMethodMapper.mapDeliveryMethod(any(), any())).thenReturn(TestConstants.DELIVERY_METHOD);
+        when(ordersApiDetails.getCompanyName()).thenReturn(TestConstants.COMPANY_NAME);
+        when(ordersApiDetails.getCompanyNumber()).thenReturn(TestConstants.COMPANY_NUMBER);
+        when(ordersApiDetails.getItemOptions()).thenReturn(itemOptions);
+
+        // when
+        CertificateOrderNotificationModel result = otherCertificateOptionsMapper.generateEmailData(
+                ordersApiDetails);
+
+        // then
+        CertificateOrderNotificationModel expected = new CertificateOrderNotificationModel();
+        expected.setCompanyType(TestConstants.LIMITED_COMPANY_TYPE);
+        expected.setCompanyName(TestConstants.COMPANY_NAME);
+        expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
+        expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
+        expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
+        expected.setDeliveryTimescale(TestConstants.DELIVERY_TIMESCALE);
+        expected.setEmailCopyRequired("Email only available for express delivery method");
+
+        assertEquals(expected, result);
+        verifyNoInteractions(directorOrSecretaryDetailsApiMapper);
+        verifyNoInteractions(addressRecordTypeMapper);
+    }
+
 
     private CertificateDetailsModel getCertificateDetailsModel() {
         return new CertificateDetailsModel(true, Collections.unmodifiableList(new ArrayList<String>() {

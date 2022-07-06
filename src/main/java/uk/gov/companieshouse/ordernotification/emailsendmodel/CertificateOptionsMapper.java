@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
+import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.ordernotification.config.FeatureOptions;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
@@ -34,7 +35,9 @@ public abstract class CertificateOptionsMapper {
         model.setFeatureOptions(featureOptions);
         commonFieldsMapper.mapCommonFields(model, ordersApiDetails);
 
-        doMapCustomData(itemOptions, model);
+        if (itemOptions.getCertificateType() != CertificateTypeApi.DISSOLUTION) {
+            doMapCustomData(itemOptions, model);
+        }
 
         return model;
     }

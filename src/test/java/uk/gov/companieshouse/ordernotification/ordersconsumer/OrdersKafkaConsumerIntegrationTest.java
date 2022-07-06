@@ -94,7 +94,7 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                         .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/certified-certificate.json",
+                                "/fixtures/certified-certificate.json",
                                 StandardCharsets.UTF_8))));
 
         // when
@@ -116,6 +116,37 @@ class OrdersKafkaConsumerIntegrationTest {
     }
 
     @Test
+    void testHandlesDissolvedCertificateOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
+        //given
+        client.when(request()
+                        .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                        .withMethod(HttpMethod.GET.toString()))
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                                "/fixtures/dissolved-certificate.json",
+                                StandardCharsets.UTF_8))));
+
+        // when
+        orderReceivedProducer.send(new ProducerRecord<>("order-received",
+                "order-received",
+                getOrderReceived())).get();
+        eventLatch.await(30, TimeUnit.SECONDS);
+        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+                .iterator()
+                .next()
+                .value();
+
+        // then
+        assertEquals("order_notification_sender", actual.getAppId());
+        assertEquals("order_notification_sender_dissolved_certificate", actual.getMessageId());
+        assertEquals("order_notification_sender_dissolved_certificate", actual.getMessageType());
+        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
+        assertNotNull(actual.getData());
+    }
+
+    @Test
     void testHandlesCertifiedCopyOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
         // given
         client.when(request()
@@ -124,7 +155,7 @@ class OrdersKafkaConsumerIntegrationTest {
                 .respond(response()
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/certified-copy.json",
+                        .withBody(JsonBody.json(IOUtils.resourceToString("/fixtures/certified-copy.json",
                                 StandardCharsets.UTF_8))));
 
         // when
@@ -155,7 +186,7 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                         .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/missing-image-delivery.json",
+                                "/fixtures/missing-image-delivery.json",
                                 StandardCharsets.UTF_8))));
 
         // when
@@ -186,7 +217,7 @@ class OrdersKafkaConsumerIntegrationTest {
                         .withStatusCode(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                         .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/missing-image-delivery.json",
+                                "/fixtures/missing-image-delivery.json",
                                 StandardCharsets.UTF_8))));
 
         // when

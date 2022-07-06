@@ -29,6 +29,7 @@ public final class TestConstants {
     public static final String LIMITED_COMPANY_TYPE = "ltd";
     public static final String CERTIFICATE_TYPE = "Incorporation";
     public static final String ADDRESS_TYPE = "current-previous-and-prior";
+    public static final String DISSOLVED_STATUS = "dissolved";
     public static final String DOB_TYPE = "dob-type";
     public static final String APPOINTMENT_DATE = "27 Sep 2021";
     public static final String COUNTRY_OF_RESIDENCE = "UK";

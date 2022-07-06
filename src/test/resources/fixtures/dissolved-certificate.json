@@ -35,25 +35,9 @@
         "delivery_timescale": "standard",
         "forename": "Forename",
         "surname": "Surname",
-        "certificate_type": "incorporation-with-all-name-changes",
-        "director_details": {
-          "include_address": true,
-          "include_appointment_date": false,
-          "include_basic_information": true,
-          "include_country_of_residence": true,
-          "include_dob_type": "partial",
-          "include_nationality": true,
-          "include_occupation": true
-        },
-        "registered_office_address_details": {
-          "include_address_records_type": "all",
-          "include_dates": false
-        },
-        "secretary_details": {
-          "include_address": false,
-          "include_appointment_date": true,
-          "include_basic_information": true
-        }
+        "certificate_type": "dissolution",
+        "company_type": "plc",
+        "company_status": "dissolved"
       },
       "etag": "F00DFACE",
       "kind": "item#certificate",

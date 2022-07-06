@@ -2,6 +2,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,12 +23,6 @@ class CertificateOrderNotificationMapperTest {
     private CertificateOrderNotificationMapper certificateOrderNotificationMapper;
 
     @Mock
-    private EmailConfiguration config;
-
-    @Mock
-    private EmailDataConfiguration emailDataConfig;
-
-    @Mock
     private CertificateOptionsMapperFactory mapperFactory;
 
     @Mock
@@ -42,10 +37,15 @@ class CertificateOrderNotificationMapperTest {
     @Mock
     private CertificateItemOptionsApi certificateItemOptionsApi;
 
+    @Mock
+    private CertificateOrderMessageTypeFactory messageTypeFactory;
+
+    @Mock
+    private EmailDataConfiguration messageConfiguration;
+
     @BeforeEach
     void setup() {
-        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(config,
-                mapperFactory);
+        certificateOrderNotificationMapper = new CertificateOrderNotificationMapper(mapperFactory, messageTypeFactory);
     }
 
     @Test
@@ -53,12 +53,12 @@ class CertificateOrderNotificationMapperTest {
     void testCorrectlyMapsCertificateOrderApiToOrderDetails() {
         //given
         when(ordersApiDetails.getItemOptions()).thenReturn(certificateItemOptionsApi);
-        when(config.getCertificate()).thenReturn(emailDataConfig);
-        when(emailDataConfig.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
-        when(emailDataConfig.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
         when(certificateItemOptionsApi.getCompanyType()).thenReturn("ltd");
         when(mapperFactory.getCertificateOptionsMapper("ltd")).thenReturn(certificateOptionsMapper);
         when(certificateOptionsMapper.generateEmailData(ordersApiDetails)).thenReturn(orderModel);
+        when(messageTypeFactory.getMessageConfiguration(any())).thenReturn(messageConfiguration);
+        when(messageConfiguration.getMessageId()).thenReturn(TestConstants.MESSAGE_ID);
+        when(messageConfiguration.getMessageType()).thenReturn(TestConstants.MESSAGE_TYPE);
 
         //when
         OrderDetails orderDetails = certificateOrderNotificationMapper.map(ordersApiDetails);

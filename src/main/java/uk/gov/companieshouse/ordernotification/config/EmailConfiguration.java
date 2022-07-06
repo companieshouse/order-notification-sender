@@ -19,6 +19,7 @@ public class EmailConfiguration {
     private String confirmationMessage;
     private String dispatchDays;
     private EmailDataConfiguration certificate;
+    private EmailDataConfiguration dissolvedCertificate;
     private EmailDataConfiguration document;
     private EmailDataConfiguration missingImage;
 
@@ -76,6 +77,14 @@ public class EmailConfiguration {
 
     public void setCertificate(EmailDataConfiguration certificate) {
         this.certificate = certificate;
+    }
+
+    public EmailDataConfiguration getDissolvedCertificate() {
+        return dissolvedCertificate;
+    }
+
+    public void setDissolvedCertificate(EmailDataConfiguration dissolvedCertificate) {
+        this.dissolvedCertificate = dissolvedCertificate;
     }
 
     public EmailDataConfiguration getDocument() {
