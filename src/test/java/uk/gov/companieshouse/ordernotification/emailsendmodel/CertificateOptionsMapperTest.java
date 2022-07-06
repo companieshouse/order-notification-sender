@@ -121,7 +121,7 @@ class CertificateOptionsMapperTest {
         CertificateItemOptionsApi itemOptions = new CertificateItemOptionsApi();
         itemOptions.setCompanyType(TestConstants.LIMITED_COMPANY_TYPE);
         itemOptions.setCompanyStatus(TestConstants.DISSOLVED_STATUS);
-        CertificateTypeApi certificateType = CertificateTypeApi.INCORPORATION;
+        CertificateTypeApi certificateType = CertificateTypeApi.DISSOLUTION;
         itemOptions.setCertificateType(certificateType);
         itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
         itemOptions.setDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
@@ -142,7 +142,6 @@ class CertificateOptionsMapperTest {
         expected.setCompanyType(TestConstants.LIMITED_COMPANY_TYPE);
         expected.setCompanyName(TestConstants.COMPANY_NAME);
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
-        expected.setCompanyStatus(TestConstants.DISSOLVED_STATUS);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
 

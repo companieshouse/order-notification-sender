@@ -141,6 +141,46 @@ class OrderMessageErrorConsumerIntegrationTest {
     }
 
     @Test
+    void testConsumesDissolvedCertificateOrderReceivedFromErrorTopic() throws
+            ExecutionException, InterruptedException,
+            IOException {
+        //given
+        client.when(request()
+                        .withPath(getOrderReference())
+                        .withMethod(HttpMethod.GET.toString()))
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                                "/fixtures/dissolved-certificate.json",
+                                StandardCharsets.UTF_8))));
+        orderMessageErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
+        orderMessageErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
+
+        //when
+        ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
+                kafkaTopics.getOrderReceivedError(),
+                kafkaTopics.getOrderReceivedError(),
+                getOrderReceived());
+        orderReceivedProducer.send(producerRecord).get();
+        orderMessageErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
+        orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
+        email_send actual = KafkaTestUtils.getSingleRecord(emailSendConsumer, kafkaTopics.getEmailSend()).value();
+
+        //then
+        assertEquals(0, orderMessageErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
+        assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
+        assertEquals("order_notification_sender",
+                actual.getAppId());
+        assertEquals("order_notification_sender_dissolved_certificate",
+                actual.getMessageId());
+        assertEquals("order_notification_sender_dissolved_certificate",
+                actual.getMessageType());
+        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
+        assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
+    }
+
+    @Test
     void testConsumesCertifiedDocumentOrderReceivedFromErrorTopic() throws ExecutionException, InterruptedException, IOException {
         //given
         client.when(request()

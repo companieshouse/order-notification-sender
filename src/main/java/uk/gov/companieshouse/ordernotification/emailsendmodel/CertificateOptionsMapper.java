@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
+import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.ordernotification.config.FeatureOptions;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
 
@@ -10,7 +11,6 @@ public abstract class CertificateOptionsMapper {
     private final CertificateTypeMapper certificateTypeMapper;
     private final DeliveryMethodMapper deliveryMethodMapper;
     private final OrdersApiDetailsCommonFieldsMapper commonFieldsMapper;
-    private final String COMPANY_STATUS_DISSOLVED = "dissolved";
 
     protected CertificateOptionsMapper(FeatureOptions featureOptions,
                                        CertificateTypeMapper certificateTypeMapper,
@@ -26,7 +26,6 @@ public abstract class CertificateOptionsMapper {
         CertificateOrderNotificationModel model = new CertificateOrderNotificationModel();
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) ordersApiDetails.getItemOptions();
         model.setCompanyType(itemOptions.getCompanyType());
-        model.setCompanyStatus(itemOptions.getCompanyStatus());
         model.setCompanyName(ordersApiDetails.getCompanyName());
         model.setCompanyNumber(ordersApiDetails.getCompanyNumber());
         model.setCertificateType(getCertificateTypeMapper().mapCertificateType(itemOptions.getCertificateType()));
@@ -34,7 +33,7 @@ public abstract class CertificateOptionsMapper {
         model.setFeatureOptions(featureOptions);
         commonFieldsMapper.mapCommonFields(model, ordersApiDetails);
 
-        if (!COMPANY_STATUS_DISSOLVED.equals(itemOptions.getCompanyStatus())) {
+        if (itemOptions.getCertificateType() != CertificateTypeApi.DISSOLUTION) {
             doMapCustomData(itemOptions, model);
         }
 

@@ -14,7 +14,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
     private CertificateDetailsModel secretaryDetailsModel;
     private String companyObjects;
     private String companyType;
-    private String companyStatus;
     private CertificateDetailsModel designatedMembersDetails;
     private CertificateDetailsModel membersDetails;
     private String generalPartnerDetails;
@@ -87,14 +86,6 @@ public class CertificateOrderNotificationModel extends OrderModel {
 
     public void setCompanyType(String companyType) {
         this.companyType = companyType;
-    }
-
-    public String getCompanyStatus() {
-        return companyStatus;
-    }
-
-    public void setCompanyStatus(String companyStatus) {
-        this.companyStatus = companyStatus;
     }
 
     public CertificateDetailsModel getDesignatedMembersDetails() {
