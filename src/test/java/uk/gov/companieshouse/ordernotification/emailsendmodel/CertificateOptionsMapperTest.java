@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,14 +21,7 @@ import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeDobTypeApi;
 import uk.gov.companieshouse.api.model.order.item.RegisteredOfficeAddressDetailsApi;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
-
-import java.util.ArrayList;
-import java.util.Collections;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateOptionsMapperTest {
@@ -71,6 +70,7 @@ class CertificateOptionsMapperTest {
         itemOptions.setIncludeGoodStandingInformation(true);
         itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
         itemOptions.setDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
+        itemOptions.setIncludeEmailCopy(false);
 
         RegisteredOfficeAddressDetailsApi registeredOfficeAddressDetails = new RegisteredOfficeAddressDetailsApi();
         IncludeAddressRecordsTypeApi addressRecord = IncludeAddressRecordsTypeApi.CURRENT_PREVIOUS_AND_PRIOR;
@@ -102,7 +102,9 @@ class CertificateOptionsMapperTest {
         expected.setCompanyNumber(TestConstants.COMPANY_NUMBER);
         expected.setCertificateType(TestConstants.CERTIFICATE_TYPE);
         expected.setStatementOfGoodStanding(new Content<>(TestConstants.READABLE_TRUE));
+        expected.setDeliveryTimescale(TestConstants.DELIVERY_TIMESCALE);
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
+        expected.setEmailCopyRequired(TestConstants.EMAIL_COPY_EXPRESS_ONLY);
         expected.setRegisteredOfficeAddressDetails(TestConstants.EXPECTED_ADDRESS_TYPE);
         expected.setDirectorDetailsModel(getCertificateDetailsModel());
         expected.setSecretaryDetailsModel(getCertificateDetailsModel());
