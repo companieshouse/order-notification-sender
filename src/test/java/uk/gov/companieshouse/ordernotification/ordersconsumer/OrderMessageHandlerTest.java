@@ -28,9 +28,6 @@ class OrderMessageHandlerTest {
     @Mock
     private SendOrderNotificationEventFactory eventFactory;
 
-    @Mock
-    private MessageFilter<OrderReceived> messageFilter;
-
     @InjectMocks
     private OrderMessageHandler orderMessageHandler;
 
@@ -44,7 +41,6 @@ class OrderMessageHandlerTest {
         // given
         SendOrderNotificationEvent event = new SendOrderNotificationEvent("ORD-12345-678", 1);
         when(eventFactory.createEvent(message)).thenReturn(event);
-        when(messageFilter.include(message)).thenReturn(true);
 
         // when
         orderMessageHandler.handleMessage(message);
