@@ -11,13 +11,10 @@ import uk.gov.companieshouse.orders.OrderReceived;
 public class OrderMessageHandler implements ApplicationEventPublisherAware {
 
     private final SendOrderNotificationEventFactory eventFactory;
-    private final MessageFilter<OrderReceived> messageFilter;
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderMessageHandler(SendOrderNotificationEventFactory eventFactory,
-                               MessageFilter<OrderReceived> messageFilter) {
+    public OrderMessageHandler(SendOrderNotificationEventFactory eventFactory) {
         this.eventFactory = eventFactory;
-        this.messageFilter = messageFilter;
     }
 
     /**
@@ -26,9 +23,7 @@ public class OrderMessageHandler implements ApplicationEventPublisherAware {
      * @param message received
      */
     public void handleMessage(Message<OrderReceived> message) {
-        if (messageFilter.include(message)) {
-            applicationEventPublisher.publishEvent(eventFactory.createEvent(message));
-        }
+        applicationEventPublisher.publishEvent(eventFactory.createEvent(message));
     }
 
     @Override
