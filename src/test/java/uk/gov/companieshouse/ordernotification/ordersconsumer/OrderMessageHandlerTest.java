@@ -48,16 +48,4 @@ class OrderMessageHandlerTest {
         // then
         verify(applicationEventPublisher).publishEvent(event);
     }
-
-    @Test
-    void testHandleMessageDoesNotPublishEventOnDuplicateMessage() {
-        // given
-        when(messageFilter.include(message)).thenReturn(false);
-
-        // when
-        orderMessageHandler.handleMessage(message);
-
-        // then
-        verifyNoInteractions(applicationEventPublisher);
-    }
 }
