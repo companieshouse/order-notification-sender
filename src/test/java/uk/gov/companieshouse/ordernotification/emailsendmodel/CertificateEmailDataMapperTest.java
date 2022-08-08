@@ -38,7 +38,7 @@ public class CertificateEmailDataMapperTest {
             .withCompanyNumber(COMPANY_NUMBER)
             .withTotalItemCost(FEE);
 
-    private static final Certificate.CertificateBuilder mappedCertificate = resultBuilder()
+    private static final Certificate.CertificateBuilder mappedCertificate = Certificate.builder()
             .withId(CERTIFICATE_ID)
             .withCompanyNumber(COMPANY_NUMBER)
             .withFee(MAPPED_FEE);
@@ -103,10 +103,6 @@ public class CertificateEmailDataMapperTest {
 
     static ItemBuilder itemBuilder() {
         return new ItemBuilder();
-    }
-
-    static Certificate.CertificateBuilder resultBuilder() {
-        return new Certificate.CertificateBuilder();
     }
 
     static class ExpectationsBuilder {
