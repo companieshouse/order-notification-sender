@@ -1,486 +1,376 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.3.0">
-  <zoom_level>6</zoom_level>
+  <zoom_level>8</zoom_level>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>56</x>
+      <y>56</y>
+      <w>336</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>Class Diagram: OrderResourceOrderNotificationEnricher
+
+Enriches an order received notification with an
+order resource fetched from the Orders API.
+bg=green</panel_attributes>
+    <additional_attributes/>
+  </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>324</x>
-      <y>108</y>
-      <w>480</w>
-      <h>48</h>
+      <x>728</x>
+      <y>576</y>
+      <w>216</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-OrderMapperFactory
+    <panel_attributes>SummaryEmailDataDirector
 --
-+getOrderMapper(OrdersApi ordersApi) : OrdersApiMapper
-</panel_attributes>
+map(order: OrdersApi): EmailData</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>738</x>
-      <y>474</y>
-      <w>264</w>
-      <h>24</h>
+      <x>312</x>
+      <y>368</y>
+      <w>296</w>
+      <h>144</h>
     </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-/CertificateOrderNotificationMapper/
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>324</x>
-      <y>342</y>
-      <w>474</w>
-      <h>42</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-/OrdersApiMapper/
+    <panel_attributes>OrderNotificationEmailData
 --
-+getEmailSendModel(OrdersApi ordersApi) : EmailSendModel
-</panel_attributes>
+orderId: String
+certificates: List&lt;Certificate&gt;
+certifiedCopies: List&lt;CertifiedCopy&gt;
+missingImageDeliveries: List&lt;MissingImageDelivery&gt;
+deliveryDetails: DeliveryDetails
+paymentDetails: PaymentDetails
+hasStandardDelivery: boolean
+hasExpressDelivery: boolean
+orderSummaryLink: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>688</x>
+      <y>456</y>
+      <w>288</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>OrderNotificationEmailDataConverter</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>744</x>
-      <y>378</y>
-      <w>18</w>
-      <h>108</h>
+      <x>832</x>
+      <y>480</y>
+      <w>24</w>
+      <h>112</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;160.0</additional_attributes>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>444</x>
-      <y>378</y>
-      <w>18</w>
-      <h>54</h>
+      <x>464</x>
+      <y>504</y>
+      <w>280</w>
+      <h>112</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;70.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;120.0;330.0;120.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>714</x>
-      <y>510</y>
-      <w>264</w>
-      <h>24</h>
+      <x>688</x>
+      <y>304</y>
+      <w>288</w>
+      <h>104</h>
     </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-/DocumentOrderNotificationMapper/
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>678</x>
-      <y>546</y>
-      <w>264</w>
-      <h>24</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-/MissingImageOrderNotificationMapper/
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>408</x>
-      <y>474</y>
-      <w>282</w>
-      <h>24</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-CertificateOrderNotificationModel</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>348</x>
-      <y>546</y>
-      <w>282</w>
-      <h>24</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-DocumentOrderNotificationModel</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>378</x>
-      <y>510</y>
-      <w>282</w>
-      <h>24</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsendmodel::
-MissingImageOrderNotificationModel</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>324</x>
-      <y>420</y>
-      <w>252</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailsender::
-EmailSendModel</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>570</x>
-      <y>180</y>
-      <w>186</w>
-      <h>36</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.api.model.order::
-OrdersApi
-bg=gray</panel_attributes>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+OrderNotificationDataConvertable
+--
+mapOrder(order: OrdersApi): void
+mapCertificate(cert: BaseItemApi): void
+mapCertifiedCopy(copy: BaseItemApi): void
+mapMissingImageDelivery(mid: BaseItemApi): void
+getEmailData(): OrderNotificationEmailData</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>762</x>
-      <y>150</y>
-      <w>18</w>
-      <h>204</h>
+      <x>832</x>
+      <y>400</y>
+      <w>24</w>
+      <h>72</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;320.0;10.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>56</x>
+      <y>152</y>
+      <w>152</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>Certificate
+--
+id: String
+certificateType: String
+companyNumber: String
+deliveryMethod: String
+fee: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>48</x>
+      <y>264</y>
+      <w>160</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>CertifiedCopy
+--
+id: String
+dateFiled: String
+type: String
+description: String
+companyNumber: String
+deliveryMethod: String
+fee: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>48</x>
+      <y>392</y>
+      <w>160</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>MissingImageDelivery
+--
+id: String
+dateFiled: String
+type: String
+description: String
+companyNumber: String
+fee: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>72</x>
+      <y>520</y>
+      <w>136</w>
+      <h>144</h>
+    </coordinates>
+    <panel_attributes>DeliveryDetails
+--
+addressLine1: String
+addressLine2: String
+country: String
+locality: String
+poBox: String
+postalCode: String
+region: String
+forename: String
+surname: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>48</x>
+      <y>680</y>
+      <w>160</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>PaymentDetails
+--
+paymentReference: String
+amountPaid: String
+paymentDate: String</panel_attributes>
+    <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>348</x>
-      <y>288</y>
-      <w>18</w>
-      <h>66</h>
+      <x>200</x>
+      <y>184</y>
+      <w>128</w>
+      <h>288</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;340.0;140.0;340.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>704</x>
+      <y>672</y>
+      <w>280</w>
+      <h>32</h>
+    </coordinates>
+    <panel_attributes>OrderResourceOrderNotificationEnricher</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>736</x>
+      <y>768</y>
+      <w>208</w>
+      <h>56</h>
+    </coordinates>
+    <panel_attributes>OrderNotificationEnrichable
+--
+enrich(orderUrl: String): EmailSend</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>832</x>
+      <y>696</y>
+      <w>24</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
     <additional_attributes>10.0;90.0;10.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>660</x>
-      <y>210</y>
-      <w>18</w>
-      <h>144</h>
+      <x>832</x>
+      <y>608</y>
+      <w>24</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;220.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>660</x>
-      <y>150</y>
-      <w>18</w>
-      <h>42</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLNote</id>
-    <coordinates>
-      <x>840</x>
-      <y>252</y>
-      <w>216</w>
-      <h>36</h>
-    </coordinates>
-    <panel_attributes>Facade for uk.gov.companieshouse.api::
-InternalApiClient / OrdersApi API
-fg=red</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>642</x>
-      <y>252</y>
-      <w>210</w>
-      <h>42</h>
-    </coordinates>
-    <panel_attributes>lt=..
-fg=red</panel_attributes>
-    <additional_attributes>10.0;50.0;330.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>414</x>
-      <y>444</y>
-      <w>36</w>
-      <h>42</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-m1=0..1</panel_attributes>
-    <additional_attributes>10.0;50.0;10.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>396</x>
-      <y>246</y>
-      <w>252</w>
-      <h>48</h>
+      <x>1088</x>
+      <y>672</y>
+      <w>248</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.ordersapiservice::
-/OrdersApiService/
+    <panel_attributes>OrderRetrievable
 --
-+getOrders(String orderURI) : OrdersApi
-
-
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>108</x>
-      <y>258</y>
-      <w>264</w>
-      <h>36</h>
-    </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailmodel::
-OrderNotificationOrderUriMapper
-
-
-</panel_attributes>
+getOrderData(orderUrl: String): OrdersApi</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>162</x>
-      <y>150</y>
-      <w>18</w>
-      <h>120</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;180.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>366</x>
-      <y>270</y>
-      <w>42</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>50.0;10.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>594</x>
-      <y>210</y>
-      <w>18</w>
-      <h>48</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;60.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>162</x>
-      <y>288</y>
-      <w>174</w>
-      <h>162</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>270.0;250.0;10.0;250.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLNote</id>
-    <coordinates>
-      <x>840</x>
-      <y>324</y>
-      <w>210</w>
-      <h>60</h>
-    </coordinates>
-    <panel_attributes>Mapping is performed from OrdersApi (kind) 
-directly to respective EmailSendModel.
-
-Factory method.
-
-fg=red</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>792</x>
-      <y>336</y>
-      <w>60</w>
+      <x>976</x>
+      <y>680</y>
+      <w>128</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>lt=..
-fg=red</panel_attributes>
-    <additional_attributes>10.0;20.0;80.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>140.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>448</y>
+      <w>128</w>
+      <h>280</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;330.0;50.0;330.0;50.0;10.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>448</y>
+      <w>128</w>
+      <h>168</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;190.0;50.0;190.0;50.0;10.0;140.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>312</y>
+      <w>128</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;50.0;10.0;50.0;180.0;140.0;180.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>448</y>
+      <w>128</w>
+      <h>24</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>10.0;10.0;140.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>18</x>
-      <y>108</y>
-      <w>288</w>
-      <h>48</h>
+      <x>1120</x>
+      <y>768</y>
+      <w>176</w>
+      <h>24</h>
     </coordinates>
-    <panel_attributes>uk.gov.companieshouse.ordernotification.emailmodel::
-/OrderUriMapper/
---
-+getEmailSendModel(String orderUri) : EmailSendModel
-
-
-</panel_attributes>
+    <panel_attributes>OrdersApiOrderRetriever</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>684</x>
-      <y>480</y>
-      <w>66</w>
-      <h>18</h>
+      <x>1200</x>
+      <y>704</y>
+      <w>24</w>
+      <h>80</h>
     </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>654</x>
-      <y>516</y>
-      <w>72</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;100.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>624</x>
-      <y>552</y>
-      <w>66</w>
-      <h>18</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;90.0;10.0</additional_attributes>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
   </element>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>18</x>
-      <y>18</y>
-      <w>252</w>
-      <h>54</h>
+      <x>984</x>
+      <y>536</y>
+      <w>112</w>
+      <h>56</h>
     </coordinates>
-    <panel_attributes>Class Diagram: OrderUriMapper
-
-Produces an order notification EmailSendModel from
-a supplied URL i.e. according to the order's type. 
-bg=green</panel_attributes>
+    <panel_attributes>Builder/adapter
+pattern
+fg=red</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>348</x>
-      <y>150</y>
-      <w>18</w>
-      <h>120</h>
+      <x>600</x>
+      <y>464</y>
+      <w>104</w>
+      <h>24</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;180.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>384</x>
-      <y>444</y>
-      <w>36</w>
-      <h>78</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-m1=0..1</panel_attributes>
-    <additional_attributes>10.0;110.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>354</x>
-      <y>444</y>
-      <w>36</w>
-      <h>114</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-m1=0..1</panel_attributes>
-    <additional_attributes>10.0;170.0;10.0;10.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>720</x>
-      <y>378</y>
-      <w>18</w>
-      <h>144</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;220.0</additional_attributes>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>696</x>
-      <y>378</y>
-      <w>18</w>
-      <h>180</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;10.0;280.0</additional_attributes>
-  </element>
-  <element>
-    <id>UMLNote</id>
-    <coordinates>
-      <x>840</x>
-      <y>210</y>
-      <w>174</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>See OrdersApiService-class-diagram
-bg=cyan</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>Relation</id>
-    <coordinates>
-      <x>642</x>
-      <y>222</y>
-      <w>210</w>
-      <h>42</h>
-    </coordinates>
-    <panel_attributes>lt=..</panel_attributes>
-    <additional_attributes>10.0;50.0;330.0;10.0</additional_attributes>
+    <additional_attributes>10.0;10.0;110.0;10.0</additional_attributes>
   </element>
 </diagram>
