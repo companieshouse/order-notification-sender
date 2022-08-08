@@ -5,6 +5,8 @@ import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 
 public class OrderNotificationEmailDataConverter implements OrderNotificationDataConvertable {
 
+    private OrderNotificationEmailData emailData;
+
     @Override
     public void mapOrder(OrdersApi ordersApi) {
 
@@ -27,6 +29,6 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     @Override
     public OrderNotificationEmailData getEmailData() {
-        return null;
+        return emailData;
     }
 }
