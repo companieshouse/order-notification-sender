@@ -26,12 +26,12 @@ public class CertifiedCopyEmailDataMapper {
                 (CertifiedCopyItemOptionsApi) certifiedDocumentItem.getItemOptions();
 
         return CertifiedCopy.builder()
-                .withId(certifiedDocumentItem.getId())
-                .withCompanyNumber(certifiedDocumentItem.getCompanyNumber())
-                .withDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(
-                        itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()))
-                .withFilingHistoryDetailsModelList(mapFilingHistoryDocuments(itemOptions))
-                .build();
+            .withId(certifiedDocumentItem.getId())
+            .withCompanyNumber(certifiedDocumentItem.getCompanyNumber())
+            .withDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(
+                    itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()))
+            .withFilingHistoryDetailsModelList(mapFilingHistoryDocuments(itemOptions))
+            .build();
     }
 
     private List<FilingHistoryDetailsModel> mapFilingHistoryDocuments(
