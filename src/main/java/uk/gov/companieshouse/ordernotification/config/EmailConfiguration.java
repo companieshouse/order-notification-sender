@@ -18,10 +18,9 @@ public class EmailConfiguration {
     private String applicationId;
     private String confirmationMessage;
     private String dispatchDays;
-    private EmailDataConfiguration certificate;
-    private EmailDataConfiguration dissolvedCertificate;
-    private EmailDataConfiguration document;
-    private EmailDataConfiguration missingImage;
+    private String messageId;
+    private String messageType;
+    private String filingHistoryDateFormat;
 
     public String getDateFormat() {
         return dateFormat;
@@ -71,60 +70,40 @@ public class EmailConfiguration {
         this.dispatchDays = dispatchDays;
     }
 
-    public EmailDataConfiguration getCertificate() {
-        return certificate;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public void setCertificate(EmailDataConfiguration certificate) {
-        this.certificate = certificate;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
-    public EmailDataConfiguration getDissolvedCertificate() {
-        return dissolvedCertificate;
+    public String getMessageType() {
+        return messageType;
     }
 
-    public void setDissolvedCertificate(EmailDataConfiguration dissolvedCertificate) {
-        this.dissolvedCertificate = dissolvedCertificate;
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
     }
 
-    public EmailDataConfiguration getDocument() {
-        return document;
+    public String getFilingHistoryDateFormat() {
+        return filingHistoryDateFormat;
     }
 
-    public void setDocument(EmailDataConfiguration document) {
-        this.document = document;
-    }
-
-    public EmailDataConfiguration getMissingImage() {
-        return missingImage;
-    }
-
-    public void setMissingImage(EmailDataConfiguration missingImage) {
-        this.missingImage = missingImage;
+    public void setFilingHistoryDateFormat(String filingHistoryDateFormat) {
+        this.filingHistoryDateFormat = filingHistoryDateFormat;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof EmailConfiguration)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         EmailConfiguration that = (EmailConfiguration) o;
-        return Objects.equals(getDateFormat(), that.getDateFormat()) &&
-                Objects.equals(getSenderAddress(), that.getSenderAddress()) &&
-                Objects.equals(getPaymentDateFormat(), that.getPaymentDateFormat()) &&
-                Objects.equals(getApplicationId(), that.getApplicationId()) &&
-                Objects.equals(getConfirmationMessage(), that.getConfirmationMessage()) &&
-                Objects.equals(getDispatchDays(), that.getDispatchDays()) &&
-                Objects.equals(getCertificate(), that.getCertificate()) &&
-                Objects.equals(getDocument(), that.getDocument()) &&
-                Objects.equals(getMissingImage(), that.getMissingImage());
+        return Objects.equals(dateFormat, that.dateFormat) && Objects.equals(senderAddress, that.senderAddress) && Objects.equals(paymentDateFormat, that.paymentDateFormat) && Objects.equals(applicationId, that.applicationId) && Objects.equals(confirmationMessage, that.confirmationMessage) && Objects.equals(dispatchDays, that.dispatchDays) && Objects.equals(messageId, that.messageId) && Objects.equals(messageType, that.messageType) && Objects.equals(filingHistoryDateFormat, that.filingHistoryDateFormat);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDateFormat(), getSenderAddress(), getPaymentDateFormat(), getApplicationId(), getConfirmationMessage(), getDispatchDays(), getCertificate(), getDocument(), getMissingImage());
+        return Objects.hash(dateFormat, senderAddress, paymentDateFormat, applicationId, confirmationMessage, dispatchDays, messageId, messageType, filingHistoryDateFormat);
     }
 }

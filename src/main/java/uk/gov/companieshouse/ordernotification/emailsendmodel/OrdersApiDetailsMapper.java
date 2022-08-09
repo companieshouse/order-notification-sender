@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
 
 /**
  * Map an {@link OrdersApi} object to an {@link EmailSend} object.
@@ -18,16 +18,16 @@ public class OrdersApiDetailsMapper {
     private final DateGenerator dateGenerator;
     private final EmailConfiguration config;
     private final ObjectMapper objectMapper;
-    private final OrderKindMapperFactory kindMapperFactory;
+    private final SummaryEmailDataDirector director;
 
     public OrdersApiDetailsMapper(DateGenerator dateGenerator,
                                   EmailConfiguration config,
                                   ObjectMapper objectMapper,
-                                  OrderKindMapperFactory kindMapperFactory) {
+                                  SummaryEmailDataDirector director) {
         this.dateGenerator = dateGenerator;
         this.config = config;
         this.objectMapper = objectMapper;
-        this.kindMapperFactory = kindMapperFactory;
+        this.director = director;
     }
 
     /**
@@ -36,21 +36,20 @@ public class OrdersApiDetailsMapper {
      * @return An {@link EmailSend} object containing orderDetails data.
      * @throws MappingException If an error occurs when serialising email data.
      */
-    public EmailSend mapToEmailSend(OrdersApiDetails ordersApiDetails) {
-        OrderDetails orderDetails = kindMapperFactory.getInstance(ordersApiDetails.getKind()).map(
-                ordersApiDetails);
+    public EmailSend mapToEmailSend(OrdersApiWrappable ordersApiWrappable) {
+        OrderNotificationEmailData emailData = director.map(ordersApiWrappable.getOrdersApi());
         try {
             EmailSend emailSend = new EmailSend();
             emailSend.setEmailAddress(config.getSenderAddress());
-            emailSend.setData(objectMapper.writeValueAsString(orderDetails.getOrderModel()));
-            emailSend.setMessageId(orderDetails.getMessageId());
+            emailSend.setData(objectMapper.writeValueAsString(emailData));
+            emailSend.setMessageId(config.getMessageId());
             emailSend.setAppId(config.getApplicationId());
-            emailSend.setMessageType(orderDetails.getMessageType());
+            emailSend.setMessageType(config.getMessageType());
             emailSend.setCreatedAt(dateGenerator.generate()
                     .format(DateTimeFormatter.ofPattern(config.getDateFormat())));
             return emailSend;
         } catch (JsonProcessingException e) {
-            throw new MappingException("Failed to map orderDetails: " + ordersApiDetails.getOrderReference(), e);
+            throw new MappingException("Failed to map orderDetails: " + ordersApiWrappable.getOrdersApi().getReference(), e);
         }
     }
 }

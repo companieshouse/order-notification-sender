@@ -28,7 +28,7 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
     }
 
     @Override
-    public OrdersApiDetails getOrderData(String orderUri) {
+    public OrdersApiWrappable getOrderData(String orderUri) {
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
         try {
@@ -39,9 +39,7 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
 
             OrdersApi ordersApi = response.getData();
             loggingUtils.getLogger().debug("Order data returned from API client", logMap);
-            return OrdersApiDetailsBuilder.newBuilder()
-                    .withOrdersApi(ordersApi)
-                    .build();
+            return new OrdersApiWrapper(ordersApi);
         } catch (ApiErrorResponseException exception) {
             String message = String.format("Order URI %s, API exception %s, HTTP status %d",
                     orderUri,

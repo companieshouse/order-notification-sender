@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapper;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
@@ -35,7 +35,7 @@ class OrderResourceOrderNotificationEnricherTest {
     private OrderRetrievable orderRetrievable;
 
     @Mock
-    private OrdersApiDetails ordersApiDetails;
+    private OrdersApiWrappable ordersApiWrappable;
 
     @Mock
     private Logger logger;
@@ -64,7 +64,7 @@ class OrderResourceOrderNotificationEnricherTest {
     @Test
     void testLogRuntimeExceptionThrownByMapper() {
         //given
-        when(orderRetrievable.getOrderData(anyString())).thenReturn(ordersApiDetails);
+        when(orderRetrievable.getOrderData(anyString())).thenReturn(ordersApiWrappable);
         when(ordersApiMapper.mapToEmailSend(any())).thenThrow(IllegalArgumentException.class);
         when(loggingUtils.logWithOrderUri(any(), any())).thenReturn(Collections.emptyMap());
         when(loggingUtils.getLogger()).thenReturn(logger);
@@ -80,7 +80,7 @@ class OrderResourceOrderNotificationEnricherTest {
     @Test
     void testUrlIsEnriched() {
         //given
-        when(orderRetrievable.getOrderData(anyString())).thenReturn(ordersApiDetails);
+        when(orderRetrievable.getOrderData(anyString())).thenReturn(ordersApiWrappable);
         when(loggingUtils.logWithOrderUri(any(), any())).thenReturn(Collections.emptyMap());
         when(loggingUtils.getLogger()).thenReturn(logger);
 

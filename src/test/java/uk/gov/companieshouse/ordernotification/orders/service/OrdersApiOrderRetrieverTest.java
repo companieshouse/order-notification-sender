@@ -77,12 +77,12 @@ class OrdersApiOrderRetrieverTest {
         when(loggingUtils.createLogMap()).thenReturn(logMap);
 
         //when
-        OrdersApiDetails actual = serviceUnderTest.getOrderData(ORDER_URL);
+        OrdersApiWrappable actual = serviceUnderTest.getOrderData(ORDER_URL);
 
         //then
         verify(ordersGet).execute();
         verify(logger).debug("Order data returned from API client", logMap);
-        assertThat(actual.getOrderReference(), is("order-reference"));
+        assertThat(actual.getOrdersApi().getReference(), is("order-reference"));
     }
 
     @Test

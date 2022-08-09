@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MappingException;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapper;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;
@@ -43,7 +43,7 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
      */
     public EmailSend enrich(final String orderUri) throws OrdersResponseException {
         Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order", orderUri);
-        OrdersApiDetails order = orderRetrievable.getOrderData(orderUri);
+        OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order", logArgs);
         try {
             return ordersApiMapper.mapToEmailSend(order);
