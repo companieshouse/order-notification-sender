@@ -38,7 +38,10 @@ public class CertifiedCopyEmailDataMapperTest {
             CertifiedCopy.builder()
                 .withId(TestConstants.CERTIFIED_COPY_ID)
                 .withCompanyNumber(TestConstants.COMPANY_NUMBER)
-                .withFilingHistoryDetailsModelList(getFilingHistoryDetailsModelList());
+                .withDateFiled(TestConstants.FILING_HISTORY_DATE_VIEW)
+                .withType(TestConstants.FILING_HISTORY_TYPE)
+                .withDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION)
+                .withFee(TestConstants.ORDER_VIEW);
 
     private static final BaseItemBuilder standardDelivery = baseCertifiedCopy.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
@@ -195,15 +198,5 @@ public class CertifiedCopyEmailDataMapperTest {
         filingHistoryDescriptionValues.put("made_up_date", TestConstants.MADE_UP_DATE);
         filingHistoryDescriptionValues.put("key", "value");
         return filingHistoryDescriptionValues;
-    }
-
-    private static List<FilingHistoryDetailsModel> getFilingHistoryDetailsModelList() {
-        FilingHistoryDetailsModel filingHistoryDetailsModel = new FilingHistoryDetailsModel();
-        filingHistoryDetailsModel.setFilingHistoryCost(TestConstants.ORDER_VIEW);
-        filingHistoryDetailsModel.setFilingHistoryDate(TestConstants.FILING_HISTORY_DATE_VIEW);
-        filingHistoryDetailsModel.setFilingHistoryType(TestConstants.FILING_HISTORY_TYPE);
-        filingHistoryDetailsModel.setFilingHistoryDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
-
-        return Collections.singletonList(filingHistoryDetailsModel);
     }
 }

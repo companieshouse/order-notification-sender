@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
+import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 public class CertifiedCopyEmailDataMapper {
@@ -24,35 +25,21 @@ public class CertifiedCopyEmailDataMapper {
     CertifiedCopy map(BaseItemApi certifiedDocumentItem) {
         CertifiedCopyItemOptionsApi itemOptions =
                 (CertifiedCopyItemOptionsApi) certifiedDocumentItem.getItemOptions();
-
+        FilingHistoryDocumentApi filingHistoryDocumentApi =
+                itemOptions.getFilingHistoryDocuments().get(0);
         return CertifiedCopy.builder()
-            .withId(certifiedDocumentItem.getId())
-            .withCompanyNumber(certifiedDocumentItem.getCompanyNumber())
-            .withDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(
-                    itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()))
-            .withFilingHistoryDetailsModelList(mapFilingHistoryDocuments(itemOptions))
+                .withId(certifiedDocumentItem.getId())
+                .withCompanyNumber(certifiedDocumentItem.getCompanyNumber())
+                .withDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(
+                        itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()))
+                .withDateFiled(LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
+                        .format(DateTimeFormatter.ofPattern(
+                                emailConfiguration.getDocument().getFilingHistoryDateFormat())))
+                .withType(filingHistoryDocumentApi.getFilingHistoryType())
+                .withDescription(this.providerService.mapFilingHistoryDescription(
+                        filingHistoryDocumentApi.getFilingHistoryDescription(),
+                        filingHistoryDocumentApi.getFilingHistoryDescriptionValues()))
+                .withFee("£" + filingHistoryDocumentApi.getFilingHistoryCost())
             .build();
-    }
-
-    private List<FilingHistoryDetailsModel> mapFilingHistoryDocuments(
-            CertifiedCopyItemOptionsApi itemOptions) {
-        return itemOptions.getFilingHistoryDocuments().stream()
-            .map(filingHistoryDocumentApi -> {
-                FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
-                details.setFilingHistoryDate(
-                        LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
-                        .format(DateTimeFormatter.ofPattern(emailConfiguration.getDocument()
-                                .getFilingHistoryDateFormat())));
-                details.setFilingHistoryCost(
-                        "£" + filingHistoryDocumentApi.getFilingHistoryCost());
-                details.setFilingHistoryDescription(
-                        this.providerService.mapFilingHistoryDescription(
-                                filingHistoryDocumentApi.getFilingHistoryDescription(),
-                                filingHistoryDocumentApi.getFilingHistoryDescriptionValues()
-                        )
-                );
-                details.setFilingHistoryType(filingHistoryDocumentApi.getFilingHistoryType());
-                return details;
-            }).collect(Collectors.toList());
     }
 }
