@@ -33,6 +33,7 @@ class DocumentOrderDetailsMapper {
         CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) order.getItemOptions();
         model.setDeliveryMethod(deliveryMethodMapper.mapDeliveryMethod(itemOptions.getDeliveryMethod(),
                 itemOptions.getDeliveryTimescale()));
+        model.setDeliveryTimescale(itemOptions.getDeliveryTimescale().toString());
 
         List<FilingHistoryDetailsModel> detailsModels = itemOptions.getFilingHistoryDocuments()
                 .stream()
