@@ -13,9 +13,14 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     private OrderNotificationEmailData emailData;
 
+    public OrderNotificationEmailDataConverter(OrderNotificationEmailData emailData) {
+        this.emailData = emailData;
+    }
+
     @Override
     public void mapOrder(OrdersApi ordersApi) {
-
+        emailData.setOrderId(ordersApi.getReference());
+        emailData.setOrderSummaryLink("/GCI-2224/TODO");
     }
 
     @Override

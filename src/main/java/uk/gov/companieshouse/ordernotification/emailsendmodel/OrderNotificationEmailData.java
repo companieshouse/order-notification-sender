@@ -1,7 +1,9 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import java.util.List;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderNotificationEmailData {
     private String orderId;
     private List<Certificate> certificates;
@@ -61,7 +63,7 @@ public class OrderNotificationEmailData {
         this.paymentDetails = paymentDetails;
     }
 
-    public boolean isHasStandardDelivery() {
+    public boolean hasStandardDelivery() {
         return hasStandardDelivery;
     }
 
@@ -69,7 +71,7 @@ public class OrderNotificationEmailData {
         this.hasStandardDelivery = hasStandardDelivery;
     }
 
-    public boolean isHasExpressDelivery() {
+    public boolean hasExpressDelivery() {
         return hasExpressDelivery;
     }
 
