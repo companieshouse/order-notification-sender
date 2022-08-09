@@ -51,6 +51,27 @@ public class CertifiedCopy {
         this.filingHistoryDetailsModelList = filingHistoryDetailsModelList;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        CertifiedCopy that = (CertifiedCopy) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(companyNumber, that.companyNumber) &&
+                Objects.equals(deliveryMethod, that.deliveryMethod) &&
+                Objects.equals(filingHistoryDetailsModelList,
+                        that.filingHistoryDetailsModelList);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, companyNumber, deliveryMethod, filingHistoryDetailsModelList);
+    }
+
     public static CertifiedCopyBuilder builder() {
         return new CertifiedCopyBuilder();
     }
