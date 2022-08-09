@@ -30,12 +30,6 @@ public class OrdersApiDetailsMapper {
         this.director = director;
     }
 
-    /**
-     * Map an {@link OrderDetails} object to an {@link EmailSend} object.
-     *
-     * @return An {@link EmailSend} object containing orderDetails data.
-     * @throws MappingException If an error occurs when serialising email data.
-     */
     public EmailSend mapToEmailSend(OrdersApiWrappable ordersApiWrappable) {
         OrderNotificationEmailData emailData = director.map(ordersApiWrappable.getOrdersApi());
         try {
