@@ -18,11 +18,11 @@ public class SummaryEmailDataDirector {
         converter.mapOrder(ordersApi);
         for (BaseItemApi itemApi: ordersApi.getItems()) {
             String kind = itemApi.getKind();
-            if ("item#certificate".equals(kind)) {
+            if (Kind.CERTIFICATE.toString().equals(kind)) {
                 converter.mapCertificate(itemApi);
-            } else if ("item#certified-copy".equals(kind)) {
+            } else if (Kind.CERTIFIED_COPY.toString().equals(kind)) {
                 converter.mapCertifiedCopy(itemApi);
-            } else if ("item#missing-image-delivery".equals(kind)) {
+            } else if (Kind.MISSING_IMAGE_DELIVERY.toString().equals(kind)) {
                 converter.mapMissingImageDelivery(itemApi);
             } else {
                 throw new NonRetryableFailureException(String.format("Unhandled kind: [%s]", kind));
