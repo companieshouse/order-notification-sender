@@ -20,6 +20,7 @@ import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
@@ -72,6 +73,7 @@ class DocumentOrdersApiDetailsMapperTest {
     private DocumentOrderNotificationModel getExpectedModel() {
         DocumentOrderNotificationModel expected = new DocumentOrderNotificationModel();
         expected.setDeliveryMethod(TestConstants.DELIVERY_METHOD);
+        expected.setDeliveryTimescale(TestConstants.DELIVERY_TIMESCALE);
 
         FilingHistoryDetailsModel details = new FilingHistoryDetailsModel();
         details.setFilingHistoryCost(TestConstants.ORDER_VIEW);
@@ -97,6 +99,7 @@ class DocumentOrdersApiDetailsMapperTest {
 
         CertifiedCopyItemOptionsApi itemOptions = new CertifiedCopyItemOptionsApi();
         itemOptions.setDeliveryMethod(DeliveryMethodApi.POSTAL);
+        itemOptions.setDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
 
         FilingHistoryDocumentApi filingHistoryDocumentApi = new FilingHistoryDocumentApi();
         filingHistoryDocumentApi.setFilingHistoryCost(TestConstants.ORDER_COST);

@@ -6,6 +6,7 @@ import java.util.Objects;
 public class DocumentOrderNotificationModel extends OrderModel {
 
     private String deliveryMethod;
+    private String deliveryTimescale;
     private List<FilingHistoryDetailsModel> filingHistoryDocuments;
 
     public String getDeliveryMethod() {
@@ -14,6 +15,14 @@ public class DocumentOrderNotificationModel extends OrderModel {
 
     public void setDeliveryMethod(String deliveryMethod) {
         this.deliveryMethod = deliveryMethod;
+    }
+
+    public String getDeliveryTimescale() {
+        return deliveryTimescale;
+    }
+
+    public void setDeliveryTimescale(String deliveryTimescale) {
+        this.deliveryTimescale = deliveryTimescale;
     }
 
     public List<FilingHistoryDetailsModel> getFilingHistoryDocuments() {
@@ -26,21 +35,17 @@ public class DocumentOrderNotificationModel extends OrderModel {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         DocumentOrderNotificationModel that = (DocumentOrderNotificationModel) o;
-        return Objects.equals(deliveryMethod, that.deliveryMethod) && Objects.equals(filingHistoryDocuments, that.filingHistoryDocuments);
+        return Objects.equals(deliveryMethod, that.deliveryMethod) &&
+                Objects.equals(deliveryTimescale, that.deliveryTimescale) &&
+                Objects.equals(filingHistoryDocuments, that.filingHistoryDocuments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), deliveryMethod, filingHistoryDocuments);
+        return Objects.hash(super.hashCode(), deliveryMethod, deliveryTimescale, filingHistoryDocuments);
     }
 }
