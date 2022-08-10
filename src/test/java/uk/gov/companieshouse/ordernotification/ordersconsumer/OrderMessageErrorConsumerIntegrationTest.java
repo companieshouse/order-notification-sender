@@ -252,7 +252,7 @@ class OrderMessageErrorConsumerIntegrationTest {
     }
 
     @Test
-    void testPublishesOrderReceivedToRetryTopicWhenOrdersApiIsUnavailable() throws ExecutionException, InterruptedException, IOException {
+    void testPublishesOrderReceivedToRetryTopicWhenOrdersApiIsUnavailable() throws ExecutionException, InterruptedException {
         //given
         client.when(request()
                         .withPath(getOrderReference())

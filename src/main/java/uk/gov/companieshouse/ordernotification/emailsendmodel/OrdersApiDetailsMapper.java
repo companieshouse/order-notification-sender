@@ -43,7 +43,7 @@ public class OrdersApiDetailsMapper {
                     .format(DateTimeFormatter.ofPattern(config.getDateFormat())));
             return emailSend;
         } catch (JsonProcessingException e) {
-            throw new MappingException("Failed to map orderDetails: " + ordersApiWrappable.getOrdersApi().getReference(), e);
+            throw new MappingException("Failed to map order: " + ordersApiWrappable.getOrdersApi().getReference(), e);
         }
     }
 }

@@ -2,7 +2,7 @@ package uk.gov.companieshouse.ordernotification.orders.service;
 
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 
-final class OrdersApiWrapper implements OrdersApiWrappable {
+public class OrdersApiWrapper implements OrdersApiWrappable {
     private final OrdersApi ordersApi;
 
     public OrdersApiWrapper(OrdersApi ordersApi) {
