@@ -107,8 +107,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_certificate", actual.getMessageId());
-        assertEquals("order_notification_sender_certificate", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -138,8 +138,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_dissolved_certificate", actual.getMessageId());
-        assertEquals("order_notification_sender_dissolved_certificate", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -168,8 +168,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_document", actual.getMessageId());
-        assertEquals("order_notification_sender_document", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -199,8 +199,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -230,8 +230,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }

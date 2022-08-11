@@ -130,12 +130,11 @@ class OrderMessageErrorConsumerIntegrationTest {
         assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
         assertEquals("order_notification_sender",
                 actual.getAppId());
-        assertEquals("order_notification_sender_certificate",
+        assertEquals("order_notification_sender_summary",
                 actual.getMessageId());
-        assertEquals("order_notification_sender_certificate",
+        assertEquals("order_notification_sender_summary",
                 actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
     }
 
     @Test
@@ -170,12 +169,11 @@ class OrderMessageErrorConsumerIntegrationTest {
         assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
         assertEquals("order_notification_sender",
                 actual.getAppId());
-        assertEquals("order_notification_sender_dissolved_certificate",
+        assertEquals("order_notification_sender_summary",
                 actual.getMessageId());
-        assertEquals("order_notification_sender_dissolved_certificate",
+        assertEquals("order_notification_sender_summary",
                 actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
     }
 
     @Test
@@ -207,10 +205,9 @@ class OrderMessageErrorConsumerIntegrationTest {
         assertEquals(0, orderMessageErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_document", actual.getMessageId());
-        assertEquals("order_notification_sender_document", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
     }
 
     @Test
@@ -243,10 +240,9 @@ class OrderMessageErrorConsumerIntegrationTest {
         assertEquals(0, orderMessageErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderMessageErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertTrue(actual.getData().contains("demo@ch.gov.uk")); // verify recipient email address
     }
 
     @Test
