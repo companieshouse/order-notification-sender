@@ -2,6 +2,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -98,5 +99,22 @@ public class OrderNotificationEmailData {
 
     public void setOrderSummaryLink(String orderSummaryLink) {
         this.orderSummaryLink = orderSummaryLink;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OrderNotificationEmailData emailData = (OrderNotificationEmailData) o;
+        return hasStandardDelivery == emailData.hasStandardDelivery && hasExpressDelivery == emailData.hasExpressDelivery && Objects.equals(orderId, emailData.orderId) && Objects.equals(certificates, emailData.certificates) && Objects.equals(certifiedCopies, emailData.certifiedCopies) && Objects.equals(missingImageDeliveries, emailData.missingImageDeliveries) && Objects.equals(deliveryDetails, emailData.deliveryDetails) && Objects.equals(paymentDetails, emailData.paymentDetails) && Objects.equals(orderSummaryLink, emailData.orderSummaryLink);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orderId, certificates, certifiedCopies, missingImageDeliveries, deliveryDetails, paymentDetails, hasStandardDelivery, hasExpressDelivery, orderSummaryLink);
     }
 }

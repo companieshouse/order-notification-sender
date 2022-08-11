@@ -24,40 +24,20 @@ public class Certificate {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getCertificateType() {
         return certificateType;
-    }
-
-    public void setCertificateType(String certificateType) {
-        this.certificateType = certificateType;
     }
 
     public String getCompanyNumber() {
         return companyNumber;
     }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
-
     public String getDeliveryMethod() {
         return deliveryMethod;
     }
 
-    public void setDeliveryMethod(String deliveryMethod) {
-        this.deliveryMethod = deliveryMethod;
-    }
-
     public String getFee() {
         return fee;
-    }
-
-    public void setFee(String fee) {
-        this.fee = fee;
     }
 
     public static CertificateBuilder builder() {

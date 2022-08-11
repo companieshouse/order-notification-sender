@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;

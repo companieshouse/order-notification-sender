@@ -21,6 +21,7 @@ public class EmailConfiguration {
     private String messageId;
     private String messageType;
     private String filingHistoryDateFormat;
+    private String chsUrl;
 
     public String getDateFormat() {
         return dateFormat;
@@ -94,20 +95,24 @@ public class EmailConfiguration {
         this.filingHistoryDateFormat = filingHistoryDateFormat;
     }
 
+    public String getChsUrl() {
+        return chsUrl;
+    }
+
+    public void setChsUrl(String chsUrl) {
+        this.chsUrl = chsUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         EmailConfiguration that = (EmailConfiguration) o;
-        return Objects.equals(dateFormat, that.dateFormat) && Objects.equals(senderAddress, that.senderAddress) && Objects.equals(paymentDateFormat, that.paymentDateFormat) && Objects.equals(applicationId, that.applicationId) && Objects.equals(confirmationMessage, that.confirmationMessage) && Objects.equals(dispatchDays, that.dispatchDays) && Objects.equals(messageId, that.messageId) && Objects.equals(messageType, that.messageType) && Objects.equals(filingHistoryDateFormat, that.filingHistoryDateFormat);
+        return Objects.equals(dateFormat, that.dateFormat) && Objects.equals(senderAddress, that.senderAddress) && Objects.equals(paymentDateFormat, that.paymentDateFormat) && Objects.equals(applicationId, that.applicationId) && Objects.equals(confirmationMessage, that.confirmationMessage) && Objects.equals(dispatchDays, that.dispatchDays) && Objects.equals(messageId, that.messageId) && Objects.equals(messageType, that.messageType) && Objects.equals(filingHistoryDateFormat, that.filingHistoryDateFormat) && Objects.equals(chsUrl, that.chsUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dateFormat, senderAddress, paymentDateFormat, applicationId, confirmationMessage, dispatchDays, messageId, messageType, filingHistoryDateFormat);
+        return Objects.hash(dateFormat, senderAddress, paymentDateFormat, applicationId, confirmationMessage, dispatchDays, messageId, messageType, filingHistoryDateFormat, chsUrl);
     }
 }

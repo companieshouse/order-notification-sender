@@ -17,24 +17,12 @@ public class PaymentDetails {
         return paymentReference;
     }
 
-    public void setPaymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
-    }
-
     public String getAmountPaid() {
         return amountPaid;
     }
 
-    public void setAmountPaid(String amountPaid) {
-        this.amountPaid = amountPaid;
-    }
-
     public String getPaymentDate() {
         return paymentDate;
-    }
-
-    public void setPaymentDate(String paymentDate) {
-        this.paymentDate = paymentDate;
     }
 
     public static PaymentDetailsBuilder builder() {

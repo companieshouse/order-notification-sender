@@ -1,8 +1,6 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -15,6 +13,8 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.INTERFACES)
 public class OrderNotificationEmailDataConverter implements OrderNotificationDataConvertable {
+
+    private static final String ORDER_SUMMARY_LINK = "%s/orders/%s";
 
     private OrderNotificationEmailData emailData;
     private CertificateEmailDataMapper certificateEmailDataMapper;
@@ -37,11 +37,9 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
     @Override
     public void mapOrder(OrdersApi ordersApi) {
         emailData.setOrderId(ordersApi.getReference());
-        emailData.setOrderSummaryLink("/GCI-2224/TODO");
-
-        // delivery details
+        emailData.setOrderSummaryLink(
+                String.format(ORDER_SUMMARY_LINK, emailConfiguration.getChsUrl(), ordersApi.getReference()));
         mapDeliveryDetails(ordersApi);
-        // payment details
         mapPaymentDetails(ordersApi);
     }
 
@@ -73,7 +71,7 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
                 .withCountry(orderDeliveryDetails.getCountry())
                 .withLocality(orderDeliveryDetails.getLocality())
                 .withPoBox(orderDeliveryDetails.getPoBox())
-                .withPostalCode((orderDeliveryDetails.getPostalCode()))
+                .withPostalCode(orderDeliveryDetails.getPostalCode())
                 .withRegion(orderDeliveryDetails.getRegion())
                 .withForename(orderDeliveryDetails.getForename())
                 .withSurname(orderDeliveryDetails.getSurname())

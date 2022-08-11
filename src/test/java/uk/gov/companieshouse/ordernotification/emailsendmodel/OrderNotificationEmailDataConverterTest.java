@@ -1,28 +1,29 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.DeliveryDetailsApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
+import uk.gov.companieshouse.api.model.order.item.CertificateApi;
+import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
+import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 @ExtendWith(MockitoExtension.class)
 class OrderNotificationEmailDataConverterTest {
 
-    @InjectMocks
-    private OrderNotificationDataConvertable converter;
+    private OrderNotificationEmailDataConverter converter;
 
-    @Mock
-    private OrdersApi ordersApi;
-
-    @Mock
     private OrderNotificationEmailData emailData;
 
     @Mock
@@ -38,7 +39,35 @@ class OrderNotificationEmailDataConverterTest {
     private EmailConfiguration emailConfiguration;
 
     @Mock
+    private OrdersApi ordersApi;
+
+    @Mock
     private DeliveryDetailsApi deliveryDetails;
+
+    @Mock
+    private CertificateApi certificateApi;
+
+    @Mock
+    private Certificate certificate;
+
+    @Mock
+    private CertifiedCopyApi certifiedCopyApi;
+
+    @Mock
+    private CertifiedCopy certifiedCopy;
+
+    @Mock
+    private MissingImageDeliveryApi missingImageDeliveryApi;
+
+    @Mock
+    private MissingImageDelivery missingImageDelivery;
+
+    @BeforeEach
+    void setup() {
+        emailData = new OrderNotificationEmailData();
+        converter = new OrderNotificationEmailDataConverter(emailData, certificateEmailDataMapper,
+                certifiedCopyEmailDataMapper, missingImageDeliveryEmailDataMapper, emailConfiguration);
+    }
 
     @Test
     void testMapOrder() {
@@ -52,22 +81,61 @@ class OrderNotificationEmailDataConverterTest {
         when(deliveryDetails.getLocality()).thenReturn(TestConstants.LOCALITY);
         when(deliveryDetails.getPoBox()).thenReturn(TestConstants.PO_BOX);
         when(deliveryDetails.getRegion()).thenReturn(TestConstants.REGION);
+        when(deliveryDetails.getPostalCode()).thenReturn(TestConstants.POSTAL_CODE);
         when(deliveryDetails.getCountry()).thenReturn(TestConstants.COUNTRY);
         when(ordersApi.getPaymentReference()).thenReturn(TestConstants.PAYMENT_REFERENCE);
         when(ordersApi.getOrderedAt()).thenReturn(TestConstants.TEST_DATE);
         when(ordersApi.getTotalOrderCost()).thenReturn(TestConstants.ORDER_COST);
+        when(emailConfiguration.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
+        when(emailConfiguration.getChsUrl()).thenReturn(TestConstants.CHS_URL);
 
         // when
         converter.mapOrder(ordersApi);
 
         // then
         assertEquals(TestConstants.ORDER_REFERENCE_NUMBER, converter.getEmailData().getOrderId());
-        assertEquals("/GCI-2224/TODO", converter.getEmailData().getOrderSummaryLink());
         assertEquals(expectedEmailData(), converter.getEmailData());
+    }
+
+    @Test
+    void testMapCertificate() {
+        // given
+        when(certificateEmailDataMapper.map(any())).thenReturn(certificate);
+        // when
+        converter.mapCertificate(certificateApi);
+
+        // then
+        assertTrue(converter.getEmailData().getCertificates().contains(certificate));
+        verify(certificateEmailDataMapper).map(certificateApi);
+    }
+
+    @Test
+    void testMapCertifiedCopy() {
+        // given
+        when(certifiedCopyEmailDataMapper.map(any())).thenReturn(certifiedCopy);
+        // when
+        converter.mapCertifiedCopy(certifiedCopyApi);
+
+        // then
+        assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
+        verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
+    }
+
+    @Test
+    void testMapMissingImageDelivery() {
+        // given
+        when(missingImageDeliveryEmailDataMapper.map(any())).thenReturn(missingImageDelivery);
+        // when
+        converter.mapMissingImageDelivery(missingImageDeliveryApi);
+
+        // then
+        assertTrue(converter.getEmailData().getMissingImageDeliveries().contains(missingImageDelivery));
+        verify(missingImageDeliveryEmailDataMapper).map(missingImageDeliveryApi);
     }
 
     private OrderNotificationEmailData expectedEmailData() {
         OrderNotificationEmailData result = new OrderNotificationEmailData();
+        result.setOrderSummaryLink(String.format("%s/orders/%s", TestConstants.CHS_URL, TestConstants.ORDER_REFERENCE_NUMBER));
         result.setOrderId(TestConstants.ORDER_REFERENCE_NUMBER);
         result.setPaymentDetails(PaymentDetails.builder()
                 .withAmountPaid(TestConstants.ORDER_VIEW)
@@ -75,7 +143,15 @@ class OrderNotificationEmailDataConverterTest {
                 .withPaymentDate(TestConstants.PAYMENT_TIME)
                 .build());
         result.setDeliveryDetails(DeliveryDetails.builder()
+                .withForename(TestConstants.FORENAME)
+                .withSurname(TestConstants.SURNAME)
                 .withAddressLine1(TestConstants.ADDRESS_LINE_1)
+                .withAddressLine2(TestConstants.ADDRESS_LINE_2)
+                .withPoBox(TestConstants.PO_BOX)
+                .withLocality(TestConstants.LOCALITY)
+                .withRegion(TestConstants.REGION)
+                .withPostalCode(TestConstants.POSTAL_CODE)
+                .withCountry(TestConstants.COUNTRY)
                 .build());
         return result;
     }
