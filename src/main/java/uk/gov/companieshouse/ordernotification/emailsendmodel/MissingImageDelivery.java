@@ -10,10 +10,6 @@ public class MissingImageDelivery {
     private String companyNumber;
     private String fee;
 
-    public MissingImageDelivery() {
-
-    }
-
     public MissingImageDelivery(String id, String dateFiled, String type, String description,
                                 String companyNumber, String fee) {
         this.id = id;

@@ -9,9 +9,6 @@ public class Certificate {
     private String deliveryMethod;
     private String fee;
 
-    public Certificate() {
-    }
-
     public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, String fee) {
         this.id = id;
         this.companyNumber = companyNumber;
