@@ -34,7 +34,7 @@ public class CertifiedCopyEmailDataMapper {
                         .format(DateTimeFormatter.ofPattern(
                                 emailConfiguration.getFilingHistoryDateFormat())))
                 .withType(filingHistoryDocumentApi.getFilingHistoryType())
-                .withDescription(this.providerService.mapFilingHistoryDescription(
+                .withDescription(providerService.mapFilingHistoryDescription(
                         filingHistoryDocumentApi.getFilingHistoryDescription(),
                         filingHistoryDocumentApi.getFilingHistoryDescriptionValues()))
                 .withFee("£" + filingHistoryDocumentApi.getFilingHistoryCost())

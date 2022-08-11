@@ -37,7 +37,7 @@ public class CertifiedCopyEmailDataMapperTest {
             CertifiedCopy.builder()
                 .withId(TestConstants.CERTIFIED_COPY_ID)
                 .withCompanyNumber(TestConstants.COMPANY_NUMBER)
-                .withDateFiled(TestConstants.FILING_HISTORY_DATE_VIEW)
+                .withDateFiled(TestConstants.MAPPED_FILING_HISTORY_DATE)
                 .withType(TestConstants.FILING_HISTORY_TYPE)
                 .withDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION)
                 .withFee(TestConstants.ORDER_VIEW);
@@ -78,7 +78,7 @@ public class CertifiedCopyEmailDataMapperTest {
         CertifiedCopy expected = expectationsBuilder.buildCertifiedCopy();
 
         when(deliveryMapper.mapDeliveryMethod(any(), any())).thenReturn(expected.getDeliveryMethod());
-        when(config.getFilingHistoryDateFormat()).thenReturn(TestConstants.EMAIL_DATE_FORMAT);
+        when(config.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
                 .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
 

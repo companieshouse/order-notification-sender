@@ -48,6 +48,7 @@ public final class TestConstants {
     public static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
     public static final String FILING_HISTORY_DATE = "2021-07-28";
     public static final String FILING_HISTORY_DATE_VIEW = "28 July 2021";
+    public static final String MAPPED_FILING_HISTORY_DATE = "28 Jul 2021";
     public static final String DELIVERY_METHOD = "Standard delivery (aim to dispatch within 5 working days)";
     public static final String FILING_HISTORY_DESCRIPTION = "confirmation-statement-with-updates";
     public static final String MAPPED_FILING_HISTORY_DESCRIPTION = "Mapped filing history description";
@@ -58,6 +59,7 @@ public final class TestConstants {
     public static final String CONFIRMATION_MESSAGE = "Confirmation of your order number {0}";
 
     //missing image order constants
+    public static final String MISSING_IMAGE_DELIVERY_ID = "MID-123456-123456";
 
     //filing history description constants
     public static final String DESCRIPTION_FILE = "filing-history-test.yaml";
@@ -74,6 +76,7 @@ public final class TestConstants {
     public static final String READABLE_TRUE = "Yes";
     public static final String READABLE_FALSE = "No";
     public static final int DISPATCH_DAYS = 5;
+    public static final String FILING_HISTORY_EMAIL_DATE_FORMAT = "dd MMM yyyy";
 
     private TestConstants(){
     }
