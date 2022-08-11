@@ -2,8 +2,6 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
@@ -36,7 +34,7 @@ public class CertifiedCopyEmailDataMapper {
                         .format(DateTimeFormatter.ofPattern(
                                 emailConfiguration.getDocument().getFilingHistoryDateFormat())))
                 .withType(filingHistoryDocumentApi.getFilingHistoryType())
-                .withDescription(this.providerService.mapFilingHistoryDescription(
+                .withDescription(providerService.mapFilingHistoryDescription(
                         filingHistoryDocumentApi.getFilingHistoryDescription(),
                         filingHistoryDocumentApi.getFilingHistoryDescriptionValues()))
                 .withFee("£" + filingHistoryDocumentApi.getFilingHistoryCost())
