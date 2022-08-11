@@ -30,6 +30,13 @@ public class OrdersApiDetailsMapper {
         this.director = director;
     }
 
+    /**
+     * Delegates mapping of ordersApiWrappable to OrderNotificationEmailData to the director and
+     * then builds an EmailSend object from the emailData and email configuration properties.
+     *
+     * @param ordersApiWrappable A wrapper interface for an OrdersApi object
+     * @return EmailSend
+     */
     public EmailSend mapToEmailSend(OrdersApiWrappable ordersApiWrappable) {
         OrderNotificationEmailData emailData = director.map(ordersApiWrappable.getOrdersApi());
         try {
