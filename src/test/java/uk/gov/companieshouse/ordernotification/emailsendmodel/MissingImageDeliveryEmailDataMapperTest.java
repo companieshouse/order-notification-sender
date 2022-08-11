@@ -41,8 +41,7 @@ public class MissingImageDeliveryEmailDataMapperTest {
         // given
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
                 .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
-        when(config.getMissingImage()).thenReturn(emailDataConfig);
-        when(emailDataConfig.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);
+        when(config.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);
 
         // when
         MissingImageDelivery actual = mapper.map(getItem());

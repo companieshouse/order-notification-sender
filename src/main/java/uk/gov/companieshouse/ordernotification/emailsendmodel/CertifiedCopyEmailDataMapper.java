@@ -32,7 +32,7 @@ public class CertifiedCopyEmailDataMapper {
                         itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale()))
                 .withDateFiled(LocalDate.parse(filingHistoryDocumentApi.getFilingHistoryDate())
                         .format(DateTimeFormatter.ofPattern(
-                                emailConfiguration.getDocument().getFilingHistoryDateFormat())))
+                                emailConfiguration.getFilingHistoryDateFormat())))
                 .withType(filingHistoryDocumentApi.getFilingHistoryType())
                 .withDescription(providerService.mapFilingHistoryDescription(
                         filingHistoryDocumentApi.getFilingHistoryDescription(),

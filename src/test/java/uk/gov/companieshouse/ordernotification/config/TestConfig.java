@@ -12,13 +12,11 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.CertificateOptionsMapperFactory;
 import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
 import uk.gov.companieshouse.orders.OrderReceived;
 
@@ -27,7 +25,6 @@ import java.util.Map;
 import java.util.Random;
 
 @Configuration
-@Import({CertificateOptionsMapperFactory.class, FeatureOptionsConfig.class})
 public class TestConfig {
 
     @Bean

@@ -25,7 +25,7 @@ public class MissingImageDeliveryEmailDataMapper {
                 .withId(missingImageDeliveryItem.getId())
                 .withDateFiled(LocalDate.parse(itemOptions.getFilingHistoryDate())
                         .format(DateTimeFormatter.ofPattern(
-                                emailConfiguration.getMissingImage().getFilingHistoryDateFormat())))
+                                emailConfiguration.getFilingHistoryDateFormat())))
                 .withType(itemOptions.getFilingHistoryType())
                 .withDescription(providerService.mapFilingHistoryDescription(
                         itemOptions.getFilingHistoryDescription(),

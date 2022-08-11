@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
@@ -28,7 +27,6 @@ import uk.gov.companieshouse.ordernotification.emailsender.NonRetryableFailureEx
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(locations="classpath:application-stubbed.properties")
-@ActiveProfiles("feature-flags-disabled")
 @ExtendWith(MockitoExtension.class)
 class SummaryEmailDataDirectorTest {
 
