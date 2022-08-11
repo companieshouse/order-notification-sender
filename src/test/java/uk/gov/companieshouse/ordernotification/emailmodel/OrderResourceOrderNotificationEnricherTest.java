@@ -20,7 +20,6 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapper;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.OrdersApiDetailsMapperTest;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.OrderRetrievable;

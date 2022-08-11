@@ -12,7 +12,6 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
@@ -26,7 +25,6 @@ import java.util.Map;
 import java.util.Random;
 
 @Configuration
-@Import(FeatureOptionsConfig.class)
 public class TestConfig {
 
     @Bean

@@ -29,7 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -41,7 +40,6 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@ActiveProfiles("feature-flags-disabled")
 class OrdersKafkaConsumerIntegrationTest {
 
     private static MockServerContainer container;

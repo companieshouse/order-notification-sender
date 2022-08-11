@@ -30,7 +30,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -42,7 +41,6 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @Import(KafkaConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed.properties",
         properties = {"uk.gov.companieshouse.order-notification-sender.error-consumer=true"})
-@ActiveProfiles("feature-flags-enabled")
 class OrderMessageErrorConsumerIntegrationTest {
 
     private static int orderId = 123456;
