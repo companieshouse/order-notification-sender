@@ -2,99 +2,94 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiDetails;
+import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
 
 @ExtendWith(MockitoExtension.class)
-class OrdersApiDetailsMapperTest {
+public class OrdersApiDetailsMapperTest {
+
     @Mock
     private DateGenerator dateGenerator;
 
     @Mock
-    private EmailConfiguration emailConfiguration;
+    private EmailConfiguration config;
 
     @Mock
     private ObjectMapper objectMapper;
 
     @Mock
-    private OrderKindMapperFactory orderKindMapperFactory;
+    private SummaryEmailDataDirector director;
 
     @InjectMocks
-    private OrdersApiDetailsMapper ordersApiDetailsMapper;
+    private OrdersApiDetailsMapper mapper;
 
     @Mock
-    private OrdersApiDetails ordersApiDetails;
+    private OrdersApiWrappable ordersApiWrapper;
 
     @Mock
-    private OrderKindMapper kindMapper;
+    private OrdersApi ordersApi;
 
     @Mock
-    private OrderDetails orderDetails;
-
-    @Mock
-    private OrderModel orderModel;
-
-    @Mock
-    private JsonProcessingException jsonProcessingException;
+    private OrderNotificationEmailData emailData;
 
     @Test
-    void testSuccessfullyMapsOrdersApiToEmailSendObject() throws JsonProcessingException {
+    void testMapToEmailSendSuccess() throws JsonProcessingException {
         // given
-        when(ordersApiDetails.getKind()).thenReturn("item#certificate");
-        when(orderKindMapperFactory.getInstance("item#certificate")).thenReturn(kindMapper);
-        when(kindMapper.map(ordersApiDetails)).thenReturn(orderDetails);
-        when(emailConfiguration.getSenderAddress()).thenReturn("address");
-        when(objectMapper.writeValueAsString(orderModel)).thenReturn("json string");
-        when(orderDetails.getOrderModel()).thenReturn(orderModel);
-        when(orderDetails.getMessageId()).thenReturn("certificate");
-        when(emailConfiguration.getApplicationId()).thenReturn("order-notification-sender");
-        when(orderDetails.getMessageType()).thenReturn("certificate");
-        when(emailConfiguration.getDateFormat()).thenReturn("dd/MM/yy");
-        when(dateGenerator.generate()).thenReturn(LocalDateTime.parse("04/03/22 12:00:00",
-                DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss")));
+        EmailSend expected = new EmailSend();
+        expected.setEmailAddress("address");
+        expected.setData("email data json");
+        expected.setMessageId("id");
+        expected.setAppId("id");
+        expected.setMessageType("type");
+        expected.setCreatedAt("10/08/2022");
+
+        when(ordersApiWrapper.getOrdersApi()).thenReturn(ordersApi);
+        when(director.map(ordersApi)).thenReturn(emailData);
+        when(config.getSenderAddress()).thenReturn("address");
+        when(objectMapper.writeValueAsString(emailData)).thenReturn("email data json");
+        when(config.getMessageId()).thenReturn("id");
+        when(config.getApplicationId()).thenReturn("id");
+        when(config.getMessageType()).thenReturn("type");
+        when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2022, 8, 10, 11, 42));
+        when(config.getDateFormat()).thenReturn("dd/MM/yyyy");
 
         // when
-        EmailSend actual = ordersApiDetailsMapper.mapToEmailSend(ordersApiDetails);
+        EmailSend actual = mapper.mapToEmailSend(ordersApiWrapper);
 
         // then
-        assertEquals("address", actual.getEmailAddress());
-        assertEquals("json string", actual.getData());
-        assertEquals("certificate", actual.getMessageId());
-        assertEquals("order-notification-sender", actual.getAppId());
-        assertEquals("certificate", actual.getMessageType());
-        assertEquals("04/03/22", actual.getCreatedAt());
+        assertEquals(expected, actual);
     }
 
     @Test
-    @DisplayName("Should throw MappingException when email data cannot be serialised")
-    void testShouldThrowMappingExceptionWhenObjectMapperThrowsJSonProcessingException() throws JsonProcessingException {
-        //given
-        when(ordersApiDetails.getKind()).thenReturn("item#certificate");
-        when(ordersApiDetails.getOrderReference()).thenReturn("123456");
-        when(orderKindMapperFactory.getInstance("item#certificate")).thenReturn(kindMapper);
-        when(kindMapper.map(ordersApiDetails)).thenReturn(orderDetails);
-        when(emailConfiguration.getSenderAddress()).thenReturn("address");
-        when(orderDetails.getOrderModel()).thenReturn(orderModel);
-        when(objectMapper.writeValueAsString(orderModel)).thenThrow(jsonProcessingException);
-        //then
-        Executable actual = () -> ordersApiDetailsMapper.mapToEmailSend(ordersApiDetails);
+    void testMapToEmailSendFailure() throws JsonProcessingException {
+        // given
+        when(ordersApiWrapper.getOrdersApi()).thenReturn(ordersApi);
+        when(director.map(any())).thenReturn(emailData);
+        when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
+        when(ordersApi.getReference()).thenReturn("12345");
 
-        //when
-        Exception exception = assertThrows(MappingException.class, actual);
-        assertEquals("Failed to map orderDetails: 123456", exception.getMessage());
+        // when
+        Executable actual = () -> mapper.mapToEmailSend(ordersApiWrapper);
+
+        // then
+        MappingException exception = assertThrows(MappingException.class, actual);
+        assertEquals("Failed to map order: 12345", exception.getMessage());
+        verify(objectMapper).writeValueAsString(emailData);
+        verify(director).map(ordersApi);
     }
 }

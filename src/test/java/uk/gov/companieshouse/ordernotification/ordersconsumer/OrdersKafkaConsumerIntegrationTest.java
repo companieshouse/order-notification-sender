@@ -29,7 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -41,7 +40,6 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-@ActiveProfiles("feature-flags-disabled")
 class OrdersKafkaConsumerIntegrationTest {
 
     private static MockServerContainer container;
@@ -109,8 +107,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_certificate", actual.getMessageId());
-        assertEquals("order_notification_sender_certificate", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -140,8 +138,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_dissolved_certificate", actual.getMessageId());
-        assertEquals("order_notification_sender_dissolved_certificate", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -170,8 +168,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_document", actual.getMessageId());
-        assertEquals("order_notification_sender_document", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -201,8 +199,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }
@@ -232,8 +230,8 @@ class OrdersKafkaConsumerIntegrationTest {
 
         // then
         assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageId());
-        assertEquals("order_notification_sender_missing_image", actual.getMessageType());
+        assertEquals("order_notification_sender_summary", actual.getMessageId());
+        assertEquals("order_notification_sender_summary", actual.getMessageType());
         assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
         assertNotNull(actual.getData());
     }

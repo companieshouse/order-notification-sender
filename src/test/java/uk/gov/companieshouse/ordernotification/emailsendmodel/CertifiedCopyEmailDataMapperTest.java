@@ -24,7 +24,6 @@ import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
-import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 @ExtendWith(MockitoExtension.class)
@@ -67,9 +66,6 @@ public class CertifiedCopyEmailDataMapperTest {
     private EmailConfiguration config;
 
     @Mock
-    private EmailDataConfiguration emailDataConfig;
-
-    @Mock
     private FilingHistoryDescriptionProviderService providerService;
 
     @ParameterizedTest(name = "{0}")
@@ -82,8 +78,7 @@ public class CertifiedCopyEmailDataMapperTest {
         CertifiedCopy expected = expectationsBuilder.buildCertifiedCopy();
 
         when(deliveryMapper.mapDeliveryMethod(any(), any())).thenReturn(expected.getDeliveryMethod());
-        when(config.getDocument()).thenReturn(emailDataConfig);
-        when(emailDataConfig.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);
+        when(config.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
                 .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
 
