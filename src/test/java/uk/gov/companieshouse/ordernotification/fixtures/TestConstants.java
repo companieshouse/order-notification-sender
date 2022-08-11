@@ -24,6 +24,10 @@ public final class TestConstants {
     public static final String ORDER_CREATED_AT = "27 July 2021";
     public static final String EMAIL_COPY_EXPRESS_ONLY = "Email only available for express delivery method";
     public static final String DELIVERY_TIMESCALE = "STANDARD";
+    public static final String MAPPED_STANDARD_DELIVERY_TEXT = "Standard delivery (aim to "
+            + "dispatch within 10 working days)";
+    public static final String MAPPED_EXPRESS_DELIVERY_TEXT = "Express (Orders received before 11am "
+            + "will be dispatched the same day. Orders received after 11am will be dispatched the next working day)";
 
     //certificate order constants
     public static final String LIMITED_COMPANY_TYPE = "ltd";
@@ -41,6 +45,7 @@ public final class TestConstants {
     public static final String MESSAGE_TYPE = "message_type";
 
     //document order constants
+    public static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
     public static final String FILING_HISTORY_DATE = "2021-07-28";
     public static final String FILING_HISTORY_DATE_VIEW = "28 July 2021";
     public static final String DELIVERY_METHOD = "Standard delivery (aim to dispatch within 5 working days)";
