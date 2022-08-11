@@ -74,7 +74,7 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
     @Override
     public void mapMissingImageDelivery(BaseItemApi missingImageDelivery) {
         List<MissingImageDelivery> missingImageDeliveryList;
-        if (emailData.getCertifiedCopies() != null) {
+        if (emailData.getMissingImageDeliveries() != null) {
             missingImageDeliveryList = emailData.getMissingImageDeliveries();
             missingImageDeliveryList.add(missingImageDeliveryEmailDataMapper
                     .map(missingImageDelivery));
