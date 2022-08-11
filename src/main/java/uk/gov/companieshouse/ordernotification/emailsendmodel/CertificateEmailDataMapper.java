@@ -1,8 +1,10 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 
+@Component
 public class CertificateEmailDataMapper {
 
     private final CertificateTypeMapper certificateTypeMapper;

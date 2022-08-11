@@ -2,15 +2,18 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.FilingHistoryDocumentApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
+@Component
 public class CertifiedCopyEmailDataMapper {
     private final DeliveryMethodMapper deliveryMethodMapper;
     private final FilingHistoryDescriptionProviderService providerService;
-    private EmailConfiguration emailConfiguration;
+    private final EmailConfiguration emailConfiguration;
 
     public CertifiedCopyEmailDataMapper(DeliveryMethodMapper deliveryMethodMapper,
             FilingHistoryDescriptionProviderService providerService,

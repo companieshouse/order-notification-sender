@@ -1,14 +1,15 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderNotificationEmailData {
     private String orderId;
-    private List<Certificate> certificates;
-    private List<CertifiedCopy> certifiedCopies;
-    private List<MissingImageDelivery> missingImageDeliveries;
+    private List<Certificate> certificates = new ArrayList<>();
+    private List<CertifiedCopy> certifiedCopies  = new ArrayList<>();;
+    private List<MissingImageDelivery> missingImageDeliveries = new ArrayList<>();;
     private DeliveryDetails deliveryDetails;
     private PaymentDetails paymentDetails;
     private boolean hasStandardDelivery;
@@ -31,6 +32,10 @@ public class OrderNotificationEmailData {
         this.certificates = certificates;
     }
 
+    public void addCertificate(Certificate certificate) {
+        this.certificates.add(certificate);
+    }
+
     public List<CertifiedCopy> getCertifiedCopies() {
         return certifiedCopies;
     }
@@ -39,12 +44,20 @@ public class OrderNotificationEmailData {
         this.certifiedCopies = certifiedCopies;
     }
 
+    public void addCertifiedCopy(CertifiedCopy certifiedCopy) {
+        this.certifiedCopies.add(certifiedCopy);
+    }
+
     public List<MissingImageDelivery> getMissingImageDeliveries() {
         return missingImageDeliveries;
     }
 
     public void setMissingImageDeliveries(List<MissingImageDelivery> missingImageDeliveries) {
         this.missingImageDeliveries = missingImageDeliveries;
+    }
+
+    public void addMissingImageDelivery(MissingImageDelivery missingImageDelivery) {
+        this.missingImageDeliveries.add(missingImageDelivery);
     }
 
     public DeliveryDetails getDeliveryDetails() {

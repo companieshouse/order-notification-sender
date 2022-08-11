@@ -47,43 +47,17 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     @Override
     public void mapCertificate(BaseItemApi certificate) {
-        List<Certificate> certificatesList;
-        if (emailData.getCertificates() != null) {
-            certificatesList = emailData.getCertificates();
-            certificatesList.add(certificateEmailDataMapper.map(certificate));
-        } else {
-            certificatesList = new ArrayList<>();
-            certificatesList.add(certificateEmailDataMapper.map(certificate));
-        }
-        emailData.setCertificates(certificatesList);
+        emailData.addCertificate(certificateEmailDataMapper.map(certificate));
     }
 
     @Override
     public void mapCertifiedCopy(BaseItemApi certifiedCopy) {
-        List<CertifiedCopy> certifiedCopyList;
-        if (emailData.getCertifiedCopies() != null) {
-            certifiedCopyList = emailData.getCertifiedCopies();
-            certifiedCopyList.add(certifiedCopyEmailDataMapper.map(certifiedCopy));
-        } else {
-            certifiedCopyList = new ArrayList<>();
-            certifiedCopyList.add(certifiedCopyEmailDataMapper.map(certifiedCopy));
-        }
-        emailData.setCertifiedCopies(certifiedCopyList);
+        emailData.addCertifiedCopy(certifiedCopyEmailDataMapper.map(certifiedCopy));
     }
 
     @Override
     public void mapMissingImageDelivery(BaseItemApi missingImageDelivery) {
-        List<MissingImageDelivery> missingImageDeliveryList;
-        if (emailData.getMissingImageDeliveries() != null) {
-            missingImageDeliveryList = emailData.getMissingImageDeliveries();
-            missingImageDeliveryList.add(missingImageDeliveryEmailDataMapper
-                    .map(missingImageDelivery));
-        } else {
-            missingImageDeliveryList = new ArrayList<>();
-            missingImageDeliveryList.add(missingImageDeliveryEmailDataMapper
-                    .map(missingImageDelivery));
-        }
-        emailData.setMissingImageDeliveries(missingImageDeliveryList);
+        emailData.addMissingImageDelivery(missingImageDeliveryEmailDataMapper.map(missingImageDelivery));
     }
 
     @Override

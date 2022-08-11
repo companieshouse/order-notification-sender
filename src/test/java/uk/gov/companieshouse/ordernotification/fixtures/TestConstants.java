@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.ordernotification.fixtures;
 
+import java.time.LocalDateTime;
+
 public final class TestConstants {
 
     //common constants
@@ -77,6 +79,18 @@ public final class TestConstants {
     public static final String READABLE_FALSE = "No";
     public static final int DISPATCH_DAYS = 5;
     public static final String FILING_HISTORY_EMAIL_DATE_FORMAT = "dd MMM yyyy";
+
+    public static final String FORENAME = "forename";
+    public static final String SURNAME = "surname";
+    public static final String ADDRESS_LINE_1 = "address line 1";
+    public static final String ADDRESS_LINE_2 = "address line 2";
+    public static final String PO_BOX = "po box";
+    public static final String LOCALITY = "locality";
+    public static final String REGION = "region";
+    public static final String POSTAL_CODE = "postal code";
+    public static final String COUNTRY = "country";
+
+    public static final LocalDateTime TEST_DATE = LocalDateTime.of(2022, 07, 27, 15, 20, 10);
 
     private TestConstants(){
     }
