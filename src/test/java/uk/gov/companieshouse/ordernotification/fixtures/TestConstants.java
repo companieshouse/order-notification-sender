@@ -18,12 +18,10 @@ public final class TestConstants {
 
     //certificates
     public static final String CERTIFICATE_ID = "CRT-123456-123456";
-    public static final String MAPPED_INCORPORATION_CERTIFICATE_TYPE = "Incorporation with all " +
-            "company name changes";
-    public static final String MAPPED_DISSOLUTION_CERTIFICATE_TYPE = "Dissolution with all " +
-            "company name changes";
+    public static final String MAPPED_INCORPORATION_CERTIFICATE_TYPE = "Incorporation with all company name changes";
+    public static final String MAPPED_DISSOLUTION_CERTIFICATE_TYPE = "Dissolution with all company name changes";
 
-    //document order constantsF
+    //document order constants
     public static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
     public static final String FILING_HISTORY_DATE = "2021-07-28";
     public static final String MAPPED_FILING_HISTORY_DATE = "28 Jul 2021";
