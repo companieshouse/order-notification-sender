@@ -3,9 +3,9 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class PaymentDetails {
-    private String paymentReference;
-    private String amountPaid;
-    private String paymentDate;
+    private final String paymentReference;
+    private final String amountPaid;
+    private final String paymentDate;
 
     public PaymentDetails(String paymentReference, String amountPaid, String paymentDate) {
         this.paymentReference = paymentReference;

@@ -3,15 +3,15 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class DeliveryDetails {
-    private String addressLine1;
-    private String addressLine2;
-    private String country;
-    private String locality;
-    private String poBox;
-    private String postalCode;
-    private String region;
-    private String forename;
-    private String surname;
+    private final String addressLine1;
+    private final String addressLine2;
+    private final String country;
+    private final String locality;
+    private final String poBox;
+    private final String postalCode;
+    private final String region;
+    private final String forename;
+    private final String surname;
 
     public DeliveryDetails(String addressLine1, String addressLine2, String country,
             String locality, String poBox, String postalCode, String region,

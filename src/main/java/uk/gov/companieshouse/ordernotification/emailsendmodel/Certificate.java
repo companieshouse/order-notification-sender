@@ -3,11 +3,11 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class Certificate {
-    private String id;
-    private String companyNumber;
-    private String certificateType;
-    private String deliveryMethod;
-    private String fee;
+    private final String id;
+    private final String companyNumber;
+    private final String certificateType;
+    private final String deliveryMethod;
+    private final String fee;
 
     public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, String fee) {
         this.id = id;

@@ -3,13 +3,13 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class CertifiedCopy {
-    private String id;
-    private String companyNumber;
-    private String deliveryMethod;
-    private String dateFiled;
-    private String type;
-    private String description;
-    private String fee;
+    private final String id;
+    private final String companyNumber;
+    private final String deliveryMethod;
+    private final String dateFiled;
+    private final String type;
+    private final String description;
+    private final String fee;
 
     public CertifiedCopy(String id, String companyNumber, String deliveryMethod,
             String dateFiled, String type, String description, String fee) {

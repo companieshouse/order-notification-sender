@@ -3,12 +3,12 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class MissingImageDelivery {
-    private String id;
-    private String dateFiled;
-    private String type;
-    private String description;
-    private String companyNumber;
-    private String fee;
+    private final String id;
+    private final String dateFiled;
+    private final String type;
+    private final String description;
+    private final String companyNumber;
+    private final String fee;
 
     public MissingImageDelivery(String id, String dateFiled, String type, String description,
                                 String companyNumber, String fee) {
