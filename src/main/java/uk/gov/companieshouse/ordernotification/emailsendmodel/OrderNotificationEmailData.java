@@ -3,9 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.stereotype.Component;
 
-@Component
 public class OrderNotificationEmailData {
     private String to;
     private String subject;
