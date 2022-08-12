@@ -14,7 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.DeliveryDetailsApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
+import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertifiedCopyApi;
+import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
@@ -48,10 +51,16 @@ class OrderNotificationEmailDataConverterTest {
     private CertificateApi certificateApi;
 
     @Mock
+    private CertificateItemOptionsApi certificateItemOptionsApi;
+
+    @Mock
     private Certificate certificate;
 
     @Mock
     private CertifiedCopyApi certifiedCopyApi;
+
+    @Mock
+    private CertifiedCopyItemOptionsApi certifiedCopyItemOptionsApi;
 
     @Mock
     private CertifiedCopy certifiedCopy;
@@ -88,6 +97,7 @@ class OrderNotificationEmailDataConverterTest {
         when(ordersApi.getTotalOrderCost()).thenReturn(TestConstants.ORDER_COST);
         when(emailConfiguration.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
         when(emailConfiguration.getChsUrl()).thenReturn(TestConstants.CHS_URL);
+        when(emailConfiguration.getDispatchDays()).thenReturn(10);
 
         // when
         converter.mapOrder(ordersApi);
@@ -95,29 +105,66 @@ class OrderNotificationEmailDataConverterTest {
         // then
         assertEquals(TestConstants.ORDER_REFERENCE_NUMBER, converter.getEmailData().getOrderId());
         assertEquals(expectedEmailData(), converter.getEmailData());
+        assertEquals(10, converter.getEmailData().getDispatchDays());
     }
 
     @Test
-    void testMapCertificate() {
+    void testMapCertificateStandardDelivery() {
         // given
         when(certificateEmailDataMapper.map(any())).thenReturn(certificate);
+        when(certificateApi.getItemOptions()).thenReturn(certificateItemOptionsApi);
+        when(certificateItemOptionsApi.getDeliveryTimescale()).thenReturn(DeliveryTimescaleApi.STANDARD);
         // when
         converter.mapCertificate(certificateApi);
 
         // then
         assertTrue(converter.getEmailData().getCertificates().contains(certificate));
+        assertTrue(converter.getEmailData().hasStandardDelivery());
         verify(certificateEmailDataMapper).map(certificateApi);
     }
 
     @Test
-    void testMapCertifiedCopy() {
+    void testMapCertificateExpressDelivery() {
+        // given
+        when(certificateEmailDataMapper.map(any())).thenReturn(certificate);
+        when(certificateApi.getItemOptions()).thenReturn(certificateItemOptionsApi);
+        when(certificateItemOptionsApi.getDeliveryTimescale()).thenReturn(DeliveryTimescaleApi.SAME_DAY);
+        // when
+        converter.mapCertificate(certificateApi);
+
+        // then
+        assertTrue(converter.getEmailData().getCertificates().contains(certificate));
+        assertTrue(converter.getEmailData().hasExpressDelivery());
+        verify(certificateEmailDataMapper).map(certificateApi);
+    }
+
+    @Test
+    void testMapCertifiedCopyStandardDelivery() {
         // given
         when(certifiedCopyEmailDataMapper.map(any())).thenReturn(certifiedCopy);
+        when(certifiedCopyApi.getItemOptions()).thenReturn(certifiedCopyItemOptionsApi);
+        when(certifiedCopyItemOptionsApi.getDeliveryTimescale()).thenReturn(DeliveryTimescaleApi.STANDARD);
         // when
         converter.mapCertifiedCopy(certifiedCopyApi);
 
         // then
         assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
+        assertTrue(converter.getEmailData().hasStandardDelivery());
+        verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
+    }
+
+    @Test
+    void testMapCertifiedCopyExpressDelivery() {
+        // given
+        when(certifiedCopyEmailDataMapper.map(any())).thenReturn(certifiedCopy);
+        when(certifiedCopyApi.getItemOptions()).thenReturn(certifiedCopyItemOptionsApi);
+        when(certifiedCopyItemOptionsApi.getDeliveryTimescale()).thenReturn(DeliveryTimescaleApi.SAME_DAY);
+        // when
+        converter.mapCertifiedCopy(certifiedCopyApi);
+
+        // then
+        assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
+        assertTrue(converter.getEmailData().hasExpressDelivery());
         verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
     }
 
@@ -153,6 +200,7 @@ class OrderNotificationEmailDataConverterTest {
                 .withPostalCode(TestConstants.POSTAL_CODE)
                 .withCountry(TestConstants.COUNTRY)
                 .build());
+        result.setDispatchDays(10);
         return result;
     }
 }

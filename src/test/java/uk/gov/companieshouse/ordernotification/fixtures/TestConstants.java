@@ -13,16 +13,20 @@ public final class TestConstants {
     public static final String ORDER_NOTIFICATION_REFERENCE = "/orders/" + ORDER_REFERENCE_NUMBER;
     public static final String KAFKA_TOPIC = "topic";
     public static final String PAYMENT_TIME = "27 July 2021 - 15:20:10";
-    public static final String MAPPED_STANDARD_DELIVERY_TEXT = "Standard delivery (aim to "
-            + "dispatch within 10 working days)";
-    public static final String MAPPED_EXPRESS_DELIVERY_TEXT = "Express (Orders received before 11am "
-            + "will be dispatched the same day. Orders received after 11am will be dispatched the next working day)";
+    public static final String MAPPED_STANDARD_DELIVERY_TEXT = "Standard";
+    public static final String MAPPED_EXPRESS_DELIVERY_TEXT = "Express";
 
-    //document order constants
+    //certificates
+    public static final String CERTIFICATE_ID = "CRT-123456-123456";
+    public static final String MAPPED_INCORPORATION_CERTIFICATE_TYPE = "Incorporation with all " +
+            "company name changes";
+    public static final String MAPPED_DISSOLUTION_CERTIFICATE_TYPE = "Dissolution with all " +
+            "company name changes";
+
+    //document order constantsF
     public static final String CERTIFIED_COPY_ID = "CCD-123456-123456";
     public static final String FILING_HISTORY_DATE = "2021-07-28";
     public static final String MAPPED_FILING_HISTORY_DATE = "28 Jul 2021";
-    public static final String DELIVERY_METHOD = "Standard delivery (aim to dispatch within 5 working days)";
     public static final String FILING_HISTORY_DESCRIPTION = "confirmation-statement-with-updates";
     public static final String MAPPED_FILING_HISTORY_DESCRIPTION = "Mapped filing history description";
     public static final String MADE_UP_DATE = "2017-05-20";

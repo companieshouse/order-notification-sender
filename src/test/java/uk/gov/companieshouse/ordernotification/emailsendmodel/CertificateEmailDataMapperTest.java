@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
@@ -14,6 +16,7 @@ import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 
 import java.util.stream.Stream;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,25 +26,15 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class CertificateEmailDataMapperTest {
 
-    private static final String CERTIFICATE_ID = "CRT-123456-123456";
-    private static final String COMPANY_NUMBER = "12345678";
-    private static final String FEE = "15";
-
-    private static final String MAPPED_INCORPORATION_CERTIFICATE_TYPE = "Incorporation with all company name changes";
-    private static final String MAPPED_DISSOLUTION_CERTIFICATE_TYPE = "Dissolution with all company name changes";
-    private static final String MAPPED_STANDARD_DELIVERY_TEXT = "Standard delivery (aim to dispatch within 10 working days)";
-    private static final String MAPPED_EXPRESS_DELIVERY_TEXT = "Express (Orders received before 11am will be dispatched the same day. Orders received after 11am will be dispatched the next working day)";
-    private static final String MAPPED_FEE = "£15";
-
     private static final ItemBuilder standardCertificate = itemBuilder()
-            .withId(CERTIFICATE_ID)
-            .withCompanyNumber(COMPANY_NUMBER)
-            .withTotalItemCost(FEE);
+            .withId(TestConstants.CERTIFICATE_ID)
+            .withCompanyNumber(TestConstants.COMPANY_NUMBER)
+            .withTotalItemCost(TestConstants.ORDER_COST);
 
     private static final Certificate.CertificateBuilder mappedCertificate = Certificate.builder()
-            .withId(CERTIFICATE_ID)
-            .withCompanyNumber(COMPANY_NUMBER)
-            .withFee(MAPPED_FEE);
+            .withId(TestConstants.CERTIFICATE_ID)
+            .withCompanyNumber(TestConstants.COMPANY_NUMBER)
+            .withFee(TestConstants.ORDER_VIEW);
 
     private static final ItemBuilder incorporation = standardCertificate.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.STANDARD)
@@ -49,8 +42,8 @@ public class CertificateEmailDataMapperTest {
 
     private static final Certificate.CertificateBuilder mappedIncorporation = mappedCertificate
             .clone()
-            .withDeliveryMethod(MAPPED_STANDARD_DELIVERY_TEXT)
-            .withCertificateType(MAPPED_INCORPORATION_CERTIFICATE_TYPE);
+            .withDeliveryMethod(TestConstants.MAPPED_STANDARD_DELIVERY_TEXT)
+            .withCertificateType(TestConstants.MAPPED_INCORPORATION_CERTIFICATE_TYPE);
 
     private static final ItemBuilder dissolution = standardCertificate.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.SAME_DAY)
@@ -58,17 +51,24 @@ public class CertificateEmailDataMapperTest {
 
     private static final Certificate.CertificateBuilder mappedDissolution = mappedCertificate
             .clone()
-            .withDeliveryMethod(MAPPED_EXPRESS_DELIVERY_TEXT)
-            .withCertificateType(MAPPED_DISSOLUTION_CERTIFICATE_TYPE);
+            .withDeliveryMethod(TestConstants.MAPPED_EXPRESS_DELIVERY_TEXT)
+            .withCertificateType(TestConstants.MAPPED_DISSOLUTION_CERTIFICATE_TYPE);
 
-    @InjectMocks
     private CertificateEmailDataMapper mapper;
 
     @Mock
     private CertificateTypeMapper typeMapper;
 
-    @Mock
-    private DeliveryMethodMapper deliveryMapper;
+    @BeforeEach
+    void setup() {
+        Map<DeliveryTimescaleApi, String> deliveryMappings = new HashMap<DeliveryTimescaleApi, String>() {
+            {
+                put(DeliveryTimescaleApi.STANDARD, "Standard");
+                put(DeliveryTimescaleApi.SAME_DAY, "Express");
+            }
+        };
+        mapper = new CertificateEmailDataMapper(typeMapper, deliveryMappings);
+    }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("getArguments")
@@ -79,7 +79,6 @@ public class CertificateEmailDataMapperTest {
         CertificateItemOptionsApi itemOptions = (CertificateItemOptionsApi) input.getItemOptions();
         Certificate expected = expectationsBuilder.buildCertificate();
         when(typeMapper.mapCertificateType(any())).thenReturn(expected.getCertificateType());
-        when(deliveryMapper.mapDeliveryMethod(any(), any())).thenReturn(expected.getDeliveryMethod());
 
         // when
         Certificate actual = mapper.map(input);
@@ -87,7 +86,6 @@ public class CertificateEmailDataMapperTest {
         // then
         assertEquals(expected, actual);
         verify(typeMapper).mapCertificateType(itemOptions.getCertificateType());
-        verify(deliveryMapper).mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale());
     }
 
     static Stream<Arguments> getArguments() {

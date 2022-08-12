@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.DeliveryDetailsApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
+import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
+import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
+import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 @Component
@@ -41,21 +44,26 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
                 String.format(ORDER_SUMMARY_LINK, emailConfiguration.getChsUrl(), ordersApi.getReference()));
         mapDeliveryDetails(ordersApi);
         mapPaymentDetails(ordersApi);
+        emailData.setDispatchDays(emailConfiguration.getDispatchDays());
     }
 
     @Override
-    public void mapCertificate(BaseItemApi certificate) {
-        emailData.addCertificate(certificateEmailDataMapper.map(certificate));
+    public void mapCertificate(BaseItemApi certificateApi) {
+        emailData.addCertificate(certificateEmailDataMapper.map(certificateApi));
+        DeliveryTimescaleApi deliveryTimescaleApi = ((CertificateItemOptionsApi) certificateApi.getItemOptions()).getDeliveryTimescale();
+        mapDeliveryTimescale(deliveryTimescaleApi);
     }
 
     @Override
-    public void mapCertifiedCopy(BaseItemApi certifiedCopy) {
-        emailData.addCertifiedCopy(certifiedCopyEmailDataMapper.map(certifiedCopy));
+    public void mapCertifiedCopy(BaseItemApi certifiedCopyApi) {
+        emailData.addCertifiedCopy(certifiedCopyEmailDataMapper.map(certifiedCopyApi));
+        DeliveryTimescaleApi deliveryTimescaleApi = ((CertifiedCopyItemOptionsApi) certifiedCopyApi.getItemOptions()).getDeliveryTimescale();
+        mapDeliveryTimescale(deliveryTimescaleApi);
     }
 
     @Override
-    public void mapMissingImageDelivery(BaseItemApi missingImageDelivery) {
-        emailData.addMissingImageDelivery(missingImageDeliveryEmailDataMapper.map(missingImageDelivery));
+    public void mapMissingImageDelivery(BaseItemApi missingImageDeliveryApi) {
+        emailData.addMissingImageDelivery(missingImageDeliveryEmailDataMapper.map(missingImageDeliveryApi));
     }
 
     @Override
@@ -87,5 +95,13 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
             ))
             .build()
         );
+    }
+
+    private void mapDeliveryTimescale(DeliveryTimescaleApi deliveryTimescaleApi) {
+        if (deliveryTimescaleApi == DeliveryTimescaleApi.STANDARD) {
+            emailData.hasStandardDelivery(true);
+        } else if (deliveryTimescaleApi == DeliveryTimescaleApi.SAME_DAY){
+            emailData.hasExpressDelivery(true);
+        }
     }
 }

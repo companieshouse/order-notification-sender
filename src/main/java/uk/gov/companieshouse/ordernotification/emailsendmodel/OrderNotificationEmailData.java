@@ -16,6 +16,7 @@ public class OrderNotificationEmailData {
     private boolean hasStandardDelivery;
     private boolean hasExpressDelivery;
     private String orderSummaryLink;
+    private int dispatchDays;
 
     public String getOrderId() {
         return orderId;
@@ -81,7 +82,7 @@ public class OrderNotificationEmailData {
         return hasStandardDelivery;
     }
 
-    public void setHasStandardDelivery(boolean hasStandardDelivery) {
+    public void hasStandardDelivery(boolean hasStandardDelivery) {
         this.hasStandardDelivery = hasStandardDelivery;
     }
 
@@ -89,7 +90,7 @@ public class OrderNotificationEmailData {
         return hasExpressDelivery;
     }
 
-    public void setHasExpressDelivery(boolean hasExpressDelivery) {
+    public void hasExpressDelivery(boolean hasExpressDelivery) {
         this.hasExpressDelivery = hasExpressDelivery;
     }
 
@@ -101,6 +102,14 @@ public class OrderNotificationEmailData {
         this.orderSummaryLink = orderSummaryLink;
     }
 
+    public int getDispatchDays() {
+        return dispatchDays;
+    }
+
+    public void setDispatchDays(int dispatchDays) {
+        this.dispatchDays = dispatchDays;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -110,11 +119,11 @@ public class OrderNotificationEmailData {
             return false;
         }
         OrderNotificationEmailData emailData = (OrderNotificationEmailData) o;
-        return hasStandardDelivery == emailData.hasStandardDelivery && hasExpressDelivery == emailData.hasExpressDelivery && Objects.equals(orderId, emailData.orderId) && Objects.equals(certificates, emailData.certificates) && Objects.equals(certifiedCopies, emailData.certifiedCopies) && Objects.equals(missingImageDeliveries, emailData.missingImageDeliveries) && Objects.equals(deliveryDetails, emailData.deliveryDetails) && Objects.equals(paymentDetails, emailData.paymentDetails) && Objects.equals(orderSummaryLink, emailData.orderSummaryLink);
+        return hasStandardDelivery == emailData.hasStandardDelivery && hasExpressDelivery == emailData.hasExpressDelivery && dispatchDays == emailData.dispatchDays && Objects.equals(orderId, emailData.orderId) && Objects.equals(certificates, emailData.certificates) && Objects.equals(certifiedCopies, emailData.certifiedCopies) && Objects.equals(missingImageDeliveries, emailData.missingImageDeliveries) && Objects.equals(deliveryDetails, emailData.deliveryDetails) && Objects.equals(paymentDetails, emailData.paymentDetails) && Objects.equals(orderSummaryLink, emailData.orderSummaryLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, certificates, certifiedCopies, missingImageDeliveries, deliveryDetails, paymentDetails, hasStandardDelivery, hasExpressDelivery, orderSummaryLink);
+        return Objects.hash(orderId, certificates, certifiedCopies, missingImageDeliveries, deliveryDetails, paymentDetails, hasStandardDelivery, hasExpressDelivery, orderSummaryLink, dispatchDays);
     }
 }
