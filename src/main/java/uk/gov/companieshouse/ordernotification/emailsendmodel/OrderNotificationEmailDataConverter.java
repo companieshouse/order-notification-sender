@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -19,11 +20,11 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     private static final String ORDER_SUMMARY_LINK = "%s/orders/%s";
 
-    private OrderNotificationEmailData emailData;
-    private CertificateEmailDataMapper certificateEmailDataMapper;
-    private CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper;
-    private MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper;
-    private EmailConfiguration emailConfiguration;
+    private final OrderNotificationEmailData emailData;
+    private final CertificateEmailDataMapper certificateEmailDataMapper;
+    private final CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper;
+    private final MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper;
+    private final EmailConfiguration emailConfiguration;
 
     public OrderNotificationEmailDataConverter(OrderNotificationEmailData emailData,
             CertificateEmailDataMapper certificateEmailDataMapper,
@@ -45,6 +46,8 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
         mapDeliveryDetails(ordersApi);
         mapPaymentDetails(ordersApi);
         emailData.setDispatchDays(emailConfiguration.getDispatchDays());
+        emailData.setTo(ordersApi.getOrderedBy().getEmail());
+        emailData.setSubject(MessageFormat.format(emailConfiguration.getConfirmationMessage(), ordersApi.getReference()));
     }
 
     @Override
