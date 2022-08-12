@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
-import uk.gov.companieshouse.ordernotification.config.EmailDataConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 import java.util.HashMap;
@@ -29,9 +28,6 @@ public class MissingImageDeliveryEmailDataMapperTest {
 
     @Mock
     private EmailConfiguration config;
-
-    @Mock
-    private EmailDataConfiguration emailDataConfig;
 
     @InjectMocks
     private MissingImageDeliveryEmailDataMapper mapper;

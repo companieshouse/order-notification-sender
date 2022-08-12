@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
@@ -56,17 +56,24 @@ public class CertifiedCopyEmailDataMapperTest {
             mappedBaseCertifiedCopy.clone()
                 .withDeliveryMethod(TestConstants.MAPPED_EXPRESS_DELIVERY_TEXT);
 
-    @InjectMocks
     private CertifiedCopyEmailDataMapper mapper;
 
     @Mock
-    private DeliveryMethodMapper deliveryMapper;
+    private FilingHistoryDescriptionProviderService providerService;
 
     @Mock
     private EmailConfiguration config;
 
-    @Mock
-    private FilingHistoryDescriptionProviderService providerService;
+    @BeforeEach
+    void setup() {
+        Map<DeliveryTimescaleApi, String> deliveryMappings = new HashMap<DeliveryTimescaleApi, String>() {
+            {
+                put(DeliveryTimescaleApi.STANDARD, "Standard");
+                put(DeliveryTimescaleApi.SAME_DAY, "Express");
+            }
+        };
+        mapper = new CertifiedCopyEmailDataMapper(deliveryMappings, providerService, config);
+    }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("getArguments")
@@ -77,7 +84,6 @@ public class CertifiedCopyEmailDataMapperTest {
         CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) input.getItemOptions();
         CertifiedCopy expected = expectationsBuilder.buildCertifiedCopy();
 
-        when(deliveryMapper.mapDeliveryMethod(any(), any())).thenReturn(expected.getDeliveryMethod());
         when(config.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);
         when(providerService.mapFilingHistoryDescription(eq(TestConstants.FILING_HISTORY_DESCRIPTION), any()))
                 .thenReturn(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION);
@@ -87,7 +93,6 @@ public class CertifiedCopyEmailDataMapperTest {
 
         // then
         assertEquals(expected, actual);
-        verify(deliveryMapper).mapDeliveryMethod(itemOptions.getDeliveryMethod(), itemOptions.getDeliveryTimescale());
         verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION, getFilingHistoryDescriptionValues());
     }
 

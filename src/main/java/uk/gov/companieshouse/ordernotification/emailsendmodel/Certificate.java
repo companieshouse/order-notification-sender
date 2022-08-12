@@ -3,14 +3,11 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class Certificate {
-    private String id;
-    private String companyNumber;
-    private String certificateType;
-    private String deliveryMethod;
-    private String fee;
-
-    public Certificate() {
-    }
+    private final String id;
+    private final String companyNumber;
+    private final String certificateType;
+    private final String deliveryMethod;
+    private final String fee;
 
     public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, String fee) {
         this.id = id;
@@ -24,40 +21,20 @@ public class Certificate {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getCertificateType() {
         return certificateType;
-    }
-
-    public void setCertificateType(String certificateType) {
-        this.certificateType = certificateType;
     }
 
     public String getCompanyNumber() {
         return companyNumber;
     }
 
-    public void setCompanyNumber(String companyNumber) {
-        this.companyNumber = companyNumber;
-    }
-
     public String getDeliveryMethod() {
         return deliveryMethod;
     }
 
-    public void setDeliveryMethod(String deliveryMethod) {
-        this.deliveryMethod = deliveryMethod;
-    }
-
     public String getFee() {
         return fee;
-    }
-
-    public void setFee(String fee) {
-        this.fee = fee;
     }
 
     public static CertificateBuilder builder() {

@@ -9,17 +9,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
-import uk.gov.companieshouse.api.model.order.item.DeliveryMethodApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
 import uk.gov.companieshouse.kafka.deserialization.DeserializerFactory;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
-import uk.gov.companieshouse.ordernotification.emailsendmodel.DeliveryMethodTuple;
 
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
@@ -66,12 +63,10 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    Map<DeliveryMethodTuple, String> deliveryMethodMappings(@Value("${email.dispatchDays}") int dispatchDays) {
-        Map<DeliveryMethodTuple, String> mappings = new HashMap<>();
-        mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.STANDARD),
-                "Standard delivery (aim to dispatch within "+dispatchDays+" working days)");
-        mappings.put(new DeliveryMethodTuple(DeliveryMethodApi.POSTAL, DeliveryTimescaleApi.SAME_DAY),
-                "Express (Orders received before 11am will be dispatched the same day. Orders received after 11am will be dispatched the next working day)");
+    Map<DeliveryTimescaleApi, String> deliveryMethodMappings() {
+        Map<DeliveryTimescaleApi, String> mappings = new HashMap<>();
+        mappings.put(DeliveryTimescaleApi.STANDARD, "Standard");
+        mappings.put(DeliveryTimescaleApi.SAME_DAY, "Express");
         return mappings;
     }
 
