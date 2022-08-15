@@ -1,10 +1,9 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.stereotype.Component;
+import java.util.Objects;
+
 import uk.gov.companieshouse.api.model.order.DeliveryDetailsApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
@@ -13,17 +12,15 @@ import uk.gov.companieshouse.api.model.order.item.CertifiedCopyItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
-@Component
-@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE, proxyMode = ScopedProxyMode.INTERFACES)
 public class OrderNotificationEmailDataConverter implements OrderNotificationDataConvertable {
 
     private static final String ORDER_SUMMARY_LINK = "%s/orders/%s";
 
-    private OrderNotificationEmailData emailData;
-    private CertificateEmailDataMapper certificateEmailDataMapper;
-    private CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper;
-    private MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper;
-    private EmailConfiguration emailConfiguration;
+    private final OrderNotificationEmailData emailData;
+    private final CertificateEmailDataMapper certificateEmailDataMapper;
+    private final CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper;
+    private final MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper;
+    private final EmailConfiguration emailConfiguration;
 
     public OrderNotificationEmailDataConverter(OrderNotificationEmailData emailData,
             CertificateEmailDataMapper certificateEmailDataMapper,
@@ -45,6 +42,8 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
         mapDeliveryDetails(ordersApi);
         mapPaymentDetails(ordersApi);
         emailData.setDispatchDays(emailConfiguration.getDispatchDays());
+        emailData.setTo(ordersApi.getOrderedBy().getEmail());
+        emailData.setSubject(MessageFormat.format(emailConfiguration.getConfirmationMessage(), ordersApi.getReference()));
     }
 
     @Override
@@ -99,9 +98,26 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     private void mapDeliveryTimescale(DeliveryTimescaleApi deliveryTimescaleApi) {
         if (deliveryTimescaleApi == DeliveryTimescaleApi.STANDARD) {
-            emailData.hasStandardDelivery(true);
+            emailData.setHasStandardDelivery(true);
         } else if (deliveryTimescaleApi == DeliveryTimescaleApi.SAME_DAY){
-            emailData.hasExpressDelivery(true);
+            emailData.setHasExpressDelivery(true);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OrderNotificationEmailDataConverter that = (OrderNotificationEmailDataConverter) o;
+        return Objects.equals(emailData, that.emailData) && Objects.equals(certificateEmailDataMapper, that.certificateEmailDataMapper) && Objects.equals(certifiedCopyEmailDataMapper, that.certifiedCopyEmailDataMapper) && Objects.equals(missingImageDeliveryEmailDataMapper, that.missingImageDeliveryEmailDataMapper) && Objects.equals(emailConfiguration, that.emailConfiguration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(emailData, certificateEmailDataMapper, certifiedCopyEmailDataMapper, missingImageDeliveryEmailDataMapper, emailConfiguration);
     }
 }

@@ -23,6 +23,12 @@ import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable
 @ExtendWith(MockitoExtension.class)
 public class OrdersApiDetailsMapperTest {
 
+    @InjectMocks
+    private OrdersApiDetailsMapper mapper;
+
+    @Mock
+    private OrderNotificationEmailDataBuilderFactory factory;
+
     @Mock
     private DateGenerator dateGenerator;
 
@@ -35,8 +41,8 @@ public class OrdersApiDetailsMapperTest {
     @Mock
     private SummaryEmailDataDirector director;
 
-    @InjectMocks
-    private OrdersApiDetailsMapper mapper;
+    @Mock
+    private OrderNotificationDataConvertable converter;
 
     @Mock
     private OrdersApiWrappable ordersApiWrapper;
@@ -59,7 +65,6 @@ public class OrdersApiDetailsMapperTest {
         expected.setCreatedAt("10/08/2022");
 
         when(ordersApiWrapper.getOrdersApi()).thenReturn(ordersApi);
-        when(director.map(ordersApi)).thenReturn(emailData);
         when(config.getSenderAddress()).thenReturn("address");
         when(objectMapper.writeValueAsString(emailData)).thenReturn("email data json");
         when(config.getMessageId()).thenReturn("id");
@@ -67,21 +72,27 @@ public class OrdersApiDetailsMapperTest {
         when(config.getMessageType()).thenReturn("type");
         when(dateGenerator.generate()).thenReturn(LocalDateTime.of(2022, 8, 10, 11, 42));
         when(config.getDateFormat()).thenReturn("dd/MM/yyyy");
+        when(factory.newDirector(converter)).thenReturn(director);
+        when(factory.newConverter()).thenReturn(converter);
+        when(converter.getEmailData()).thenReturn(emailData);
 
         // when
         EmailSend actual = mapper.mapToEmailSend(ordersApiWrapper);
 
         // then
         assertEquals(expected, actual);
+        verify(director).map(ordersApi);
     }
 
     @Test
     void testMapToEmailSendFailure() throws JsonProcessingException {
         // given
         when(ordersApiWrapper.getOrdersApi()).thenReturn(ordersApi);
-        when(director.map(any())).thenReturn(emailData);
         when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
         when(ordersApi.getReference()).thenReturn("12345");
+        when(factory.newDirector(converter)).thenReturn(director);
+        when(factory.newConverter()).thenReturn(converter);
+        when(converter.getEmailData()).thenReturn(emailData);
 
         // when
         Executable actual = () -> mapper.mapToEmailSend(ordersApiWrapper);

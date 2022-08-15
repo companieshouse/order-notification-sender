@@ -61,6 +61,9 @@ public final class TestConstants {
     public static final LocalDateTime TEST_DATE = LocalDateTime.of(2021, 7, 27, 15, 20, 10);
 
     public static final String CHS_URL = "https://find-and-update.company-information.service.gov.uk/";
+    public static final String USER_EMAIL = "demo@ch.gov.uk";
+    public static final String CONFIRMATION_MESSAGE_HEAD = "Confirmation of your order number ";
+    public static final String CONFIRMATION_MESSAGE = CONFIRMATION_MESSAGE_HEAD + "{0}";
 
     private TestConstants(){
     }

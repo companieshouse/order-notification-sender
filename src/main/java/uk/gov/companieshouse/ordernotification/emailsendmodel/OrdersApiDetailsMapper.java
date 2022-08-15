@@ -18,16 +18,16 @@ public class OrdersApiDetailsMapper {
     private final DateGenerator dateGenerator;
     private final EmailConfiguration config;
     private final ObjectMapper objectMapper;
-    private final SummaryEmailDataDirector director;
+    private final OrderNotificationEmailDataBuilderFactory factory;
 
     public OrdersApiDetailsMapper(DateGenerator dateGenerator,
                                   EmailConfiguration config,
                                   ObjectMapper objectMapper,
-                                  SummaryEmailDataDirector director) {
+                                  OrderNotificationEmailDataBuilderFactory factory) {
         this.dateGenerator = dateGenerator;
         this.config = config;
         this.objectMapper = objectMapper;
-        this.director = director;
+        this.factory = factory;
     }
 
     /**
@@ -38,11 +38,13 @@ public class OrdersApiDetailsMapper {
      * @return EmailSend
      */
     public EmailSend mapToEmailSend(OrdersApiWrappable ordersApiWrappable) {
-        OrderNotificationEmailData emailData = director.map(ordersApiWrappable.getOrdersApi());
+        OrderNotificationDataConvertable converter = factory.newConverter();
+        SummaryEmailDataDirector director = factory.newDirector(converter);
+        director.map(ordersApiWrappable.getOrdersApi());
         try {
             EmailSend emailSend = new EmailSend();
             emailSend.setEmailAddress(config.getSenderAddress());
-            emailSend.setData(objectMapper.writeValueAsString(emailData));
+            emailSend.setData(objectMapper.writeValueAsString(converter.getEmailData()));
             emailSend.setMessageId(config.getMessageId());
             emailSend.setAppId(config.getApplicationId());
             emailSend.setMessageType(config.getMessageType());

@@ -3,10 +3,10 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.stereotype.Component;
 
-@Component
 public class OrderNotificationEmailData {
+    private String to;
+    private String subject;
     private String orderId;
     private List<Certificate> certificates = new ArrayList<>();
     private List<CertifiedCopy> certifiedCopies  = new ArrayList<>();;
@@ -17,6 +17,22 @@ public class OrderNotificationEmailData {
     private boolean hasExpressDelivery;
     private String orderSummaryLink;
     private int dispatchDays;
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
     public String getOrderId() {
         return orderId;
@@ -78,22 +94,6 @@ public class OrderNotificationEmailData {
         this.paymentDetails = paymentDetails;
     }
 
-    public boolean hasStandardDelivery() {
-        return hasStandardDelivery;
-    }
-
-    public void hasStandardDelivery(boolean hasStandardDelivery) {
-        this.hasStandardDelivery = hasStandardDelivery;
-    }
-
-    public boolean hasExpressDelivery() {
-        return hasExpressDelivery;
-    }
-
-    public void hasExpressDelivery(boolean hasExpressDelivery) {
-        this.hasExpressDelivery = hasExpressDelivery;
-    }
-
     public String getOrderSummaryLink() {
         return orderSummaryLink;
     }
@@ -110,6 +110,22 @@ public class OrderNotificationEmailData {
         this.dispatchDays = dispatchDays;
     }
 
+    public boolean isHasStandardDelivery() {
+        return hasStandardDelivery;
+    }
+
+    public void setHasStandardDelivery(boolean hasStandardDelivery) {
+        this.hasStandardDelivery = hasStandardDelivery;
+    }
+
+    public boolean isHasExpressDelivery() {
+        return hasExpressDelivery;
+    }
+
+    public void setHasExpressDelivery(boolean hasExpressDelivery) {
+        this.hasExpressDelivery = hasExpressDelivery;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -118,12 +134,12 @@ public class OrderNotificationEmailData {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        OrderNotificationEmailData emailData = (OrderNotificationEmailData) o;
-        return hasStandardDelivery == emailData.hasStandardDelivery && hasExpressDelivery == emailData.hasExpressDelivery && dispatchDays == emailData.dispatchDays && Objects.equals(orderId, emailData.orderId) && Objects.equals(certificates, emailData.certificates) && Objects.equals(certifiedCopies, emailData.certifiedCopies) && Objects.equals(missingImageDeliveries, emailData.missingImageDeliveries) && Objects.equals(deliveryDetails, emailData.deliveryDetails) && Objects.equals(paymentDetails, emailData.paymentDetails) && Objects.equals(orderSummaryLink, emailData.orderSummaryLink);
+        OrderNotificationEmailData that = (OrderNotificationEmailData) o;
+        return hasStandardDelivery == that.hasStandardDelivery && hasExpressDelivery == that.hasExpressDelivery && dispatchDays == that.dispatchDays && Objects.equals(to, that.to) && Objects.equals(subject, that.subject) && Objects.equals(orderId, that.orderId) && Objects.equals(certificates, that.certificates) && Objects.equals(certifiedCopies, that.certifiedCopies) && Objects.equals(missingImageDeliveries, that.missingImageDeliveries) && Objects.equals(deliveryDetails, that.deliveryDetails) && Objects.equals(paymentDetails, that.paymentDetails) && Objects.equals(orderSummaryLink, that.orderSummaryLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(orderId, certificates, certifiedCopies, missingImageDeliveries, deliveryDetails, paymentDetails, hasStandardDelivery, hasExpressDelivery, orderSummaryLink, dispatchDays);
+        return Objects.hash(to, subject, orderId, certificates, certifiedCopies, missingImageDeliveries, deliveryDetails, paymentDetails, hasStandardDelivery, hasExpressDelivery, orderSummaryLink, dispatchDays);
     }
 }

@@ -1,11 +1,11 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.ordernotification.emailsender.NonRetryableFailureException;
 
-@Component
+import java.util.Objects;
+
 public class SummaryEmailDataDirector {
 
     private final OrderNotificationDataConvertable converter;
@@ -14,7 +14,7 @@ public class SummaryEmailDataDirector {
         this.converter = converter;
     }
 
-    public OrderNotificationEmailData map(OrdersApi ordersApi) {
+    public void map(OrdersApi ordersApi) {
         converter.mapOrder(ordersApi);
         for (BaseItemApi itemApi: ordersApi.getItems()) {
             String kind = itemApi.getKind();
@@ -28,6 +28,22 @@ public class SummaryEmailDataDirector {
                 throw new NonRetryableFailureException(String.format("Unhandled kind: [%s]", kind));
             }
         }
-        return converter.getEmailData();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        SummaryEmailDataDirector that = (SummaryEmailDataDirector) o;
+        return Objects.equals(converter, that.converter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(converter);
     }
 }

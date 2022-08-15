@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.companieshouse.api.model.order.ActionedByApi;
 import uk.gov.companieshouse.api.model.order.DeliveryDetailsApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateApi;
@@ -71,6 +72,9 @@ class OrderNotificationEmailDataConverterTest {
     @Mock
     private MissingImageDelivery missingImageDelivery;
 
+    @Mock
+    private ActionedByApi orderedBy;
+
     @BeforeEach
     void setup() {
         emailData = new OrderNotificationEmailData();
@@ -95,9 +99,12 @@ class OrderNotificationEmailDataConverterTest {
         when(ordersApi.getPaymentReference()).thenReturn(TestConstants.PAYMENT_REFERENCE);
         when(ordersApi.getOrderedAt()).thenReturn(TestConstants.TEST_DATE);
         when(ordersApi.getTotalOrderCost()).thenReturn(TestConstants.ORDER_COST);
+        when(ordersApi.getOrderedBy()).thenReturn(orderedBy);
+        when(orderedBy.getEmail()).thenReturn(TestConstants.USER_EMAIL);
         when(emailConfiguration.getPaymentDateFormat()).thenReturn(TestConstants.PAYMENT_DATE_FORMAT);
         when(emailConfiguration.getChsUrl()).thenReturn(TestConstants.CHS_URL);
         when(emailConfiguration.getDispatchDays()).thenReturn(10);
+        when(emailConfiguration.getConfirmationMessage()).thenReturn(TestConstants.CONFIRMATION_MESSAGE);
 
         // when
         converter.mapOrder(ordersApi);
@@ -119,7 +126,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertificates().contains(certificate));
-        assertTrue(converter.getEmailData().hasStandardDelivery());
+        assertTrue(converter.getEmailData().isHasStandardDelivery());
         verify(certificateEmailDataMapper).map(certificateApi);
     }
 
@@ -134,7 +141,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertificates().contains(certificate));
-        assertTrue(converter.getEmailData().hasExpressDelivery());
+        assertTrue(converter.getEmailData().isHasExpressDelivery());
         verify(certificateEmailDataMapper).map(certificateApi);
     }
 
@@ -149,7 +156,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
-        assertTrue(converter.getEmailData().hasStandardDelivery());
+        assertTrue(converter.getEmailData().isHasStandardDelivery());
         verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
     }
 
@@ -164,7 +171,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
-        assertTrue(converter.getEmailData().hasExpressDelivery());
+        assertTrue(converter.getEmailData().isHasExpressDelivery());
         verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
     }
 
@@ -201,6 +208,8 @@ class OrderNotificationEmailDataConverterTest {
                 .withCountry(TestConstants.COUNTRY)
                 .build());
         result.setDispatchDays(10);
+        result.setTo(TestConstants.USER_EMAIL);
+        result.setSubject(TestConstants.CONFIRMATION_MESSAGE_HEAD + TestConstants.ORDER_REFERENCE_NUMBER);
         return result;
     }
 }

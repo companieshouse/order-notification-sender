@@ -12,28 +12,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
-import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.emailsender.NonRetryableFailureException;
 
-@SpringBootTest
-@Import(TestConfig.class)
-@TestPropertySource(locations="classpath:application-stubbed.properties")
 @ExtendWith(MockitoExtension.class)
 class SummaryEmailDataDirectorTest {
 
-    @Autowired
+    @InjectMocks
     private SummaryEmailDataDirector summaryEmailDataDirector;
 
-    @MockBean
+    @Mock
     private OrderNotificationDataConvertable orderNotificationDataConvertable;
 
     @Mock
@@ -59,13 +51,11 @@ class SummaryEmailDataDirectorTest {
         when(certifiedCopy.getKind()).thenReturn("item#certified-copy");
         when(missingImageDelivery.getKind()).thenReturn("item#missing-image-delivery");
         when(ordersApi.getItems()).thenReturn(Arrays.asList(certificate, certifiedCopy, missingImageDelivery));
-        when(orderNotificationDataConvertable.getEmailData()).thenReturn(emailData);
 
         // when
-        OrderNotificationEmailData actual = summaryEmailDataDirector.map(ordersApi);
+        summaryEmailDataDirector.map(ordersApi);
 
         // then
-        assertEquals(emailData, actual);
         verify(orderNotificationDataConvertable).mapOrder(ordersApi);
         verify(orderNotificationDataConvertable).mapCertificate(certificate);
         verify(orderNotificationDataConvertable).mapCertifiedCopy(certifiedCopy);
