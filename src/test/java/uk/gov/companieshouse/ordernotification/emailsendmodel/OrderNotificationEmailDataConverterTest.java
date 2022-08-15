@@ -126,7 +126,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertificates().contains(certificate));
-        assertTrue(converter.getEmailData().hasStandardDelivery());
+        assertTrue(converter.getEmailData().isHasStandardDelivery());
         verify(certificateEmailDataMapper).map(certificateApi);
     }
 
@@ -141,7 +141,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertificates().contains(certificate));
-        assertTrue(converter.getEmailData().hasExpressDelivery());
+        assertTrue(converter.getEmailData().isHasExpressDelivery());
         verify(certificateEmailDataMapper).map(certificateApi);
     }
 
@@ -156,7 +156,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
-        assertTrue(converter.getEmailData().hasStandardDelivery());
+        assertTrue(converter.getEmailData().isHasStandardDelivery());
         verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
     }
 
@@ -171,7 +171,7 @@ class OrderNotificationEmailDataConverterTest {
 
         // then
         assertTrue(converter.getEmailData().getCertifiedCopies().contains(certifiedCopy));
-        assertTrue(converter.getEmailData().hasExpressDelivery());
+        assertTrue(converter.getEmailData().isHasExpressDelivery());
         verify(certifiedCopyEmailDataMapper).map(certifiedCopyApi);
     }
 

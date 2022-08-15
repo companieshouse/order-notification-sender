@@ -94,22 +94,6 @@ public class OrderNotificationEmailData {
         this.paymentDetails = paymentDetails;
     }
 
-    public boolean hasStandardDelivery() {
-        return hasStandardDelivery;
-    }
-
-    public void hasStandardDelivery(boolean hasStandardDelivery) {
-        this.hasStandardDelivery = hasStandardDelivery;
-    }
-
-    public boolean hasExpressDelivery() {
-        return hasExpressDelivery;
-    }
-
-    public void hasExpressDelivery(boolean hasExpressDelivery) {
-        this.hasExpressDelivery = hasExpressDelivery;
-    }
-
     public String getOrderSummaryLink() {
         return orderSummaryLink;
     }

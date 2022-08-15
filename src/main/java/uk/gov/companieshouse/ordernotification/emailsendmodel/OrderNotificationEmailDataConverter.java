@@ -98,9 +98,9 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     private void mapDeliveryTimescale(DeliveryTimescaleApi deliveryTimescaleApi) {
         if (deliveryTimescaleApi == DeliveryTimescaleApi.STANDARD) {
-            emailData.hasStandardDelivery(true);
+            emailData.setHasStandardDelivery(true);
         } else if (deliveryTimescaleApi == DeliveryTimescaleApi.SAME_DAY){
-            emailData.hasExpressDelivery(true);
+            emailData.setHasExpressDelivery(true);
         }
     }
 
