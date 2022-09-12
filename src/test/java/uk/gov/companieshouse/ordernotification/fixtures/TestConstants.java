@@ -50,6 +50,7 @@ public final class TestConstants {
     //delivery details
     public static final String FORENAME = "forename";
     public static final String SURNAME = "surname";
+    public static final String COMPANY_NAME = "company name";
     public static final String ADDRESS_LINE_1 = "address line 1";
     public static final String ADDRESS_LINE_2 = "address line 2";
     public static final String PO_BOX = "po box";

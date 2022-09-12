@@ -89,6 +89,7 @@ class OrderNotificationEmailDataConverterTest {
         when(ordersApi.getDeliveryDetails()).thenReturn(deliveryDetails);
         when(deliveryDetails.getForename()).thenReturn(TestConstants.FORENAME);
         when(deliveryDetails.getSurname()).thenReturn(TestConstants.SURNAME);
+        when(deliveryDetails.getCompanyName()).thenReturn(TestConstants.COMPANY_NAME);
         when(deliveryDetails.getAddressLine1()).thenReturn(TestConstants.ADDRESS_LINE_1);
         when(deliveryDetails.getAddressLine2()).thenReturn(TestConstants.ADDRESS_LINE_2);
         when(deliveryDetails.getLocality()).thenReturn(TestConstants.LOCALITY);
@@ -199,6 +200,7 @@ class OrderNotificationEmailDataConverterTest {
         result.setDeliveryDetails(DeliveryDetails.builder()
                 .withForename(TestConstants.FORENAME)
                 .withSurname(TestConstants.SURNAME)
+                .withCompanyName(TestConstants.COMPANY_NAME)
                 .withAddressLine1(TestConstants.ADDRESS_LINE_1)
                 .withAddressLine2(TestConstants.ADDRESS_LINE_2)
                 .withPoBox(TestConstants.PO_BOX)
