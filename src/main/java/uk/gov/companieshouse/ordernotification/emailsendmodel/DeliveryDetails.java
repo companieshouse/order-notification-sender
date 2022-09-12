@@ -12,10 +12,11 @@ public class DeliveryDetails {
     private final String region;
     private final String forename;
     private final String surname;
+    private final String companyName;
 
     public DeliveryDetails(String addressLine1, String addressLine2, String country,
             String locality, String poBox, String postalCode, String region,
-            String forename, String surname) {
+            String forename, String surname, String companyName) {
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
         this.country = country;
@@ -25,6 +26,7 @@ public class DeliveryDetails {
         this.region = region;
         this.forename = forename;
         this.surname = surname;
+        this.companyName = companyName;
     }
 
     public String getAddressLine1() {
@@ -63,6 +65,10 @@ public class DeliveryDetails {
         return surname;
     }
 
+    public String getCompanyName() {
+        return companyName;
+    }
+
     public static DeliveryDetailsBuilder builder() {
         return new DeliveryDetailsBuilder();
     }
@@ -77,6 +83,7 @@ public class DeliveryDetails {
         private String region;
         private String forename;
         private String surname;
+        private String companyName;
 
         public DeliveryDetailsBuilder withAddressLine1(String addressLine1) {
             this.addressLine1 = addressLine1;
@@ -123,9 +130,14 @@ public class DeliveryDetails {
             return this;
         }
 
+        public DeliveryDetailsBuilder withCompanyName(String companyName) {
+            this.companyName = companyName;
+            return this;
+        }
+
         public DeliveryDetails build() {
             return new DeliveryDetails(addressLine1, addressLine2, country, locality, poBox,
-                    postalCode, region, forename, surname);
+                    postalCode, region, forename, surname, companyName);
         }
     }
 
@@ -146,13 +158,13 @@ public class DeliveryDetails {
                 Objects.equals(postalCode, that.postalCode) &&
                 Objects.equals(region, that.region) &&
                 Objects.equals(forename, that.forename) &&
-                Objects.equals(surname, that.surname);
+                Objects.equals(surname, that.surname) &&
+                Objects.equals(companyName, that.companyName);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(addressLine1, addressLine2, country, locality, poBox, postalCode,
-                region,
-                forename, surname);
+                region, forename, surname, companyName);
     }
 }

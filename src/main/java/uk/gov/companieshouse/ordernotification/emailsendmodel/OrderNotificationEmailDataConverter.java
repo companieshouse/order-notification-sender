@@ -82,6 +82,7 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
                 .withRegion(orderDeliveryDetails.getRegion())
                 .withForename(orderDeliveryDetails.getForename())
                 .withSurname(orderDeliveryDetails.getSurname())
+                .withCompanyName(orderDeliveryDetails.getCompanyName())
                 .build());
     }
 
