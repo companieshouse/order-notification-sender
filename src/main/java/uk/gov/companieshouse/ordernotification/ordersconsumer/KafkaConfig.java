@@ -13,6 +13,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
@@ -41,9 +42,23 @@ public class KafkaConfig {
     }
 
     @Bean
+    public ConsumerFactory<String, ItemGroupProcessedSend> itemGroupProcessedSendConsumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
+                new MessageDeserialiser<>(ItemGroupProcessedSend.class));
+    }
+
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<String, OrderReceived> kafkaOrderReceivedListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, OrderReceived> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(orderReceivedConsumerFactory());
+        factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(0, 0)));
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, ItemGroupProcessedSend> kafkaItemGroupProcessedSendListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, ItemGroupProcessedSend> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(itemGroupProcessedSendConsumerFactory());
         factory.setErrorHandler(new SeekToCurrentErrorHandler(new FixedBackOff(0, 0)));
         return factory;
     }

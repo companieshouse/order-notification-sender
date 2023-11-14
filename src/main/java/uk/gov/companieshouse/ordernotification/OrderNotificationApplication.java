@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class OrderNotificationApplication {
 
+	public static final String NAMESPACE = "item-group-consumer";
+
 	public static void main(String[] args) {
 		SpringApplication.run(OrderNotificationApplication.class, args);
 	}
