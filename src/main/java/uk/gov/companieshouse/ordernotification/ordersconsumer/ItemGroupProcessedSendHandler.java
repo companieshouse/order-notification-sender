@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtilsConfiguration.APPLICATION_NAMESPACE;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.messaging.Message;
@@ -8,7 +10,6 @@ import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEventFactory;
-import static uk.gov.companieshouse.ordernotification.OrderNotificationApplication.NAMESPACE;
 
 
 @Service
@@ -18,7 +19,7 @@ public class ItemGroupProcessedSendHandler implements ApplicationEventPublisherA
 
     private ApplicationEventPublisher applicationEventPublisher;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NAMESPACE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     public void handleMessage(Message<ItemGroupProcessedSend> message) {
         LOGGER.info("processing item-group-processed-send message: " + message.getPayload());

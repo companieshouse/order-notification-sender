@@ -52,7 +52,6 @@ public class OrdersKafkaConsumer {
     public void processItemGroupProcessedSend(Message<ItemGroupProcessedSend> message) {
 
         //TODO: Add a RetryTopic annotation?
-        System.out.println("processing item-group-processed-send message");
         itemGroupProcessedSendHandler.handleMessage(message);
     }
 
