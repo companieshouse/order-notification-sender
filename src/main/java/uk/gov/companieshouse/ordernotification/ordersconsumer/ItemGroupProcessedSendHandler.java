@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
@@ -36,11 +37,13 @@ public class ItemGroupProcessedSendHandler implements ApplicationEventPublisherA
     }
 
     private Map<String, Object> getLogMap(final ItemGroupProcessedSend message) {
+        final Item item = message.getItem();
         return new DataMap.Builder()
             .orderId(message.getOrderNumber())
             .groupItem(message.getGroupItem())
-            .itemId(message.getItem().getId())
-            .status(message.getItem().getStatus())
+            .itemId(item.getId())
+            .status(item.getStatus())
+            .digitalDocumentLocation(item.getDigitalDocumentLocation())
             .build()
             .getLogMap();
     }
