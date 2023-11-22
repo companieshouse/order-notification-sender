@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import java.util.concurrent.CountDownLatch;
 import org.aspectj.lang.annotation.After;
@@ -16,8 +16,8 @@ class OrdersKafkaConsumerAspect {
         OrdersKafkaConsumerAspect.eventLatch = eventLatch;
     }
 
-    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.ordersconsumer" +
-            ".OrdersKafkaConsumer.processOrderReceived(..))")
+    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer." +
+            "orderreceived.OrderReceivedConsumer.processOrderReceived(..))")
     public void processOrderReceived() {
     }
 
@@ -26,8 +26,8 @@ class OrdersKafkaConsumerAspect {
         eventLatch.countDown();
     }
 
-    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.ordersconsumer" +
-            ".OrdersKafkaConsumer.processOrderReceivedRetry(..))")
+    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer." +
+            "orderreceived.OrderReceivedConsumer.processOrderReceivedRetry(..))")
     public void processOrderReceivedRetry() {
     }
 

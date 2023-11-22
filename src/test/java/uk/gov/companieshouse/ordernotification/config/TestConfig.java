@@ -17,7 +17,7 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
-import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
+import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 import java.util.HashMap;

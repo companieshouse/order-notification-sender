@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -19,6 +19,7 @@ import org.springframework.kafka.event.ConsumerStoppedEvent;
 import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.messaging.Message;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.orders.OrderReceived;
 

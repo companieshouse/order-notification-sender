@@ -1,6 +1,6 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
-import uk.gov.companieshouse.ordernotification.ordersconsumer.RetryableErrorException;
+import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 
 /**
  * Raised if an error occurs when fetching an order resource.

@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.ITEM_ID;
 
@@ -23,7 +23,7 @@ class ItemGroupProcessedSendLogger {
     }
 
     @Pointcut("execution(public void "
-        + "uk.gov.companieshouse.ordernotification.ordersconsumer.ItemGroupProcessedSendHandler.handleMessage(..)) "
+        + "uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendHandler.handleMessage(..)) "
         + "&& args(message)")
     void handleMessage(Message<ItemGroupProcessedSend> message) {
         // Pointcut

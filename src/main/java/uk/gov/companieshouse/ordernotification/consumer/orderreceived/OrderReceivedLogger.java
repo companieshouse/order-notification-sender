@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import java.util.Map;
 import org.aspectj.lang.annotation.After;
@@ -20,7 +20,7 @@ class OrderReceivedLogger {
         this.loggingUtils = loggingUtils;
     }
 
-    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.ordersconsumer.OrderMessageHandler.handleMessage(..)) && args(message)")
+    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer.orderreceived.OrderMessageHandler.handleMessage(..)) && args(message)")
     void handleMessage(Message<OrderReceived> message) {
         // Pointcut
     }

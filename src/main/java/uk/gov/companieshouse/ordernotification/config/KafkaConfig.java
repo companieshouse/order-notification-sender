@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,8 @@ import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
-import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
+import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
+import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Configuration

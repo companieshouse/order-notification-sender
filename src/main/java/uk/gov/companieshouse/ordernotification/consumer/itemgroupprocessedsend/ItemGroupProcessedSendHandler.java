@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
 import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;

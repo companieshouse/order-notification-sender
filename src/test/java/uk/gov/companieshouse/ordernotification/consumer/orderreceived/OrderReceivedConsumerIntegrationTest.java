@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -40,7 +40,7 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @SpringBootTest
 @Import(TestConfig.class)
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
-class OrdersKafkaConsumerIntegrationTest {
+class OrderReceivedConsumerIntegrationTest {
 
     private static MockServerContainer container;
     private static int attempt;

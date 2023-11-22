@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,8 +32,10 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
+import uk.gov.companieshouse.ordernotification.config.KafkaConfig;
 import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
+import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @SpringBootTest

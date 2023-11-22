@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer;
 
 import org.apache.avro.generic.IndexedRecord;
 import org.apache.avro.io.DatumReader;
