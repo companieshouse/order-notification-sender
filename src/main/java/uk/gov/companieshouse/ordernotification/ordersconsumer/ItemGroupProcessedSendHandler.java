@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.ordernotification.ordersconsumer;
 
+import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrderNotificationEventFactory;
 
 @Service
@@ -22,7 +24,8 @@ public class ItemGroupProcessedSendHandler implements ApplicationEventPublisherA
     }
 
     public void handleMessage(Message<ItemGroupProcessedSend> message) {
-        logger.info("processing item-group-processed-send message: " + message.getPayload());
+        final ItemGroupProcessedSend payload = message.getPayload();
+        logger.info("processing item-group-processed-send message: " + payload, getLogMap(payload));
 
         // TODO: Write a handler for this (another ticket?)
     }
@@ -30,5 +33,15 @@ public class ItemGroupProcessedSendHandler implements ApplicationEventPublisherA
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    private Map<String, Object> getLogMap(final ItemGroupProcessedSend message) {
+        return new DataMap.Builder()
+            .orderId(message.getOrderNumber())
+            .groupItem(message.getGroupItem())
+            .itemId(message.getItem().getId())
+            .status(message.getItem().getStatus())
+            .build()
+            .getLogMap();
     }
 }
