@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.ordernotification.fixtures;
 
 import java.time.LocalDateTime;
+import uk.gov.companieshouse.itemgroupprocessedsend.Item;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 
 public final class TestConstants {
 
@@ -72,6 +74,19 @@ public final class TestConstants {
     public static final String DIGITAL_DOCUMENT_LOCATION =
         "s3://document-signing-api.development.ch.gov.uk/docker/certified-copy/application-pdf";
 
+    public static final ItemGroupProcessedSend ITEM_GROUP_PROCESSED_SEND;
+
+    static {
+        final ItemGroupProcessedSend message = new ItemGroupProcessedSend();
+        message.setOrderNumber(ORDER_REFERENCE_NUMBER);
+        message.setGroupItem(GROUP_ITEM);
+        final Item item = new Item();
+        item.setId(ITEM_ID);
+        item.setStatus(STATUS);
+        item.setDigitalDocumentLocation(DIGITAL_DOCUMENT_LOCATION);
+        message.setItem(item);
+        ITEM_GROUP_PROCESSED_SEND = message;
+    }
 
     private TestConstants(){
     }

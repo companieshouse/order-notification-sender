@@ -1,13 +1,9 @@
 package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
-import static org.junit.Assert.fail;
-import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.DIGITAL_DOCUMENT_LOCATION;
-import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.GROUP_ITEM;
-import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_ID;
-import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ORDER_REFERENCE_NUMBER;
-import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.STATUS;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.fail;
+import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +22,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
-import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
@@ -74,30 +69,18 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
 
     @Test
     @DisplayName("Handles item-group-processed-send message")
-    void testHandlesItemGroupProcessedSendMessage() throws ExecutionException, InterruptedException, IOException {
+    void testHandlesItemGroupProcessedSendMessage() throws ExecutionException, InterruptedException {
 
         // when
         itemGroupProcessedSendProducer.send(new ProducerRecord<>("item-group-processed-send",
                 "item-group-processed-send",
-            getItemGroupProcessedSend())).get();
+            ITEM_GROUP_PROCESSED_SEND)).get();
 
         // then
         final boolean messageHandled = eventLatch.await(30, TimeUnit.SECONDS);
         if (!messageHandled) {
             fail("FAILED to handle the item-group-processed-send message produced!");
         }
-    }
-
-    private static ItemGroupProcessedSend getItemGroupProcessedSend() {
-        final ItemGroupProcessedSend message = new ItemGroupProcessedSend();
-        message.setOrderNumber(ORDER_REFERENCE_NUMBER);
-        message.setGroupItem(GROUP_ITEM);
-        final Item item = new Item();
-        item.setId(ITEM_ID);
-        item.setStatus(STATUS);
-        item.setDigitalDocumentLocation(DIGITAL_DOCUMENT_LOCATION);
-        message.setItem(item);
-        return message;
     }
 
 }
