@@ -28,7 +28,7 @@ public class ItemGroupProcessedSendHandler implements ApplicationEventPublisherA
         final ItemGroupProcessedSend payload = message.getPayload();
         logger.info("processing item-group-processed-send message: " + payload, getLogMap(payload));
 
-        // TODO: Write a handler for this (another ticket?)
+        // TODO DCAC-295: Send the relevant information onwards via the email-send topic.
     }
 
     @Override

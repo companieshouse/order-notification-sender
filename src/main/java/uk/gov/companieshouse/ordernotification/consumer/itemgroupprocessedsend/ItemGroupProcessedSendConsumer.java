@@ -31,7 +31,7 @@ public class ItemGroupProcessedSendConsumer {
             containerFactory = "kafkaItemGroupProcessedSendListenerContainerFactory")
     public void processItemGroupProcessedSend(Message<ItemGroupProcessedSend> message) {
 
-        //TODO: Add a RetryTopic annotation?
+        // TODO DCAC-279: Add a retry topic consumer, etc.
         itemGroupProcessedSendHandler.handleMessage(message);
     }
 
