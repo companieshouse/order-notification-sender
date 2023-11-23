@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
+package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
 import java.util.concurrent.CountDownLatch;
 import org.aspectj.lang.annotation.After;
@@ -8,31 +8,21 @@ import org.springframework.stereotype.Component;
 
 @Aspect
 @Component
-class OrdersKafkaConsumerAspect {
+class ItemGroupProcessedSendKafkaConsumerAspect {
 
     private static CountDownLatch eventLatch = new CountDownLatch(0);
 
     static void setEventLatch(CountDownLatch eventLatch) {
-        OrdersKafkaConsumerAspect.eventLatch = eventLatch;
+        ItemGroupProcessedSendKafkaConsumerAspect.eventLatch = eventLatch;
     }
 
     @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer." +
-            "orderreceived.OrderReceivedConsumer.processOrderReceived(..))")
+            "itemgroupprocessedsend.ItemGroupProcessedSendConsumer.processItemGroupProcessedSend(..))")
     public void processOrderReceived() {
     }
 
     @After("processOrderReceived()")
     void afterProcessOrderReceived() {
-        eventLatch.countDown();
-    }
-
-    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer." +
-            "orderreceived.OrderReceivedConsumer.processOrderReceivedRetry(..))")
-    public void processOrderReceivedRetry() {
-    }
-
-    @After("processOrderReceivedRetry()")
-    void afterProcessOrderReceivedRetry() {
         eventLatch.countDown();
     }
 }

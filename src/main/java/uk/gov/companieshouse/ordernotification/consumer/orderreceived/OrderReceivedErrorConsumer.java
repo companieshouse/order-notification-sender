@@ -21,21 +21,21 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Service
-public class OrderMessageErrorConsumer {
+public class OrderReceivedErrorConsumer {
 
     private String errorGroup;
     private String errorTopic;
 
-    private final OrderMessageHandler orderMessageHandler;
+    private final OrderReceivedHandler orderReceivedHandler;
     private final PartitionOffset errorRecoveryOffset;
     private final ErrorConsumerController errorConsumerController;
     private final LoggingUtils loggingUtils;
 
-    public OrderMessageErrorConsumer(OrderMessageHandler orderMessageHandler,
+    public OrderReceivedErrorConsumer(OrderReceivedHandler orderReceivedHandler,
                                      PartitionOffset errorRecoveryOffset,
                                      ErrorConsumerController errorConsumerController,
                                      LoggingUtils loggingUtils) {
-        this.orderMessageHandler = orderMessageHandler;
+        this.orderReceivedHandler = orderReceivedHandler;
         this.errorRecoveryOffset = errorRecoveryOffset;
         this.errorConsumerController = errorConsumerController;
         this.loggingUtils = loggingUtils;
@@ -68,7 +68,7 @@ public class OrderMessageErrorConsumer {
         configureErrorRecoveryOffset(consumer);
 
         if (offset < errorRecoveryOffset.getOffset()) {
-            orderMessageHandler.handleMessage(message);
+            orderReceivedHandler.handleMessage(message);
         }
 
         // Stop consumer after offset reached

@@ -12,10 +12,10 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @Service
 public class OrderReceivedConsumer {
 
-    private final OrderMessageHandler orderMessageHandler;
+    private final OrderReceivedHandler orderReceivedHandler;
 
-    public OrderReceivedConsumer(OrderMessageHandler orderMessageHandler) {
-        this.orderMessageHandler = orderMessageHandler;
+    public OrderReceivedConsumer(OrderReceivedHandler orderReceivedHandler) {
+        this.orderReceivedHandler = orderReceivedHandler;
     }
 
     /**
@@ -31,7 +31,7 @@ public class OrderReceivedConsumer {
             autoStartup = "#{!${uk.gov.companieshouse.order-notification-sender.error-consumer}}",
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceived(Message<OrderReceived> message) {
-        orderMessageHandler.handleMessage(message);
+        orderReceivedHandler.handleMessage(message);
     }
 
     /**
@@ -47,6 +47,6 @@ public class OrderReceivedConsumer {
             autoStartup = "#{!${uk.gov.companieshouse.order-notification-sender.error-consumer}}",
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceivedRetry(Message<OrderReceived> message) {
-        orderMessageHandler.handleMessage(message);
+        orderReceivedHandler.handleMessage(message);
     }
 }

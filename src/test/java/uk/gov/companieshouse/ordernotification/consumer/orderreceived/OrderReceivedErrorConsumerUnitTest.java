@@ -24,7 +24,7 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @ExtendWith(MockitoExtension.class)
-class OrderMessageErrorConsumerUnitTest {
+class OrderReceivedErrorConsumerUnitTest {
 
     @Mock
     private Message<OrderReceived> message;
@@ -33,7 +33,7 @@ class OrderMessageErrorConsumerUnitTest {
     private KafkaConsumer<String, OrderReceived> consumer;
 
     @Mock
-    private OrderMessageHandler orderMessageHandler;
+    private OrderReceivedHandler orderReceivedHandler;
 
     @Mock
     private ErrorConsumerController errorConsumerController;
@@ -54,13 +54,13 @@ class OrderMessageErrorConsumerUnitTest {
     private Logger logger;
 
     @InjectMocks
-    private OrderMessageErrorConsumer orderMessageErrorConsumer;
+    private OrderReceivedErrorConsumer orderReceivedErrorConsumer;
 
     @BeforeEach
     void beforeEach() {
-        orderMessageErrorConsumer.setErrorGroup("order-notification-sender-order-received-"
+        orderReceivedErrorConsumer.setErrorGroup("order-notification-sender-order-received-"
                 + "notification-error");
-        orderMessageErrorConsumer.setErrorTopic("order-received-notification-error");
+        orderReceivedErrorConsumer.setErrorTopic("order-received-notification-error");
     }
 
     @Test
@@ -69,10 +69,10 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 1L, consumer);
+        orderReceivedErrorConsumer.processOrderReceived(message, 1L, consumer);
 
         //then
-        verify(orderMessageHandler, times(0)).handleMessage(message);
+        verify(orderReceivedHandler, times(0)).handleMessage(message);
         verify(errorConsumerController).pauseConsumerThread();
     }
 
@@ -82,10 +82,10 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 2L, consumer);
+        orderReceivedErrorConsumer.processOrderReceived(message, 2L, consumer);
 
         //then
-        verify(orderMessageHandler, times(0)).handleMessage(message);
+        verify(orderReceivedHandler, times(0)).handleMessage(message);
         verify(errorConsumerController).pauseConsumerThread();
     }
 
@@ -95,10 +95,10 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(1L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 0L, consumer);
+        orderReceivedErrorConsumer.processOrderReceived(message, 0L, consumer);
 
         //then
-        verify(orderMessageHandler).handleMessage(message);
+        verify(orderReceivedHandler).handleMessage(message);
         verify(errorConsumerController).pauseConsumerThread();
     }
 
@@ -108,10 +108,10 @@ class OrderMessageErrorConsumerUnitTest {
         when(partitionOffset.getOffset()).thenReturn(2L);
 
         //when
-        orderMessageErrorConsumer.processOrderReceived(message, 0L, consumer);
+        orderReceivedErrorConsumer.processOrderReceived(message, 0L, consumer);
 
         //then
-        verify(orderMessageHandler).handleMessage(message);
+        verify(orderReceivedHandler).handleMessage(message);
         verify(errorConsumerController, times(0)).pauseConsumerThread();
     }
 
@@ -123,7 +123,7 @@ class OrderMessageErrorConsumerUnitTest {
                 + "-order-received-notification-error-0");
 
         //when
-        orderMessageErrorConsumer.consumerStopped(consumerStoppedEvent);
+        orderReceivedErrorConsumer.consumerStopped(consumerStoppedEvent);
 
         //then
         verify(partitionOffset).clear();
@@ -137,7 +137,7 @@ class OrderMessageErrorConsumerUnitTest {
                 + "-order-received-notification-retry-0");
 
         //when
-        orderMessageErrorConsumer.consumerStopped(consumerStoppedEvent);
+        orderReceivedErrorConsumer.consumerStopped(consumerStoppedEvent);
 
         //then
         verify(partitionOffset, times(0)).clear();
@@ -150,7 +150,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(loggingUtils.getLogger()).thenReturn(logger);
 
         //when
-        orderMessageErrorConsumer.configureErrorRecoveryOffset(consumer);
+        orderReceivedErrorConsumer.configureErrorRecoveryOffset(consumer);
 
         //then
         verify(partitionOffset, times(0)).setOffset(1L);
@@ -168,7 +168,7 @@ class OrderMessageErrorConsumerUnitTest {
         when(loggingUtils.getLogger()).thenReturn(logger);
 
         //when
-        orderMessageErrorConsumer.configureErrorRecoveryOffset(consumer);
+        orderReceivedErrorConsumer.configureErrorRecoveryOffset(consumer);
 
         //then
         verify(partitionOffset).setOffset(1L);

@@ -16,7 +16,7 @@ import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrder
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @ExtendWith(MockitoExtension.class)
-class OrderMessageHandlerTest {
+class OrderReceivedHandlerTest {
 
     @Mock
     private Message<OrderReceived> message;
@@ -28,11 +28,11 @@ class OrderMessageHandlerTest {
     private SendOrderNotificationEventFactory eventFactory;
 
     @InjectMocks
-    private OrderMessageHandler orderMessageHandler;
+    private OrderReceivedHandler orderReceivedHandler;
 
     @BeforeEach
     void beforeEach() {
-        orderMessageHandler.setApplicationEventPublisher(applicationEventPublisher);
+        orderReceivedHandler.setApplicationEventPublisher(applicationEventPublisher);
     }
 
     @Test
@@ -42,7 +42,7 @@ class OrderMessageHandlerTest {
         when(eventFactory.createEvent(message)).thenReturn(event);
 
         // when
-        orderMessageHandler.handleMessage(message);
+        orderReceivedHandler.handleMessage(message);
 
         // then
         verify(applicationEventPublisher).publishEvent(event);

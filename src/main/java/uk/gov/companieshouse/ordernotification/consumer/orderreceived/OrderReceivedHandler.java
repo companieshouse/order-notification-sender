@@ -8,12 +8,12 @@ import uk.gov.companieshouse.ordernotification.ordernotificationsender.SendOrder
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Service
-public class OrderMessageHandler implements ApplicationEventPublisherAware {
+public class OrderReceivedHandler implements ApplicationEventPublisherAware {
 
     private final SendOrderNotificationEventFactory eventFactory;
     private ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderMessageHandler(SendOrderNotificationEventFactory eventFactory) {
+    public OrderReceivedHandler(SendOrderNotificationEventFactory eventFactory) {
         this.eventFactory = eventFactory;
     }
 

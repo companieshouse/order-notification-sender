@@ -20,7 +20,7 @@ class OrderReceivedLogger {
         this.loggingUtils = loggingUtils;
     }
 
-    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer.orderreceived.OrderMessageHandler.handleMessage(..)) && args(message)")
+    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer.orderreceived.OrderReceivedHandler.handleMessage(..)) && args(message)")
     void handleMessage(Message<OrderReceived> message) {
         // Pointcut
     }
