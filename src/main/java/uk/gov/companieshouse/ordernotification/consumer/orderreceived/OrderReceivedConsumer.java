@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.Message;
@@ -10,12 +10,12 @@ import uk.gov.companieshouse.orders.OrderReceived;
  * ready to be processed.</p>
  */
 @Service
-public class OrdersKafkaConsumer {
+public class OrderReceivedConsumer {
 
-    private final OrderMessageHandler orderMessageHandler;
+    private final OrderReceivedHandler orderReceivedHandler;
 
-    public OrdersKafkaConsumer(OrderMessageHandler orderMessageHandler) {
-        this.orderMessageHandler = orderMessageHandler;
+    public OrderReceivedConsumer(OrderReceivedHandler orderReceivedHandler) {
+        this.orderReceivedHandler = orderReceivedHandler;
     }
 
     /**
@@ -31,7 +31,7 @@ public class OrdersKafkaConsumer {
             autoStartup = "#{!${uk.gov.companieshouse.order-notification-sender.error-consumer}}",
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceived(Message<OrderReceived> message) {
-        orderMessageHandler.handleMessage(message);
+        orderReceivedHandler.handleMessage(message);
     }
 
     /**
@@ -47,6 +47,6 @@ public class OrdersKafkaConsumer {
             autoStartup = "#{!${uk.gov.companieshouse.order-notification-sender.error-consumer}}",
             containerFactory = "kafkaOrderReceivedListenerContainerFactory")
     public void processOrderReceivedRetry(Message<OrderReceived> message) {
-        orderMessageHandler.handleMessage(message);
+        orderReceivedHandler.handleMessage(message);
     }
 }

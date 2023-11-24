@@ -15,9 +15,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
-import uk.gov.companieshouse.ordernotification.ordersconsumer.MessageDeserialiser;
+import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 import java.util.HashMap;
@@ -54,17 +55,7 @@ public class TestConfig {
     }
 
     @Bean
-    KafkaConsumer<String, OrderReceived> orderReceivedErrorConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers, EmbeddedKafkaBroker embeddedKafkaBroker, KafkaTopics kafkaTopics) {
-        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), Boolean.toString(true));
-        KafkaConsumer<String, OrderReceived> kafkaConsumer = new KafkaConsumer<>(props,
-                new StringDeserializer(),
-                new MessageDeserialiser<>(OrderReceived.class));
-        embeddedKafkaBroker.consumeFromAnEmbeddedTopic(kafkaConsumer, kafkaTopics.getOrderReceivedError());
-        return kafkaConsumer;
-    }
-
-    @Bean
-    KafkaProducer<String, OrderReceived> myProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+    KafkaProducer<String, OrderReceived> orderReceivedProducer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
         return createProducer(bootstrapServers, OrderReceived.class);
     }
 
@@ -90,5 +81,11 @@ public class TestConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MessageDeserialiser.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, ""+new Random().nextInt());
         return new KafkaConsumer<>(props, new StringDeserializer(), new MessageDeserialiser<>(email_send.class));
+    }
+
+    @Bean
+    KafkaProducer<String, ItemGroupProcessedSend> itemGroupProcessedSendProducer(
+        @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
+        return createProducer(bootstrapServers, ItemGroupProcessedSend.class);
     }
 }

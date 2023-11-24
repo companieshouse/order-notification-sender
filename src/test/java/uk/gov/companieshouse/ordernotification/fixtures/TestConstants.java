@@ -1,11 +1,13 @@
 package uk.gov.companieshouse.ordernotification.fixtures;
 
 import java.time.LocalDateTime;
+import uk.gov.companieshouse.itemgroupprocessedsend.Item;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 
 public final class TestConstants {
 
     //common constants
-    public static final String ORDER_REFERENCE_NUMBER = "87654321";
+    public static final String ORDER_REFERENCE_NUMBER = "ORD-065216-517934";
     public static final String COMPANY_NUMBER = "12345678";
     public static final String ORDER_COST = "15";
     public static final String ORDER_VIEW = "£15";
@@ -65,6 +67,26 @@ public final class TestConstants {
     public static final String USER_EMAIL = "demo@ch.gov.uk";
     public static final String CONFIRMATION_MESSAGE_HEAD = "Confirmation of your order number ";
     public static final String CONFIRMATION_MESSAGE = CONFIRMATION_MESSAGE_HEAD + "{0}";
+
+    public static final String GROUP_ITEM = "/item-groups/IG-437617-007343/items/CCD-768116-517990";
+    public static final String ITEM_ID = "CCD-768116-517990";
+    public static final String STATUS = "satisfied";
+    public static final String DIGITAL_DOCUMENT_LOCATION =
+        "s3://document-signing-api.development.ch.gov.uk/docker/certified-copy/application-pdf";
+
+    public static final ItemGroupProcessedSend ITEM_GROUP_PROCESSED_SEND;
+
+    static {
+        final ItemGroupProcessedSend message = new ItemGroupProcessedSend();
+        message.setOrderNumber(ORDER_REFERENCE_NUMBER);
+        message.setGroupItem(GROUP_ITEM);
+        final Item item = new Item();
+        item.setId(ITEM_ID);
+        item.setStatus(STATUS);
+        item.setDigitalDocumentLocation(DIGITAL_DOCUMENT_LOCATION);
+        message.setItem(item);
+        ITEM_GROUP_PROCESSED_SEND = message;
+    }
 
     private TestConstants(){
     }

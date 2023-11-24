@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import java.util.Map;
 import java.util.Optional;
@@ -7,6 +7,7 @@ import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.logging.Logger;
+import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 @Component

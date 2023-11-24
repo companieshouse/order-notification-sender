@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer;
 
 public final class PartitionOffset {
     private ThreadLocal<Long> offset = new ThreadLocal<>();
@@ -15,7 +15,7 @@ public final class PartitionOffset {
         this.offset.remove();
     }
 
-    void reset() {
+    public void reset() {
         this.offset = new ThreadLocal<>();
     }
 }

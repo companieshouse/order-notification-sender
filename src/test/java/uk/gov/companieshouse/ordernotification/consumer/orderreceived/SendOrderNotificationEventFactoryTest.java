@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

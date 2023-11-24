@@ -20,8 +20,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <ch-kafka.version>1.4.2</ch-kafka.version>
-        <kafka-models.version>1.0.26</kafka-models.version>
-        <structured-logging.version>1.9.13</structured-logging.version>
+        <kafka-models.version>1.0.38</kafka-models.version>
+        <structured-logging.version>1.9.27</structured-logging.version>
         <mockito-junit-jupiter-version>2.18.0</mockito-junit-jupiter-version>
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <junit-jupiter-engine-version>5.7.0</junit-jupiter-engine-version>
@@ -85,19 +85,17 @@
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
+                <exclusion>
+                    <!--Exclude slf4j-simple to prevent loss of log formatting. See DCAC-294. -->
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <!-- Exclude logback to prevent multiple SLF4J binding warning -->
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -184,6 +182,12 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>api-sdk-manager-java-library</artifactId>
             <version>${api-sdk-manager-java-library.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>

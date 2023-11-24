@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 /**
  * Thrown to indicate a recoverable error in processing that can be tried again. An example of a recoverable error is a

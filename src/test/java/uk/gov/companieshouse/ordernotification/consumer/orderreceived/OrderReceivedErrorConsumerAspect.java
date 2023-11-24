@@ -1,4 +1,4 @@
-package uk.gov.companieshouse.ordernotification.ordersconsumer;
+package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static java.util.Objects.isNull;
 
@@ -13,13 +13,13 @@ import uk.gov.companieshouse.logging.Logger;
 
 @Aspect
 @Component
-class OrderMessageErrorConsumerAspect {
+class OrderReceivedErrorConsumerAspect {
     private CountDownLatch beforeProcessOrderReceivedEventLatch;
     private CountDownLatch afterOrderConsumedEventLatch;
     private final Logger logger;
 
-    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.ordersconsumer" +
-            ".OrderMessageErrorConsumer.processOrderReceived(..))")
+    @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer." +
+            "orderreceived.OrderReceivedErrorConsumer.processOrderReceived(..))")
     void processOrderReceived() {
     }
 
@@ -37,7 +37,7 @@ class OrderMessageErrorConsumerAspect {
         }
     }
 
-    OrderMessageErrorConsumerAspect(Logger logger) {
+    OrderReceivedErrorConsumerAspect(Logger logger) {
         this.logger = logger;
     }
 

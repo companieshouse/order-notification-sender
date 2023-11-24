@@ -5,11 +5,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.ordersconsumer.RetryableErrorException;
 
 /**
  * Handles an order notification by enriching it with data fetched from the orders API.
