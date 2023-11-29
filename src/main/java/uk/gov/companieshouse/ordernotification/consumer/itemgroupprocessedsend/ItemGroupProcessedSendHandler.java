@@ -9,7 +9,6 @@ import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
-import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 
 @Service
 public class ItemGroupProcessedSendHandler {

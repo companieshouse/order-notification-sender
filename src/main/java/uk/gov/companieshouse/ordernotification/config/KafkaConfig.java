@@ -28,6 +28,8 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
 import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
+import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter;
+import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.MessageFlags;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @Configuration
@@ -115,9 +117,9 @@ public class KafkaConfig {
     // it is swallowed by spring/spring-kafka to which our exception types would be meaningless.
     @SuppressWarnings("squid:S112")
     public ProducerFactory<String, ItemGroupProcessedSend> producerFactory(
-        @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers /* TODO DCAC-279 ,
+        @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
         MessageFlags messageFlags,
-        @Value("${invalid_message_topic}") String invalidMessageTopic*/) {
+        @Value("${kafka.topics.item-group-processed-send.invalid_message_topic}") String invalidMessageTopic) {
 
         return new DefaultKafkaProducerFactory<>(
             new HashMap<String, Object>() {
@@ -129,9 +131,10 @@ public class KafkaConfig {
                         StringSerializer.class);
                     put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
                         StringSerializer.class);
-                    // TODO DCAC-279 put(org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, InvalidMessageRouter.class.getName())
-                    // put("message.flags", messageFlags);
-                    // put("invalid.message.topic", invalidMessageTopic);
+                    put(org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
+                        InvalidMessageRouter.class.getName());
+                    put("message.flags", messageFlags);
+                    put("invalid.message.topic", invalidMessageTopic);
                 }
             },
             new StringSerializer(),
@@ -145,7 +148,8 @@ public class KafkaConfig {
                         .topic(topic)
                         .kafkaMessage(data.toString())
                         .build();
-                    logger.error("Caught SerializationException serializing kafka message: " + e.getMessage(),
+                    logger.error("Caught SerializationException serializing kafka message: "
+                            + e.getMessage(),
                         dataMap.getLogMap());
                     throw new RuntimeException(e);
                 }
