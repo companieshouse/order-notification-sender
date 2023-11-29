@@ -35,9 +35,9 @@ public class ItemGroupProcessedSendConsumer {
             autoStartup = "#{!${uk.gov.companieshouse.order-notification-sender.error-consumer}}",
             containerFactory = "kafkaItemGroupProcessedSendListenerContainerFactory")
     @RetryableTopic(
-        attempts = "3",
+        attempts = "${kafka.topics.item-group-processed-send.max_attempts}",
         autoCreateTopics = "false",
-        backoff = @Backoff(delayExpression = "30000"),
+        backoff = @Backoff(delayExpression = "${kafka.topics.item-group-processed-send.backoff_delay}"),
         dltTopicSuffix = "-error",
         dltStrategy = DltStrategy.FAIL_ON_ERROR,
         fixedDelayTopicStrategy = FixedDelayStrategy.SINGLE_TOPIC,
