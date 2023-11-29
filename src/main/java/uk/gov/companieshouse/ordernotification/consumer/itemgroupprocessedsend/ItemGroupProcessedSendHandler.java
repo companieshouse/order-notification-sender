@@ -46,8 +46,8 @@ public class ItemGroupProcessedSendHandler {
                 .get(KafkaHeaders.RECEIVED_TOPIC))
             .orElse("no topic");
         if (true) {
-            logger.error("Will throw a retryable exception from topic " + topic);
-            throw new RetryableErrorException("Thrown from topic " + topic + " to test resilience", new Exception());
+            logger.error("Will throw a NON-retryable exception from topic " + topic);
+            throw new RuntimeException("Thrown from topic " + topic + " to test handling of non-retryable exception", new Exception());
         }
     }
 }
