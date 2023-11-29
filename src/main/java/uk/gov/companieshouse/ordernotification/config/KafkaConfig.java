@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,13 +12,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 import org.springframework.util.backoff.FixedBackOff;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.exceptions.ProducerConfigException;
+import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
+import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
+import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
 import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
@@ -97,5 +104,55 @@ public class KafkaConfig {
     @ConfigurationProperties(prefix = "kafka.topics")
     KafkaTopics kafkaTopics() {
         return new KafkaTopics();
+    }
+
+    @Bean
+    // In the unlikely event that a SerializationException should occur, the RuntimeException used to wrap
+    // it is swallowed by spring/spring-kafka to which our exception types would be meaningless.
+    @SuppressWarnings("squid:S112")
+    public ProducerFactory<String, ItemGroupProcessedSend> producerFactory(
+        @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers /* TODO DCAC-279 ,
+        MessageFlags messageFlags,
+        @Value("${invalid_message_topic}") String invalidMessageTopic*/) {
+
+        return new DefaultKafkaProducerFactory<>(
+            new HashMap<String, Object>() {
+                {
+                    put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                        bootstrapServers);
+                    put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG, "all");
+                    put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                        StringSerializer.class);
+                    put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                        StringSerializer.class);
+                    // TODO DCAC-279 put(org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, InvalidMessageRouter.class.getName())
+                    // put("message.flags", messageFlags);
+                    // put("invalid.message.topic", invalidMessageTopic);
+                }
+            },
+            new StringSerializer(),
+            (topic, data) -> {
+                try {
+                    return new SerializerFactory().getSpecificRecordSerializer(
+                            ItemGroupProcessedSend.class)
+                        .toBinary(data); //creates a leading space
+                } catch (SerializationException e) {
+                    final DataMap dataMap = new DataMap.Builder()
+                        .topic(topic)
+                        .kafkaMessage(data.toString())
+                        .build();
+// TODO DCAC-279
+//                    getLogger().error("Caught SerializationException serializing kafka message.",
+//                        dataMap.getLogMap());
+                    throw new RuntimeException(e);
+                }
+            }
+        );
+    }
+
+    @Bean
+    public KafkaTemplate<String, ItemGroupProcessedSend> kafkaTemplate(
+        ProducerFactory<String, ItemGroupProcessedSend> producerFactory) {
+        return new KafkaTemplate<>(producerFactory);
     }
 }
