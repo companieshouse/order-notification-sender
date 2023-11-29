@@ -45,9 +45,9 @@ public class ItemGroupProcessedSendHandler {
         final String topic = Optional.ofNullable((String) incomingMessage.getHeaders()
                 .get(KafkaHeaders.RECEIVED_TOPIC))
             .orElse("no topic");
-        if (!topic.endsWith("-dlt")) { // make sure this is the DLT topic suffix
+        if (true) {
             logger.error("Will throw a retryable exception from topic " + topic);
-            throw new RetryableErrorException("Thrown to test resilience from topic " + topic, new Exception());
+            throw new RetryableErrorException("Thrown from topic " + topic + " to test resilience", new Exception());
         }
     }
 }
