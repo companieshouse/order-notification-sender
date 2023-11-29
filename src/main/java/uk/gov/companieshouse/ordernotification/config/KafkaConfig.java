@@ -24,6 +24,7 @@ import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.CHKafkaProducer;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
+import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
 import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
@@ -33,9 +34,12 @@ import uk.gov.companieshouse.orders.OrderReceived;
 public class KafkaConfig {
 
     private final String brokerAddresses;
+    private final Logger logger;
 
-    public KafkaConfig(@Value("${spring.kafka.bootstrap-servers}") String brokerAddresses) {
+    public KafkaConfig(@Value("${spring.kafka.bootstrap-servers}") String brokerAddresses,
+        Logger logger) {
         this.brokerAddresses = brokerAddresses;
+        this.logger = logger;
     }
 
     @Bean
@@ -141,9 +145,8 @@ public class KafkaConfig {
                         .topic(topic)
                         .kafkaMessage(data.toString())
                         .build();
-// TODO DCAC-279
-//                    getLogger().error("Caught SerializationException serializing kafka message.",
-//                        dataMap.getLogMap());
+                    logger.error("Caught SerializationException serializing kafka message: " + e.getMessage(),
+                        dataMap.getLogMap());
                     throw new RuntimeException(e);
                 }
             }
