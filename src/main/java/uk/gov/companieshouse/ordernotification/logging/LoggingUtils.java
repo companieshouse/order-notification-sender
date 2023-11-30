@@ -3,11 +3,14 @@ package uk.gov.companieshouse.ordernotification.logging;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.MessageHeaders;
+import uk.gov.companieshouse.itemgroupprocessedsend.Item;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import uk.gov.companieshouse.logging.util.DataMap;
 
 public class LoggingUtils {
     public static final String TOPIC = "topic";
@@ -101,4 +104,17 @@ public class LoggingUtils {
     public Logger getLogger() {
         return logger;
     }
+
+    public static Map<String, Object> getLogMap(final ItemGroupProcessedSend message) {
+        final Item item = message.getItem();
+        return new DataMap.Builder()
+            .orderId(message.getOrderNumber())
+            .groupItem(message.getGroupItem())
+            .itemId(item.getId())
+            .status(item.getStatus())
+            .digitalDocumentLocation(item.getDigitalDocumentLocation())
+            .build()
+            .getLogMap();
+    }
+
 }

@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.getLogMap;
 import static uk.gov.companieshouse.ordernotification.logging.LoggingUtilsConfiguration.APPLICATION_NAMESPACE;
 
 import java.util.Map;
@@ -28,9 +29,9 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ItemGro
             messageFlags.destroy();
             return producerRecord;
         } else {
-            // TODO DCAC-279 Use structured logging
-            LOGGER.info("Producing invalid message " + producerRecord.value() + " to topic "
-                + invalidMessageTopic + ".");
+            final ItemGroupProcessedSend message = producerRecord.value();
+            LOGGER.error("Producing invalid message " + message + " to topic "
+                + invalidMessageTopic + ".", getLogMap(message));
             return new ProducerRecord<>(this.invalidMessageTopic, producerRecord.key(),
                 producerRecord.value());
         }

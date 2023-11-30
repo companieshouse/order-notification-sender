@@ -1,14 +1,13 @@
 package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
-import java.util.Map;
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.getLogMap;
+
 import java.util.Optional;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
-import uk.gov.companieshouse.logging.util.DataMap;
 
 @Service
 public class ItemGroupProcessedSendHandler {
@@ -26,18 +25,6 @@ public class ItemGroupProcessedSendHandler {
         errorExceptInDltTopic(message);
 
         // TODO DCAC-295: Send the relevant information onwards via the email-send topic.
-    }
-
-    private Map<String, Object> getLogMap(final ItemGroupProcessedSend message) {
-        final Item item = message.getItem();
-        return new DataMap.Builder()
-            .orderId(message.getOrderNumber())
-            .groupItem(message.getGroupItem())
-            .itemId(item.getId())
-            .status(item.getStatus())
-            .digitalDocumentLocation(item.getDigitalDocumentLocation())
-            .build()
-            .getLogMap();
     }
 
     private void errorExceptInDltTopic(final Message<?> incomingMessage) {
