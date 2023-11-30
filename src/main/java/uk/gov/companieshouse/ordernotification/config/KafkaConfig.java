@@ -1,5 +1,8 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.INVALID_MESSAGE_TOPIC;
+import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.MESSAGE_FLAGS;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -133,8 +136,8 @@ public class KafkaConfig {
                         StringSerializer.class);
                     put(org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
                         InvalidMessageRouter.class.getName());
-                    put("message.flags", messageFlags);
-                    put("invalid.message.topic", invalidMessageTopic);
+                    put(MESSAGE_FLAGS, messageFlags);
+                    put(INVALID_MESSAGE_TOPIC, invalidMessageTopic);
                 }
             },
             new StringSerializer(),

@@ -17,6 +17,9 @@ import uk.gov.companieshouse.logging.LoggerFactory;
  */
 public class InvalidMessageRouter implements ProducerInterceptor<String, ItemGroupProcessedSend> {
 
+    public static final String MESSAGE_FLAGS = "message.flags";
+    public static final String INVALID_MESSAGE_TOPIC = "invalid.message.topic";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
     private MessageFlags messageFlags;
@@ -49,7 +52,7 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ItemGro
 
     @Override
     public void configure(Map<String, ?> configs) {
-        this.messageFlags = (MessageFlags) configs.get("message.flags");
-        this.invalidMessageTopic = (String) configs.get("invalid.message.topic");
+        this.messageFlags = (MessageFlags) configs.get(MESSAGE_FLAGS);
+        this.invalidMessageTopic = (String) configs.get(INVALID_MESSAGE_TOPIC);
     }
 }
