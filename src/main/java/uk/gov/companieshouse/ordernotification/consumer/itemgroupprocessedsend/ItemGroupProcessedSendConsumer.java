@@ -19,7 +19,8 @@ public class ItemGroupProcessedSendConsumer {
 
     private final ItemGroupProcessedSendHandler itemGroupProcessedSendHandler;
 
-    public ItemGroupProcessedSendConsumer(ItemGroupProcessedSendHandler itemGroupProcessedSendHandler) {
+    public ItemGroupProcessedSendConsumer(
+        ItemGroupProcessedSendHandler itemGroupProcessedSendHandler) {
         this.itemGroupProcessedSendHandler = itemGroupProcessedSendHandler;
     }
 

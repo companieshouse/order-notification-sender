@@ -1,0 +1,59 @@
+# TODO DCAC-279: Remove unused properties.
+
+#server:
+#  port: 8080
+#
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: ${spring.embedded.kafka.brokers}
+
+#consumer:
+#  topic: echo
+#  group_id: echo-consumer
+#  max_attempts: 4
+#  backoff_delay: 100
+#  concurrency: 1
+#
+#error_consumer:
+#  topic: echo-error
+#  group_id: echo-error-consumer
+#  enabled: false
+#  dlt: echo-retry
+#  concurrency: 1
+#
+#invalid_message_topic: echo-invalid
+#
+#logger:
+#  namespace: archetype-client
+#
+#steps: 1
+
+
+# Config required for orders code context management. Orders code not actually tested by test
+# using this config.
+
+email:  
+  dateFormat: dd MMMM yyyy
+  senderAddress: token email address
+  paymentDateFormat: dd MMMM yyyy - HH:mm:ss
+  applicationId: order_notification_sender
+  confirmationMessage: Confirmation of your order number {0}
+  dispatchDays: 10
+  messageId: order_notification_sender_summary
+  messageType: order_notification_sender_summary
+  filingHistoryDateFormat: dd MMM yyyy
+  chsUrl: token CHS URL
+
+uk:
+  gov:
+    companieshouse:
+      order-notification-sender:
+        error-consumer: false
+
+kafkaProducer:
+  producerTimeout: 10
+
+maximum:
+  retries: 4

@@ -73,6 +73,7 @@ public final class TestConstants {
     public static final String STATUS = "satisfied";
     public static final String DIGITAL_DOCUMENT_LOCATION =
         "s3://document-signing-api.development.ch.gov.uk/docker/certified-copy/application-pdf";
+    public static final String SAME_PARTITION_KEY = "key";
 
     public static final ItemGroupProcessedSend ITEM_GROUP_PROCESSED_SEND;
 
