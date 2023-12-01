@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -26,6 +27,7 @@ import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 import uk.gov.companieshouse.ordernotification.consumer.MessageDeserialiser;
+import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendConsumerAspect;
 import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendHandler;
 import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendNonretryableExceptionThrower;
 import uk.gov.companieshouse.orders.OrderReceived;
@@ -111,5 +113,15 @@ public class ItemGroupProcessedSendTestConfig {
     @Primary
     public ItemGroupProcessedSendHandler getItemGroupProcessedSendHandler() {
         return new ItemGroupProcessedSendNonretryableExceptionThrower();
+    }
+
+    @Bean
+    CountDownLatch latch(@Value("${steps}") int steps) {
+        return new CountDownLatch(steps);
+    }
+
+    @Bean
+    ItemGroupProcessedSendConsumerAspect itemGroupProcessedSendConsumerAspect(CountDownLatch latch) {
+        return new ItemGroupProcessedSendConsumerAspect(latch);
     }
 }
