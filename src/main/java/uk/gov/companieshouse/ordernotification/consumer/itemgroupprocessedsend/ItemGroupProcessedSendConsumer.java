@@ -19,9 +19,12 @@ public class ItemGroupProcessedSendConsumer {
 
     private final ItemGroupProcessedSendHandler itemGroupProcessedSendHandler;
 
+    private final MessageFlags messageFlags;
+
     public ItemGroupProcessedSendConsumer(
-        ItemGroupProcessedSendHandler itemGroupProcessedSendHandler) {
+        ItemGroupProcessedSendHandler itemGroupProcessedSendHandler, MessageFlags messageFlags) {
         this.itemGroupProcessedSendHandler = itemGroupProcessedSendHandler;
+        this.messageFlags = messageFlags;
     }
 
     /**
@@ -45,7 +48,12 @@ public class ItemGroupProcessedSendConsumer {
         include = RetryableErrorException.class
     )
     public void processItemGroupProcessedSend(Message<ItemGroupProcessedSend> message) {
-        itemGroupProcessedSendHandler.handleMessage(message);
+        try {
+            itemGroupProcessedSendHandler.handleMessage(message);
+        } catch (RetryableErrorException ex) {
+            messageFlags.setRetryable(true);
+            throw ex;
+        }
     }
 
 }

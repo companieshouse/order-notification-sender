@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTopic;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
@@ -74,7 +75,8 @@ class ItemGroupProcessedSendConsumerRetryableExceptionTest {
     void testRepublishToErrorTopicThroughRetryTopics() throws InterruptedException {
         //given
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
-        doThrow(RetryableErrorException.class).when(itemGroupProcessedSendHandler).handleMessage(any());
+        doThrow(RetryableErrorException.class).when(itemGroupProcessedSendHandler)
+            .handleMessage(any());
 
         //when
         testProducer.send(new ProducerRecord<>(
@@ -85,13 +87,12 @@ class ItemGroupProcessedSendConsumerRetryableExceptionTest {
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 30000L, 2); // TODO DCAC-279 should be 6
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 30000L, 6);
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName), is(1));
-// TODO DCAC-279 Reinstate these assertions.
-//        assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-retry"), is(3));
-//        assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-error"), is(1));
-        assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-invalid"), is(1)); // TODO DCAC-279 should be 0!
-        verify(itemGroupProcessedSendHandler).handleMessage(messageCaptor.capture());
+        assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-retry"), is(3));
+        assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-error"), is(1));
+        assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-invalid"), is(0));
+        verify(itemGroupProcessedSendHandler, times(4)).handleMessage(messageCaptor.capture());
         assertThat(messageCaptor.getValue().getPayload(), is(ITEM_GROUP_PROCESSED_SEND));
     }
 }
