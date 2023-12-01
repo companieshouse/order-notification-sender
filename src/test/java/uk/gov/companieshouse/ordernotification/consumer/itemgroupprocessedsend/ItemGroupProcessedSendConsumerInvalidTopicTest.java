@@ -53,54 +53,6 @@ import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTest
 @ActiveProfiles("test_main_nonretryable")
 class ItemGroupProcessedSendConsumerInvalidTopicTest {
 
-    @TestConfiguration
-    static class Config {
-        @Bean
-        @Primary
-        public ItemGroupProcessedSendHandler getItemGroupProcessedSendHandler() {
-            return new ItemGroupProcessedSendNonretryableExceptionThrower();
-        }
-
-// TODO DCAC-279
-//        @Bean
-//        KafkaProducer<String, ItemGroupProcessedSend> testProducer(
-//            @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-//            final Map<String, Object> properties = new HashMap<>();
-//            properties.put(ProducerConfig.ACKS_CONFIG, "all");
-//            properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-//            return new KafkaProducer<>(
-//                properties,
-//                new StringSerializer(),
-//                (topic, data) -> {
-//                    try {
-//                        return new SerializerFactory().getSpecificRecordSerializer(
-//                            ItemGroupProcessedSend.class).toBinary(data); //creates a leading space
-//                    } catch (SerializationException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                });
-//        }
-
-        @Bean
-        KafkaConsumer<String, ItemGroupProcessedSend> testConsumer(
-            @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-            final Map<String, Object> properties = new HashMap<>();
-            properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-            properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, AvroSerializer.class);
-            properties.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
-            properties.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, AvroDeserializer.class);
-            properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-            properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-            properties.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
-            return new KafkaConsumer<>(
-                properties,
-                new StringDeserializer(),
-                new AvroDeserializer<>(ItemGroupProcessedSend.class));
-        }
-
-    }
-
     @Autowired
     private EmbeddedKafkaBroker embeddedKafkaBroker;
 

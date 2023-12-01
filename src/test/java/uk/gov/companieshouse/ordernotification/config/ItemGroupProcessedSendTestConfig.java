@@ -107,26 +107,6 @@ public class ItemGroupProcessedSendTestConfig {
             new AvroDeserializer<>(ItemGroupProcessedSend.class));
     }
 
-    // TODO DCAC-279 Is this made redundant by itemGroupProcessedSendProducer?
-//    @Bean
-//    KafkaProducer<String, ItemGroupProcessedSend> testProducer(
-//        @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers) {
-//        final Map<String, Object> properties = new HashMap<>();
-//        properties.put(ProducerConfig.ACKS_CONFIG, "all");
-//        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-//        return new KafkaProducer<>(
-//            properties,
-//            new StringSerializer(),
-//            (topic, data) -> {
-//                try {
-//                    return new SerializerFactory().getSpecificRecordSerializer(
-//                        ItemGroupProcessedSend.class).toBinary(data); //creates a leading space
-//                } catch (SerializationException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            });
-//    }
-
     @Bean
     @Primary
     public ItemGroupProcessedSendHandler getItemGroupProcessedSendHandler() {
