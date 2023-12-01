@@ -6,34 +6,22 @@ import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTo
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAME_PARTITION_KEY;
 
-import consumer.deserialization.AvroDeserializer;
-import consumer.serialization.AvroSerializer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTestConfig;
@@ -48,9 +36,8 @@ import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTest
     controlledShutdown = true,
     partitions = 1
 )
-@TestPropertySource(locations = "classpath:application-test_main_nonretryable.yml")
+@TestPropertySource(locations = "classpath:application-stubbed.properties")
 @Import(ItemGroupProcessedSendTestConfig.class)
-@ActiveProfiles("test_main_nonretryable")
 class ItemGroupProcessedSendConsumerInvalidTopicTest {
 
     @Autowired
