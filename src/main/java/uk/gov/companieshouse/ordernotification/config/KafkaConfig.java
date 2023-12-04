@@ -55,13 +55,13 @@ public class KafkaConfig {
     @Bean
     public ConsumerFactory<String, OrderReceived> orderReceivedConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
-                new MessageDeserialiser<>(OrderReceived.class));
+            new MessageDeserialiser<>(OrderReceived.class));
     }
 
     @Bean
     public ConsumerFactory<String, ItemGroupProcessedSend> itemGroupProcessedSendConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
-                new MessageDeserialiser<>(ItemGroupProcessedSend.class));
+            new MessageDeserialiser<>(ItemGroupProcessedSend.class));
     }
 
     @Bean
@@ -124,22 +124,26 @@ public class KafkaConfig {
         MessageFlags messageFlags,
         @Value("${kafka.topics.item-group-processed-send.invalid_message_topic}") String invalidMessageTopic) {
 
+        final Map<String, Object> producerFactoryConfig = new HashMap<>();
+        producerFactoryConfig.put(
+            org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+            bootstrapServers);
+        producerFactoryConfig.put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG,
+            "all");
+        producerFactoryConfig.put(
+            org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+            StringSerializer.class);
+        producerFactoryConfig.put(
+            org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+            StringSerializer.class);
+        producerFactoryConfig.put(
+            org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
+            InvalidMessageRouter.class.getName());
+        producerFactoryConfig.put(MESSAGE_FLAGS, messageFlags);
+        producerFactoryConfig.put(INVALID_MESSAGE_TOPIC, invalidMessageTopic);
+
         return new DefaultKafkaProducerFactory<>(
-            new HashMap<String, Object>() {
-                {
-                    put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                        bootstrapServers);
-                    put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG, "all");
-                    put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                        StringSerializer.class);
-                    put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                        StringSerializer.class);
-                    put(org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
-                        InvalidMessageRouter.class.getName());
-                    put(MESSAGE_FLAGS, messageFlags);
-                    put(INVALID_MESSAGE_TOPIC, invalidMessageTopic);
-                }
-            },
+            producerFactoryConfig,
             new StringSerializer(),
             (topic, data) -> {
                 try {
