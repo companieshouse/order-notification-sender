@@ -23,7 +23,7 @@ class ItemGroupProcessedSendLogger {
     }
 
     @Pointcut("execution(public void "
-        + "uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendHandler.handleMessage(..)) "
+        + "uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendEmailSender.handleMessage(..)) "
         + "&& args(message)")
     void handleMessage(Message<ItemGroupProcessedSend> message) {
         // Pointcut

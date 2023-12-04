@@ -15,7 +15,7 @@
     <properties>
         <java.version>1.8</java.version>
         <log4j.version>2.17.1</log4j.version>
-        <spring-boot-dependencies.version>2.4.4</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>2.7.18</spring-boot-dependencies.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -23,8 +23,8 @@
         <kafka-models.version>1.0.38</kafka-models.version>
         <structured-logging.version>1.9.27</structured-logging.version>
         <mockito-junit-jupiter-version>2.18.0</mockito-junit-jupiter-version>
-        <junit-jupiter.version>5.7.0</junit-jupiter.version>
-        <junit-jupiter-engine-version>5.7.0</junit-jupiter-engine-version>
+        <junit-jupiter.version>5.8.2</junit-jupiter.version>
+        <junit-jupiter-engine-version>5.8.2</junit-jupiter-engine-version>
         <private-api-sdk-java.version>2.0.188</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>1.0.4</api-sdk-manager-java-library.version>
         <testcontainers.version>1.16.0</testcontainers.version>

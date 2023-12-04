@@ -1,7 +1,7 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
 /**
- * An unrecoverable error has occured when handling a message.
+ * An unrecoverable error has occurred when handling a message.
  */
 public class NonRetryableFailureException extends RuntimeException {
 

@@ -30,7 +30,7 @@ class KafkaProducerConfigurationTest {
     @Test
     void afterPropertiesSetThrowsExceptionIfNoBrokersConfigured() {
         // Given
-        KafkaConfig configuration = new KafkaConfig(null);
+        KafkaConfig configuration = new KafkaConfig(null, null);
 
         // When
         ProducerConfigException exception = Assertions.assertThrows(ProducerConfigException.class, configuration::producerConfig);
@@ -45,7 +45,7 @@ class KafkaProducerConfigurationTest {
 
         // Given
         String brokerAddress = "broker-address";
-        KafkaConfig configuration = new KafkaConfig(brokerAddress);
+        KafkaConfig configuration = new KafkaConfig(brokerAddress, null);
 
         // When
         ProducerConfig producerConfig = configuration.producerConfig();

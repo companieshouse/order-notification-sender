@@ -16,7 +16,7 @@ import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
 
 @ExtendWith(MockitoExtension.class)
-class ItemGroupProcessedSendHandlerTest {
+class ItemGroupProcessedSendEmailSenderTest {
 
     private static final String EXPECTED_LOG_MESSAGE =
         "processing item-group-processed-send message: "
@@ -33,7 +33,7 @@ class ItemGroupProcessedSendHandlerTest {
     private Logger logger;
 
     @InjectMocks
-    private ItemGroupProcessedSendHandler itemGroupProcessedSendHandler;
+    private ItemGroupProcessedSendEmailSender itemGroupProcessedSendEmailSender;
 
     @Test
     void testHandleMessageLogsMessage() {
@@ -42,7 +42,7 @@ class ItemGroupProcessedSendHandlerTest {
         final Message<ItemGroupProcessedSend> message = new GenericMessage<>(ITEM_GROUP_PROCESSED_SEND);
 
          // when
-        itemGroupProcessedSendHandler.handleMessage(message);
+        itemGroupProcessedSendEmailSender.handleMessage(message);
 
         // then
         verify(logger).info(eq(EXPECTED_LOG_MESSAGE), anyMap());

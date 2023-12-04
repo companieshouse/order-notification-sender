@@ -34,12 +34,13 @@ import org.testcontainers.containers.MockServerContainer;
 import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.ordernotification.config.KafkaConfig;
 import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
+import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
 import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @SpringBootTest
-@Import(KafkaConfig.class)
+@Import({KafkaConfig.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:application-stubbed.properties",
         properties = {"uk.gov.companieshouse.order-notification-sender.error-consumer=true"})
 class OrderReceivedErrorConsumerIntegrationTest {

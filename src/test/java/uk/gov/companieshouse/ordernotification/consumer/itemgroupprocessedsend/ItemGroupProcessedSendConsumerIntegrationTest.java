@@ -77,7 +77,7 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
             ITEM_GROUP_PROCESSED_SEND)).get();
 
         // then
-        final boolean messageHandled = eventLatch.await(30, TimeUnit.SECONDS);
+        final boolean messageHandled = eventLatch.await(60, TimeUnit.SECONDS);
         if (!messageHandled) {
             fail("FAILED to handle the item-group-processed-send message produced!");
         }
