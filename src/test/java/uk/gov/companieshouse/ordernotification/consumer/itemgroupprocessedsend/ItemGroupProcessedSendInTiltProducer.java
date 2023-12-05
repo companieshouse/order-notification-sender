@@ -56,7 +56,6 @@ class ItemGroupProcessedSendInTiltProducer {
             final Map<String, Object> config = new HashMap<>();
             config.put(ProducerConfig.ACKS_CONFIG, "all");
             config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-            config.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, false);
             return new KafkaProducer<>(
                 config,
                 new StringSerializer(),
