@@ -40,7 +40,7 @@ class EmailSendInTiltProducer {
 
     static {
         EmailSend emailSend = new EmailSend();
-        emailSend.setAppId("App Id");
+        emailSend.setAppId("EmailSendInTiltProducer");
         emailSend.setData("Message content");
         emailSend.setEmailAddress("someone@example.com");
         emailSend.setMessageId("Message Id");
