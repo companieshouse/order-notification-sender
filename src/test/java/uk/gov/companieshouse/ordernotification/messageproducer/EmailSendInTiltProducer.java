@@ -78,7 +78,7 @@ class EmailSendInTiltProducer {
                         "and that of 'spring.embedded.kafka.brokers' property in test.]");
             }
             config.setRoundRobinPartitioner(true);
-            config.setAcks(Acks.WAIT_FOR_ALL);
+            config.setAcks(Acks.WAIT_FOR_LOCAL);
             config.setRetries(10);
             return config;
         }
