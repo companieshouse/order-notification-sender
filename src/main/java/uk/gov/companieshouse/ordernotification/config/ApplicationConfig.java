@@ -67,6 +67,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
         Map<DeliveryTimescaleApi, String> mappings = new HashMap<>();
         mappings.put(DeliveryTimescaleApi.STANDARD, "Standard");
         mappings.put(DeliveryTimescaleApi.SAME_DAY, "Express");
+        mappings.put(DeliveryTimescaleApi.DIGITAL, "Digital");
         return mappings;
     }
 
