@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailmodel;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsendmodel.MappingException;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
@@ -47,6 +48,25 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
         loggingUtils.getLogger().debug("Mapping order", logArgs);
         try {
             return ordersApiMapper.mapToEmailSend(order);
+        } catch (IllegalArgumentException | MappingException e) {
+            loggingUtils.getLogger().error("Failed to map order resource", e, logArgs);
+            throw e;
+        }
+    }
+
+    /**
+     * Enriches an item ready notification with an order resource fetched from the Orders API, and
+     * with item ready information
+     *
+     * @param orderUri the order responsible for triggering the notification
+     * @param itemReady the incoming item ready notification
+     */
+    public EmailSend enrich(final String orderUri, final ItemGroupProcessedSend itemReady) throws OrdersResponseException {
+        Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order", orderUri);
+        OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
+        loggingUtils.getLogger().debug("Mapping order", logArgs);
+        try {
+            return ordersApiMapper.mapToEmailSend(order, itemReady);
         } catch (IllegalArgumentException | MappingException e) {
             loggingUtils.getLogger().error("Failed to map order resource", e, logArgs);
             throw e;

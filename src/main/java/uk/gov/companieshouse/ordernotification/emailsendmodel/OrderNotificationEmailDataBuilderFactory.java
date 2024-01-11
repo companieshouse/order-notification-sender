@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import org.springframework.stereotype.Component;
+import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 @Component
@@ -28,6 +29,17 @@ public class OrderNotificationEmailDataBuilderFactory {
                 this.certifiedCopyEmailDataMapper,
                 this.missingImageDeliveryEmailDataMapper,
                 this.emailConfiguration
+        );
+    }
+
+    OrderNotificationDataConvertable newConverter(final ItemGroupProcessedSend itemReadyNotification) {
+        return new ItemReadyNotificationEmailDataConverter(
+            new ItemReadyNotificationEmailData(),
+            this.certificateEmailDataMapper,
+            this.certifiedCopyEmailDataMapper,
+            this.missingImageDeliveryEmailDataMapper,
+            this.emailConfiguration,
+            itemReadyNotification
         );
     }
 

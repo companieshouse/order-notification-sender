@@ -6,23 +6,24 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
-import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
+import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceOrderNotificationEnricher;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 /**
- * Handles an order notification by enriching it with data fetched from the orders API.
+ * Handles an item ready notification by enriching it with data fetched from the orders API.
  */
 @Service
 public class ItemGroupProcessedSendSenderService {
 
-    private final OrderNotificationEnrichable orderEnricher;
+    // TODO DCAC-295 This by-passes the OrderNotificationEnrichable contract.
+    private final OrderResourceOrderNotificationEnricher orderEnricher;
     private final LoggingUtils loggingUtils;
     // TODO DCAC-295 Do we need an application event publisher here?
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public ItemGroupProcessedSendSenderService(OrderNotificationEnrichable orderEnricher, LoggingUtils loggingUtils,
+    public ItemGroupProcessedSendSenderService(OrderResourceOrderNotificationEnricher orderEnricher, LoggingUtils loggingUtils,
         ApplicationEventPublisher applicationEventPublisher) {
         this.orderEnricher = orderEnricher;
         this.loggingUtils = loggingUtils;
@@ -42,7 +43,7 @@ public class ItemGroupProcessedSendSenderService {
         final String orderUri = "/orders/" + itemGroupProcessedSendEvent.getOrderNumber();
         loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, orderUri);
         try {
-            final EmailSend emailSend = orderEnricher.enrich(orderUri);
+            final EmailSend emailSend = orderEnricher.enrich(orderUri, itemGroupProcessedSendEvent);
             loggingUtils.getLogger().debug("Successfully enriched item group item status update; notifying email sender", loggerArgs);
             applicationEventPublisher.publishEvent(new SendEmailEvent(orderUri, /* TODO DCAC-295 Refactor? */0, emailSend));
 
