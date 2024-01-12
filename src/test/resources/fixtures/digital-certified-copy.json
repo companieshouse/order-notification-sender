@@ -1,0 +1,80 @@
+{
+  "payment_reference": "4i6e9pKVkheYrtA",
+  "etag": "630c1b94321a099cbcc5a21e2f1a76d6a8676d43",
+  "delivery_details": {
+    "country": "UK",
+    "forename": "John",
+    "locality": "Cardiff",
+    "postal_code": "CF14 3UZ",
+    "region": "Cardiff",
+    "surname": "Test",
+    "address_line_1": "1 Crown Way",
+    "address_line_2": "Maindy"
+  },
+  "items": [
+    {
+      "id": "CCD-768116-517930",
+      "company_name": "CERTIFIED DOCUMENTS TEST COMPANY LIMITED",
+      "company_number": "10371283",
+      "description": "certified copy for company 10371283",
+      "description_identifier": "certified-copy",
+      "description_values": {
+        "company_number": "10371283",
+        "certified-copy": "certified copy for company 10371283"
+      },
+      "item_costs": [
+        {
+          "discount_applied": "0",
+          "item_cost": "15",
+          "calculated_cost": "15",
+          "product_type": "certified-copy"
+        }
+      ],
+      "item_options": {
+        "delivery_method": "postal",
+        "delivery_timescale": "standard",
+        "filing_history_documents": [
+          {
+            "filing_history_date": "2019-11-23",
+            "filing_history_description": "capital-allotment-shares",
+            "filing_history_description_values": {
+              "date": "2019-11-10",
+              "capital": [
+                {
+                  "figure": "34,253,377",
+                  "currency": "GBP"
+                }
+              ]
+            },
+            "filing_history_id": "OTAwMzQ1NjM2M2FkaXF6a6N4",
+            "filing_history_type": "SH01",
+            "filing_history_cost": "15"
+          }
+        ]
+      },
+      "etag": "7843c9fc51087f6ae12a9b86196b665bb8f3fa83",
+      "kind": "item#certified-copy",
+      "links": {
+        "self": "/orderable/certified-copies/CCD-768116-517930"
+      },
+      "quantity": 1,
+      "item_uri": "/orderable/certified-copies/CCD-768116-517930",
+      "status": "processing",
+      "postage_cost": "0",
+      "total_item_cost": "15",
+      "digital_document_location": "s3://document-api-images-cidev/docs/--EdB7fbldt5oujK6Nz7jZ3hGj_x6vW8Q_2gQTyjWBM/application-pdf",
+      "postal_delivery": true
+    }
+  ],
+  "kind": "order",
+  "total_order_cost": "15",
+  "reference": "ORD-065216-517934",
+  "ordered_at": "2022-05-03T23:31:47.486",
+  "ordered_by": {
+    "email": "testautomation1@test.companieshouse.gov.uk",
+    "id": "xBjfyx0li07r6test1"
+  },
+  "links": {
+    "self": "/orders/ORD-065216-517934"
+  }
+}
