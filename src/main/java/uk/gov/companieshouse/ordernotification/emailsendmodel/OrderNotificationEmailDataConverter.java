@@ -43,7 +43,7 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
         mapPaymentDetails(ordersApi);
         emailData.setDispatchDays(emailConfiguration.getDispatchDays());
         emailData.setTo(ordersApi.getOrderedBy().getEmail());
-        emailData.setSubject(MessageFormat.format(emailConfiguration.getConfirmationMessage(), ordersApi.getReference()));
+        emailData.setSubject(buildSubject(ordersApi));
     }
 
     @Override
@@ -63,6 +63,10 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
     @Override
     public void mapMissingImageDelivery(BaseItemApi missingImageDeliveryApi) {
         emailData.addMissingImageDelivery(missingImageDeliveryEmailDataMapper.map(missingImageDeliveryApi));
+    }
+
+    protected String buildSubject(final OrdersApi ordersApi) {
+        return MessageFormat.format(emailConfiguration.getConfirmationMessage(), ordersApi.getReference());
     }
 
     @Override

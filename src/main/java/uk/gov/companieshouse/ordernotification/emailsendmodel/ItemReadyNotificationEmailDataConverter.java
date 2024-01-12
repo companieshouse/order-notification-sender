@@ -1,21 +1,26 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.text.MessageFormat;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.config.ItemReadyEmailConfiguration;
 
 public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEmailDataConverter {
 
     private final ItemGroupProcessedSend itemReadyNotification;
+    private final ItemReadyEmailConfiguration itemReadyConfig;
 
     public ItemReadyNotificationEmailDataConverter(OrderNotificationEmailData emailData,
         CertificateEmailDataMapper certificateEmailDataMapper,
         CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper,
         MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper,
         EmailConfiguration emailConfiguration,
+        ItemReadyEmailConfiguration itemReadyConfig,
         ItemGroupProcessedSend itemReadyNotification) {
         super(emailData, certificateEmailDataMapper, certifiedCopyEmailDataMapper,
             missingImageDeliveryEmailDataMapper, emailConfiguration);
+        this.itemReadyConfig = itemReadyConfig;
         this.itemReadyNotification = itemReadyNotification;
     }
 
@@ -27,6 +32,13 @@ public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEm
         emailData.setOrderNumber(itemReadyNotification.getOrderNumber());
         emailData.setGroupItem(itemReadyNotification.getGroupItem());
         emailData.setItemId(itemReadyNotification.getItem().getId());
-        emailData.setDigitalDocumentLocation(itemReadyNotification.getItem().getDigitalDocumentLocation());
+        emailData.setDigitalDocumentLocation(
+            itemReadyNotification.getItem().getDigitalDocumentLocation());
+    }
+
+    @Override
+    protected String buildSubject(final OrdersApi ordersApi) {
+        return MessageFormat.format(itemReadyConfig.getSubject(),
+            itemReadyNotification.getItem().getId(), ordersApi.getReference());
     }
 }

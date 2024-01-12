@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
+import uk.gov.companieshouse.ordernotification.config.ItemReadyEmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
 
@@ -18,15 +19,18 @@ public class OrdersApiDetailsMapper {
 
     private final DateGenerator dateGenerator;
     private final EmailConfiguration config;
+    private final ItemReadyEmailConfiguration itemReadyConfig;
     private final ObjectMapper objectMapper;
     private final OrderNotificationEmailDataBuilderFactory factory;
 
     public OrdersApiDetailsMapper(DateGenerator dateGenerator,
-                                  EmailConfiguration config,
-                                  ObjectMapper objectMapper,
-                                  OrderNotificationEmailDataBuilderFactory factory) {
+        EmailConfiguration config,
+        ItemReadyEmailConfiguration itemReadyConfig,
+        ObjectMapper objectMapper,
+        OrderNotificationEmailDataBuilderFactory factory) {
         this.dateGenerator = dateGenerator;
         this.config = config;
+        this.itemReadyConfig = itemReadyConfig;
         this.objectMapper = objectMapper;
         this.factory = factory;
     }
@@ -68,16 +72,16 @@ public class OrdersApiDetailsMapper {
      */
     public EmailSend mapToEmailSend(final OrdersApiWrappable ordersApiWrappable, final
     ItemGroupProcessedSend itemReady) {
-        OrderNotificationDataConvertable converter = factory.newConverter(itemReady);
+        OrderNotificationDataConvertable converter = factory.newConverter(itemReady, itemReadyConfig);
         SummaryEmailDataDirector director = factory.newDirector(converter);
         director.map(ordersApiWrappable.getOrdersApi());
         try {
             EmailSend emailSend = new EmailSend();
             emailSend.setEmailAddress(config.getSenderAddress());
             emailSend.setData(objectMapper.writeValueAsString(converter.getEmailData()));
-            emailSend.setMessageId(config.getMessageId());
+            emailSend.setMessageId(itemReadyConfig.getMessageId());
             emailSend.setAppId(config.getApplicationId());
-            emailSend.setMessageType(config.getMessageType());
+            emailSend.setMessageType(itemReadyConfig.getMessageType());
             emailSend.setCreatedAt(dateGenerator.generate()
                 .format(DateTimeFormatter.ofPattern(config.getDateFormat())));
             return emailSend;
