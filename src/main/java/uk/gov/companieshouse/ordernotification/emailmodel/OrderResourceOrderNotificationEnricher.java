@@ -30,8 +30,8 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
 
     @Autowired
     public OrderResourceOrderNotificationEnricher(OrderRetrievable orderRetrievable,
-                                                  LoggingUtils loggingUtils,
-                                                  OrdersApiDetailsMapper ordersApiMapper) {
+        LoggingUtils loggingUtils,
+        OrdersApiDetailsMapper ordersApiMapper) {
         this.orderRetrievable = orderRetrievable;
         this.loggingUtils = loggingUtils;
         this.ordersApiMapper = ordersApiMapper;
@@ -43,7 +43,8 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
      * @param orderUri the order responsible for triggering the notification
      */
     public EmailSend enrich(final String orderUri) throws OrdersResponseException {
-        Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order", orderUri);
+        Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order",
+            orderUri);
         OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order", logArgs);
         try {
@@ -58,11 +59,13 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
      * Enriches an item ready notification with an order resource fetched from the Orders API, and
      * with item ready information
      *
-     * @param orderUri the order responsible for triggering the notification
+     * @param orderUri  the order responsible for triggering the notification
      * @param itemReady the incoming item ready notification
      */
-    public EmailSend enrich(final String orderUri, final ItemGroupProcessedSend itemReady) throws OrdersResponseException {
-        Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order", orderUri);
+    public EmailSend enrich(final String orderUri, final ItemGroupProcessedSend itemReady)
+        throws OrdersResponseException {
+        Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order",
+            orderUri);
         OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order", logArgs);
         try {
