@@ -1,13 +1,15 @@
 package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import email.email_send;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +41,7 @@ import org.testcontainers.utility.DockerImageName;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
+import uk.gov.companieshouse.ordernotification.emailsendmodel.ItemReadyNotificationEmailData;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 @SpringBootTest
@@ -54,19 +57,22 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
     @Autowired
     private KafkaConsumer<String, email_send> emailSendConsumer;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private MockServerClient client;
     private CountDownLatch eventLatch;
 
     @BeforeAll
     static void before() {
         container = new MockServerContainer(DockerImageName.parse(
-                "jamesdbloom/mockserver:mockserver-5.5.4"));
+            "jamesdbloom/mockserver:mockserver-5.5.4"));
         container.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
-                "http://" + container.getHost() + ":" + container.getServerPort());
+            "http://" + container.getHost() + ":" + container.getServerPort());
         TestEnvironmentSetupHelper.setEnvironmentVariable("CHS_API_KEY", "123");
         TestEnvironmentSetupHelper.setEnvironmentVariable("PAYMENTS_API_URL",
-                "http://" + container.getHost() + ":" + container.getServerPort());
+            "http://" + container.getHost() + ":" + container.getServerPort());
     }
 
     @AfterAll
@@ -104,7 +110,7 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
 
         // when
         itemGroupProcessedSendProducer.send(new ProducerRecord<>("item-group-processed-send",
-                "item-group-processed-send",
+            "item-group-processed-send",
             ITEM_GROUP_PROCESSED_SEND)).get();
 
         // then
@@ -114,18 +120,25 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
         }
 
         eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+        final email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
             .iterator()
             .next()
             .value();
 
         // then
-        assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("digital_item_ready", actual.getMessageId());
-        assertEquals("digital_item_ready", actual.getMessageType());
-        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertNotNull(actual.getData());
+        assertThat(actual.getAppId(), is("order_notification_sender"));
+        assertThat(actual.getMessageId(), is("digital_item_ready"));
+        assertThat(actual.getMessageType(), is("digital_item_ready"));
+        assertThat(actual.getEmailAddress(), is("noreply@companieshouse.gov.uk"));
+        assertThat(actual.getData(), is(notNullValue()));
 
+        final ItemReadyNotificationEmailData data =
+            objectMapper.readValue(actual.getData(), ItemReadyNotificationEmailData.class);
+        assertThat(data.getOrderNumber(), is(ITEM_GROUP_PROCESSED_SEND.getOrderNumber()));
+        assertThat(data.getGroupItem(), is(ITEM_GROUP_PROCESSED_SEND.getGroupItem()));
+        assertThat(data.getItemId(), is(ITEM_GROUP_PROCESSED_SEND.getItem().getId()));
+        assertThat(data.getDigitalDocumentLocation(),
+            is(ITEM_GROUP_PROCESSED_SEND.getItem().getDigitalDocumentLocation()));
     }
 
 }
