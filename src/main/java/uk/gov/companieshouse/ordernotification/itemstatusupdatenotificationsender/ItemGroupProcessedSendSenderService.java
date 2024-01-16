@@ -20,7 +20,6 @@ public class ItemGroupProcessedSendSenderService {
     // TODO DCAC-295 This by-passes the OrderNotificationEnrichable contract.
     private final OrderResourceOrderNotificationEnricher orderEnricher;
     private final LoggingUtils loggingUtils;
-    // TODO DCAC-295 Do we need an application event publisher here?
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public ItemGroupProcessedSendSenderService(OrderResourceOrderNotificationEnricher orderEnricher, LoggingUtils loggingUtils,
