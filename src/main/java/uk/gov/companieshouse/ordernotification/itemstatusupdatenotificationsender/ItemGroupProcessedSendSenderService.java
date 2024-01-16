@@ -47,8 +47,7 @@ public class ItemGroupProcessedSendSenderService {
                 "Successfully enriched item group item status update; notifying email sender",
                 loggerArgs);
             applicationEventPublisher.publishEvent(
-                new SendEmailEvent(orderUri, /* TODO DCAC-295 Refactor? */0, emailSend));
-
+                new SendEmailEvent(orderUri, 0, emailSend));
         } catch (RetryableErrorException e) {
             loggingUtils.getLogger()
                 .error("Failed to enrich item group item status update", e, loggerArgs);
