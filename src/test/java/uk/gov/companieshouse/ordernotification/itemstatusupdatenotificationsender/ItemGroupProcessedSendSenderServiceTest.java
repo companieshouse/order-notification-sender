@@ -19,7 +19,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
-import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceOrderNotificationEnricher;
+import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceItemReadyNotificationEnricher;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
@@ -44,7 +44,7 @@ class ItemGroupProcessedSendSenderServiceTest {
     private LoggingUtils loggingUtils;
 
     @Mock
-    private OrderResourceOrderNotificationEnricher orderEnricher;
+    private OrderResourceItemReadyNotificationEnricher orderEnricher;
 
     @Mock
     private Logger logger;
