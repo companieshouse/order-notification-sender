@@ -52,8 +52,6 @@ public class ItemGroupProcessedSendSenderService {
         } catch (RetryableErrorException e) {
             loggingUtils.getLogger()
                 .error("Failed to enrich item group item status update", e, loggerArgs);
-            // TODO DCAC-295 Hopefully we don't need this - InvalidMessageRouter will ensure retries take place?
-            // applicationEventPublisher.publishEvent(new OrderEnrichmentFailedEvent(itemGroupProcessedSendEvent));
             throw e;
         }
     }
