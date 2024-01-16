@@ -23,7 +23,6 @@ public class ItemGroupProcessedSendEmailSender implements ItemGroupProcessedSend
     public void handleMessage(Message<ItemGroupProcessedSend> message) {
         final ItemGroupProcessedSend payload = message.getPayload();
         logger.info("processing item-group-processed-send message: " + payload, getLogMap(payload));
-        // TODO DCAC-295 Do we need to create an event class here?
         applicationEventPublisher.publishEvent(payload);
     }
 
