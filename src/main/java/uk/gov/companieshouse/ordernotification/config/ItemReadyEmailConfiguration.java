@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @PropertySource("classpath:application.properties")
 @ConfigurationProperties(prefix = "item-ready-email")
 @Component
-public class ItemReadyEmailConfiguration {
+public class ItemReadyEmailConfiguration implements MessageTypeConfigProvider {
 
     private String messageId;
     private String messageType;
