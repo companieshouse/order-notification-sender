@@ -41,16 +41,16 @@ public class OrderResourceItemReadyNotificationEnricher {
      * with item ready information
      *
      * @param orderUri  the order responsible for triggering the notification
-     * @param itemReady the incoming item ready notification
+     * @param itemReadyNotification the incoming item ready notification
      */
-    public EmailSend enrich(final String orderUri, final ItemGroupProcessedSend itemReady)
+    public EmailSend enrich(final String orderUri, final ItemGroupProcessedSend itemReadyNotification)
         throws OrdersResponseException {
         Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order",
             orderUri);
         OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order and item ready notification", logArgs);
         try {
-            return ordersApiMapper.mapToEmailSend(order, itemReady);
+            return ordersApiMapper.mapToEmailSend(order, itemReadyNotification);
         } catch (IllegalArgumentException | MappingException e) {
             loggingUtils.getLogger()
                 .error("Failed to map order and item ready notification", e, logArgs);

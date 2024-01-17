@@ -67,12 +67,12 @@ public class OrdersApiDetailsMapper {
      * the incoming item ready notification.
      *
      * @param ordersApiWrappable A wrapper interface for an OrdersApi object
-     * @param itemReady the incoming item ready notification
+     * @param itemReadyNotification the incoming item ready notification
      * @return EmailSend
      */
     public EmailSend mapToEmailSend(final OrdersApiWrappable ordersApiWrappable, final
-    ItemGroupProcessedSend itemReady) {
-        OrderNotificationDataConvertable converter = factory.newConverter(itemReady, itemReadyConfig);
+    ItemGroupProcessedSend itemReadyNotification) {
+        OrderNotificationDataConvertable converter = factory.newConverter(itemReadyNotification, itemReadyConfig);
         SummaryEmailDataDirector director = factory.newDirector(converter);
         director.map(ordersApiWrappable.getOrdersApi());
         try {

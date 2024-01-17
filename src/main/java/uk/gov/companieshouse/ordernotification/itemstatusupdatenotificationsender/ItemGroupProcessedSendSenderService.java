@@ -31,18 +31,17 @@ public class ItemGroupProcessedSendSenderService {
 
     /**
      * Handles an item group item status update notification by enriching it with data fetched from
-     * the orders API. If an error occurs when enriching the notification then a failure event will
-     * be published.
+     * the orders API.
      *
-     * @param itemGroupProcessedSendEvent The ItemGroupProcessedSend message being processed.
+     * @param itemReadyNotification The ItemGroupProcessedSend message being processed.
      */
     @EventListener
-    public void handleEvent(ItemGroupProcessedSend itemGroupProcessedSendEvent) {
+    public void handleEvent(ItemGroupProcessedSend itemReadyNotification) {
         Map<String, Object> loggerArgs = loggingUtils.createLogMap();
-        final String orderUri = "/orders/" + itemGroupProcessedSendEvent.getOrderNumber();
+        final String orderUri = "/orders/" + itemReadyNotification.getOrderNumber();
         loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, orderUri);
         try {
-            final EmailSend emailSend = orderEnricher.enrich(orderUri, itemGroupProcessedSendEvent);
+            final EmailSend emailSend = orderEnricher.enrich(orderUri, itemReadyNotification);
             loggingUtils.getLogger().debug(
                 "Successfully enriched item group item status update; notifying email sender",
                 loggerArgs);
