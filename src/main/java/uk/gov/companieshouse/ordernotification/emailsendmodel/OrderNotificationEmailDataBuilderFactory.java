@@ -34,14 +34,14 @@ public class OrderNotificationEmailDataBuilderFactory {
     }
 
     OrderNotificationDataConvertable newConverter(final ItemGroupProcessedSend itemReadyNotification,
-        final ItemReadyEmailConfiguration itemReadyConfig) {
+        final ItemReadyEmailConfiguration itemReadyEmailConfig) {
         return new ItemReadyNotificationEmailDataConverter(
             new ItemReadyNotificationEmailData(),
             this.certificateEmailDataMapper,
             this.certifiedCopyEmailDataMapper,
             this.missingImageDeliveryEmailDataMapper,
             this.emailConfiguration,
-            itemReadyConfig,
+            itemReadyEmailConfig,
             itemReadyNotification
         );
     }

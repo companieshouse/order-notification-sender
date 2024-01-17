@@ -19,18 +19,18 @@ public class OrdersApiDetailsMapper {
 
     private final DateGenerator dateGenerator;
     private final EmailConfiguration config;
-    private final ItemReadyEmailConfiguration itemReadyConfig;
+    private final ItemReadyEmailConfiguration itemReadyEmailConfig;
     private final ObjectMapper objectMapper;
     private final OrderNotificationEmailDataBuilderFactory factory;
 
     public OrdersApiDetailsMapper(DateGenerator dateGenerator,
         EmailConfiguration config,
-        ItemReadyEmailConfiguration itemReadyConfig,
+        ItemReadyEmailConfiguration itemReadyEmailConfig,
         ObjectMapper objectMapper,
         OrderNotificationEmailDataBuilderFactory factory) {
         this.dateGenerator = dateGenerator;
         this.config = config;
-        this.itemReadyConfig = itemReadyConfig;
+        this.itemReadyEmailConfig = itemReadyEmailConfig;
         this.objectMapper = objectMapper;
         this.factory = factory;
     }
@@ -72,16 +72,17 @@ public class OrdersApiDetailsMapper {
      */
     public EmailSend mapToEmailSend(final OrdersApiWrappable ordersApiWrappable, final
     ItemGroupProcessedSend itemReadyNotification) {
-        OrderNotificationDataConvertable converter = factory.newConverter(itemReadyNotification, itemReadyConfig);
+        OrderNotificationDataConvertable converter = factory.newConverter(itemReadyNotification,
+            itemReadyEmailConfig);
         SummaryEmailDataDirector director = factory.newDirector(converter);
         director.map(ordersApiWrappable.getOrdersApi());
         try {
             EmailSend emailSend = new EmailSend();
             emailSend.setEmailAddress(config.getSenderAddress());
             emailSend.setData(objectMapper.writeValueAsString(converter.getEmailData()));
-            emailSend.setMessageId(itemReadyConfig.getMessageId());
+            emailSend.setMessageId(itemReadyEmailConfig.getMessageId());
             emailSend.setAppId(config.getApplicationId());
-            emailSend.setMessageType(itemReadyConfig.getMessageType());
+            emailSend.setMessageType(itemReadyEmailConfig.getMessageType());
             emailSend.setCreatedAt(dateGenerator.generate()
                 .format(DateTimeFormatter.ofPattern(config.getDateFormat())));
             return emailSend;

@@ -9,18 +9,18 @@ import uk.gov.companieshouse.ordernotification.config.ItemReadyEmailConfiguratio
 public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEmailDataConverter {
 
     private final ItemGroupProcessedSend itemReadyNotification;
-    private final ItemReadyEmailConfiguration itemReadyConfig;
+    private final ItemReadyEmailConfiguration itemReadyEmailConfig;
 
     public ItemReadyNotificationEmailDataConverter(OrderNotificationEmailData emailData,
         CertificateEmailDataMapper certificateEmailDataMapper,
         CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper,
         MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper,
         EmailConfiguration emailConfiguration,
-        ItemReadyEmailConfiguration itemReadyConfig,
+        ItemReadyEmailConfiguration itemReadyEmailConfig,
         ItemGroupProcessedSend itemReadyNotification) {
         super(emailData, certificateEmailDataMapper, certifiedCopyEmailDataMapper,
             missingImageDeliveryEmailDataMapper, emailConfiguration);
-        this.itemReadyConfig = itemReadyConfig;
+        this.itemReadyEmailConfig = itemReadyEmailConfig;
         this.itemReadyNotification = itemReadyNotification;
     }
 
@@ -38,7 +38,7 @@ public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEm
 
     @Override
     protected String buildSubject(final OrdersApi ordersApi) {
-        return MessageFormat.format(itemReadyConfig.getSubject(),
+        return MessageFormat.format(itemReadyEmailConfig.getSubject(),
             itemReadyNotification.getItem().getId(), ordersApi.getReference());
     }
 }
