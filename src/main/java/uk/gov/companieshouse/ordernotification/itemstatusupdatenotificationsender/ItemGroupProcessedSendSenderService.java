@@ -1,5 +1,7 @@
 package uk.gov.companieshouse.ordernotification.itemstatusupdatenotificationsender;
 
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtils.getLogMap;
+
 import java.util.Map;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -37,7 +39,7 @@ public class ItemGroupProcessedSendSenderService {
      */
     @EventListener
     public void handleEvent(ItemGroupProcessedSend itemReadyNotification) {
-        Map<String, Object> loggerArgs = loggingUtils.createLogMap();
+        final Map<String, Object> loggerArgs = getLogMap(itemReadyNotification);
         final String orderUri = "/orders/" + itemReadyNotification.getOrderNumber();
         loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, orderUri);
         try {
@@ -46,7 +48,8 @@ public class ItemGroupProcessedSendSenderService {
                 "Successfully enriched item group item status update; notifying email sender",
                 loggerArgs);
             applicationEventPublisher.publishEvent(
-                new SendItemReadyEmailEvent(orderUri, emailSend));
+                new SendItemReadyEmailEvent(orderUri, itemReadyNotification.getItem().getId(),
+                    emailSend));
         } catch (RetryableErrorException e) {
             loggingUtils.getLogger()
                 .error("Failed to enrich item group item status update", e, loggerArgs);

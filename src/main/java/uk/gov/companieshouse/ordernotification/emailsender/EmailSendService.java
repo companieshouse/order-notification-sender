@@ -1,18 +1,18 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
+import uk.gov.companieshouse.logging.util.DataMap;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
-
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Handles an incoming {@link SendEmailEvent} by sending a message containing email data.
@@ -66,24 +66,23 @@ public class EmailSendService implements ApplicationEventPublisherAware {
      * @throws NonRetryableFailureException if a serialization error occurs or the producer is interrupted
      */
     @EventListener
-    public void handleEvent(SendItemReadyEmailEvent event) {
-        Map<String, Object> logArgs = loggingUtils.createLogMap();
-        loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_URI, event.getOrderURI());
+    public void handleEvent(final SendItemReadyEmailEvent event) {
         try {
             producer.sendMessage(event.getEmailModel(), event.getOrderURI(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
-            loggingUtils.getLogger().error("Failed to serialise email data as avro", e, logArgs);
-            throw new NonRetryableFailureException("Failed to serialise email data as avro", e);
+            final String error = "Failed to serialise email data as avro";
+            loggingUtils.getLogger().error(error, e, getLogMap(event));
+            throw new NonRetryableFailureException(error, e);
         } catch (ExecutionException | TimeoutException e) {
-            loggingUtils.getLogger().error("Error sending email data to Kafka", e, loggingUtils.createLogMap());
-            // TODO DCAC-295 applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
+            final String error = "Error sending email data to Kafka";
+            loggingUtils.getLogger().error(error, e, getLogMap(event));
             // TODO DCAC-295 Dedicated exception type?
-            // TODO DCAC-295 Improved log and exception message.
-            throw new RetryableErrorException("Error sending email data to Kafka", e);
+            throw new RetryableErrorException(error, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            loggingUtils.getLogger().error("Interrupted", e, logArgs);
-            throw new NonRetryableFailureException("Interrupted", e);
+            final String error = "Interrupted";
+            loggingUtils.getLogger().error(error, e, getLogMap(event));
+            throw new NonRetryableFailureException(error, e);
         }
     }
 
@@ -91,4 +90,14 @@ public class EmailSendService implements ApplicationEventPublisherAware {
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
+
+    private Map<String, Object> getLogMap(final SendItemReadyEmailEvent event) {
+        final Map<String, Object> logMap = new DataMap.Builder()
+            .itemId(event.getItemId())
+            .build()
+            .getLogMap();
+        loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, event.getOrderURI());
+        return logMap;
+    }
+
 }

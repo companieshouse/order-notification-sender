@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
@@ -52,11 +53,15 @@ class ItemGroupProcessedSendSenderServiceTest {
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
 
+    @Mock
+    private Item item;
+
     @Test
     void testHandleEventNoExceptionsThrown() {
 
         // given
         when(loggingUtils.getLogger()).thenReturn(logger);
+        when(event.getItem()).thenReturn(item);
 
         // when
         itemGroupProcessedSendSenderService.handleEvent(event);
@@ -76,6 +81,7 @@ class ItemGroupProcessedSendSenderServiceTest {
         when(orderEnricher.enrich(anyString(), eq(event))).thenThrow(
             new RetryableErrorException("Test exception", new Throwable("Test throwable")));
         when(loggingUtils.getLogger()).thenReturn(logger);
+        when(event.getItem()).thenReturn(item);
 
         // when and then
         final RetryableErrorException exception = assertThrows(RetryableErrorException.class,
