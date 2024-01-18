@@ -8,7 +8,7 @@ import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceItemReadyNotificationEnricher;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
+import uk.gov.companieshouse.ordernotification.emailsender.SendItemReadyEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 /**
@@ -46,7 +46,7 @@ public class ItemGroupProcessedSendSenderService {
                 "Successfully enriched item group item status update; notifying email sender",
                 loggerArgs);
             applicationEventPublisher.publishEvent(
-                new SendEmailEvent(orderUri, 0, emailSend));
+                new SendItemReadyEmailEvent(orderUri, emailSend));
         } catch (RetryableErrorException e) {
             loggingUtils.getLogger()
                 .error("Failed to enrich item group item status update", e, loggerArgs);

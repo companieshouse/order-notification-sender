@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
+import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 
@@ -50,6 +51,35 @@ public class EmailSendService implements ApplicationEventPublisherAware {
         } catch (ExecutionException | TimeoutException e) {
             loggingUtils.getLogger().error("Error sending email data to Kafka", e, loggingUtils.createLogMap());
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            loggingUtils.getLogger().error("Interrupted", e, logArgs);
+            throw new NonRetryableFailureException("Interrupted", e);
+        }
+    }
+
+    /**
+     * Handles an incoming {@link SendItemReadyEmailEvent} by sending a message containing email data. If an error
+     * occurs when publishing the message then the error handler will be notified.
+     *
+     * @param event A {@link SendItemReadyEmailEvent} object containing item ready email data
+     * @throws NonRetryableFailureException if a serialization error occurs or the producer is interrupted
+     */
+    @EventListener
+    public void handleEvent(SendItemReadyEmailEvent event) {
+        Map<String, Object> logArgs = loggingUtils.createLogMap();
+        loggingUtils.logIfNotNull(logArgs, LoggingUtils.ORDER_URI, event.getOrderURI());
+        try {
+            producer.sendMessage(event.getEmailModel(), event.getOrderURI(), EMAIL_SEND_TOPIC);
+        } catch (SerializationException e) {
+            loggingUtils.getLogger().error("Failed to serialise email data as avro", e, logArgs);
+            throw new NonRetryableFailureException("Failed to serialise email data as avro", e);
+        } catch (ExecutionException | TimeoutException e) {
+            loggingUtils.getLogger().error("Error sending email data to Kafka", e, loggingUtils.createLogMap());
+            // TODO DCAC-295 applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
+            // TODO DCAC-295 Dedicated exception type?
+            // TODO DCAC-295 Improved log and exception message.
+            throw new RetryableErrorException("Error sending email data to Kafka", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             loggingUtils.getLogger().error("Interrupted", e, logArgs);

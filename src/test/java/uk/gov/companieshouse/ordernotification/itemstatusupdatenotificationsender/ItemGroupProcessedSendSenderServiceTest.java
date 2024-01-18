@@ -21,7 +21,7 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderResourceItemReadyNotificationEnricher;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
-import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
+import uk.gov.companieshouse.ordernotification.emailsender.SendItemReadyEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 
@@ -66,7 +66,7 @@ class ItemGroupProcessedSendSenderServiceTest {
             eq("Successfully enriched item group item status update; notifying email sender"),
             any());
 
-        verify(applicationEventPublisher).publishEvent(any(SendEmailEvent.class));
+        verify(applicationEventPublisher).publishEvent(any(SendItemReadyEmailEvent.class));
     }
 
     @Test
