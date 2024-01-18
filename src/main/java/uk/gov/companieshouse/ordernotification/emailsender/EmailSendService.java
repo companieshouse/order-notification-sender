@@ -10,7 +10,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.logging.util.DataMap;
-import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 
@@ -76,8 +75,7 @@ public class EmailSendService implements ApplicationEventPublisherAware {
         } catch (ExecutionException | TimeoutException e) {
             final String error = "Error sending email data to Kafka";
             loggingUtils.getLogger().error(error, e, getLogMap(event));
-            // TODO DCAC-295 Dedicated exception type?
-            throw new RetryableErrorException(error, e);
+            throw new SendItemReadyEmailException(error, e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             final String error = "Interrupted";
