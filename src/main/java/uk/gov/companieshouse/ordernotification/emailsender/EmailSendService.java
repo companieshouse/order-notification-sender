@@ -58,8 +58,7 @@ public class EmailSendService implements ApplicationEventPublisherAware {
     }
 
     /**
-     * Handles an incoming {@link SendItemReadyEmailEvent} by sending a message containing email data. If an error
-     * occurs when publishing the message then the error handler will be notified.
+     * Handles an incoming {@link SendItemReadyEmailEvent} by sending a message containing email data.
      *
      * @param event A {@link SendItemReadyEmailEvent} object containing item ready email data
      * @throws NonRetryableFailureException if a serialization error occurs or the producer is interrupted
