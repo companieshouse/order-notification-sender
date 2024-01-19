@@ -193,12 +193,12 @@ class ItemGroupProcessedSendConsumerEmailSendExceptionTest {
         testProducer.send(new ProducerRecord<>(
             inboundTopic, 0, System.currentTimeMillis(), SAME_PARTITION_KEY,
             ITEM_GROUP_PROCESSED_SEND));
-        if (!latch.await(30L, TimeUnit.SECONDS)) {
+        if (!latch.await(15L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
 
         // then
-        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 30000L, 6);
+        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 15000L, 6);
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-retry"), is(3));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-error"), is(1));
@@ -231,12 +231,12 @@ class ItemGroupProcessedSendConsumerEmailSendExceptionTest {
         testProducer.send(new ProducerRecord<>(
             inboundTopic, 0, System.currentTimeMillis(), SAME_PARTITION_KEY,
             ITEM_GROUP_PROCESSED_SEND));
-        if (!latch.await(30L, TimeUnit.SECONDS)) {
+        if (!latch.await(15L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
 
         // then
-        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 30000L, 6);
+        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 15000L, 2);
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-retry"), is(0));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-error"), is(0));
