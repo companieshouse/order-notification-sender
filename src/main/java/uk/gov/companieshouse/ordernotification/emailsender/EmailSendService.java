@@ -21,6 +21,10 @@ public class EmailSendService implements ApplicationEventPublisherAware {
 
     private static final String EMAIL_SEND_TOPIC = "email-send";
 
+    private static final String EMAIL_DATA_SERIALIZATION_FAILURE =
+        "Failed to serialise email data as avro";
+    private static final String INTERRUPTED_EXCEPTION_LABEL = "Interrupted";
+
     private final MessageProducer producer;
     private final LoggingUtils loggingUtils;
     private ApplicationEventPublisher applicationEventPublisher;
@@ -45,15 +49,15 @@ public class EmailSendService implements ApplicationEventPublisherAware {
         try {
             producer.sendMessage(event.getEmailModel(), event.getOrderURI(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
-            loggingUtils.getLogger().error("Failed to serialise email data as avro", e, logArgs);
-            throw new NonRetryableFailureException("Failed to serialise email data as avro", e);
+            loggingUtils.getLogger().error(EMAIL_DATA_SERIALIZATION_FAILURE, e, logArgs);
+            throw new NonRetryableFailureException(EMAIL_DATA_SERIALIZATION_FAILURE, e);
         } catch (ExecutionException | TimeoutException e) {
             loggingUtils.getLogger().error("Error sending email data to Kafka", e, loggingUtils.createLogMap());
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            loggingUtils.getLogger().error("Interrupted", e, logArgs);
-            throw new NonRetryableFailureException("Interrupted", e);
+            loggingUtils.getLogger().error(INTERRUPTED_EXCEPTION_LABEL, e, logArgs);
+            throw new NonRetryableFailureException(INTERRUPTED_EXCEPTION_LABEL, e);
         }
     }
 
@@ -68,9 +72,8 @@ public class EmailSendService implements ApplicationEventPublisherAware {
         try {
             producer.sendMessage(event.getEmailModel(), event.getOrderURI(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
-            final String error = "Failed to serialise email data as avro";
-            loggingUtils.getLogger().error(error, e, getLogMap(event));
-            throw new NonRetryableFailureException(error, e);
+            loggingUtils.getLogger().error(EMAIL_DATA_SERIALIZATION_FAILURE, e, getLogMap(event));
+            throw new NonRetryableFailureException(EMAIL_DATA_SERIALIZATION_FAILURE, e);
         } catch (ExecutionException | TimeoutException e) {
             final String error = "Error sending email data to Kafka";
             loggingUtils.getLogger().error(error, e, getLogMap(event));
@@ -81,8 +84,7 @@ public class EmailSendService implements ApplicationEventPublisherAware {
             // calling Thread.currentThread().interrupt().
             // See https://github.com/spring-projects/spring-kafka/discussions/1847.
 
-            final String error = "Interrupted";
-            loggingUtils.getLogger().error(error, e, getLogMap(event));
+            loggingUtils.getLogger().error(INTERRUPTED_EXCEPTION_LABEL, e, getLogMap(event));
             throw e;
         }
     }
