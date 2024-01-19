@@ -17,7 +17,7 @@ import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseExce
  * <ol>
  *     <li>handles item ready notification</li>
  *     <li>retrieves the order (data) from the Orders API</li>
- *     <li>sends a certificate or certified copy order confirmation via the CHS Email Sender</li>
+ *     <li>sends a certificate or certified copy order confirmation via the CHS Email Sender.</li>
  * </ol>
  */
 @Service
@@ -38,7 +38,7 @@ public class OrderResourceItemReadyNotificationEnricher {
 
     /**
      * Enriches an item ready notification with an order resource fetched from the Orders API, and
-     * with item ready information
+     * with item ready information.
      *
      * @param orderUri  the order responsible for triggering the notification
      * @param itemReadyNotification the incoming item ready notification

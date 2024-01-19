@@ -62,10 +62,12 @@ public class EmailSendService implements ApplicationEventPublisherAware {
     }
 
     /**
-     * Handles an incoming {@link SendItemReadyEmailEvent} by sending a message containing email data.
+     * Handles an incoming {@link SendItemReadyEmailEvent} by sending a message containing email
+     * data for an item ready email.
      *
      * @param event A {@link SendItemReadyEmailEvent} object containing item ready email data
-     * @throws NonRetryableFailureException if a serialization error occurs or the producer is interrupted
+     * @throws NonRetryableFailureException if a serialization error occurs
+     * @throws InterruptedException if the producer is interrupted
      */
     @EventListener
     public void handleEvent(final SendItemReadyEmailEvent event) throws InterruptedException {
