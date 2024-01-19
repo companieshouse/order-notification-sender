@@ -64,7 +64,7 @@ public class EmailSendService implements ApplicationEventPublisherAware {
      * @throws NonRetryableFailureException if a serialization error occurs or the producer is interrupted
      */
     @EventListener
-    public void handleEvent(final SendItemReadyEmailEvent event) {
+    public void handleEvent(final SendItemReadyEmailEvent event) throws InterruptedException {
         try {
             producer.sendMessage(event.getEmailModel(), event.getOrderURI(), EMAIL_SEND_TOPIC);
         } catch (SerializationException e) {
@@ -76,10 +76,14 @@ public class EmailSendService implements ApplicationEventPublisherAware {
             loggingUtils.getLogger().error(error, e, getLogMap(event));
             throw new SendItemReadyEmailException(error, e);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+
+            // We do NOT propagate the interrupt state to the container by
+            // calling Thread.currentThread().interrupt().
+            // See https://github.com/spring-projects/spring-kafka/discussions/1847.
+
             final String error = "Interrupted";
             loggingUtils.getLogger().error(error, e, getLogMap(event));
-            throw new NonRetryableFailureException(error, e);
+            throw e;
         }
     }
 
