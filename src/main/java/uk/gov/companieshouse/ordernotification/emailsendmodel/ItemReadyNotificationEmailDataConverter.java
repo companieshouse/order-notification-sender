@@ -6,6 +6,7 @@ import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.config.ItemReadyEmailConfiguration;
 
+@SuppressWarnings("squid:S2160") // Subclasses that add fields should override "equals". Not used.
 public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEmailDataConverter {
 
     private final ItemGroupProcessedSend itemReadyNotification;

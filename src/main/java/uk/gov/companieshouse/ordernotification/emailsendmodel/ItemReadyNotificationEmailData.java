@@ -1,5 +1,6 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+@SuppressWarnings("squid:S2160") // Subclasses that add fields should override "equals". Not used.
 public class ItemReadyNotificationEmailData extends OrderNotificationEmailData {
 
     private String orderNumber;
