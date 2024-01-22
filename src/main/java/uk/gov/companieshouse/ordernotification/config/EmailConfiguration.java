@@ -11,7 +11,7 @@ import java.util.Objects;
 @PropertySource("classpath:application.properties")
 @ConfigurationProperties(prefix = "email")
 @Component
-public class EmailConfiguration {
+public class EmailConfiguration implements MessageTypeConfigProvider {
     private String dateFormat;
     private String senderAddress;
     private String paymentDateFormat;

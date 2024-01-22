@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
@@ -34,6 +35,9 @@ class ItemGroupProcessedSendEmailSenderTest {
 
     @InjectMocks
     private ItemGroupProcessedSendEmailSender itemGroupProcessedSendEmailSender;
+
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Test
     void testHandleMessageLogsMessage() {
