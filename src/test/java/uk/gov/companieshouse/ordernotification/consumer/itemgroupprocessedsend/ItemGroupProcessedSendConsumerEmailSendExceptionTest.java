@@ -111,7 +111,7 @@ class ItemGroupProcessedSendConsumerEmailSendExceptionTest {
     @SpyBean
     private ItemGroupProcessedSendHandler itemGroupProcessedSendHandler;
 
-    @MockBean // TODO DCAC-295 SpyBean or MockBean?
+    @MockBean
     private MessageProducer messageProducer;
 
     @Captor
