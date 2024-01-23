@@ -94,6 +94,7 @@ class OrdersApiOrderRetrieverTest {
         when(ordersGet.execute()).thenThrow(apiErrorResponseException);
         when(apiErrorResponseException.getMessage()).thenReturn("Orders API unavailable");
         when(apiErrorResponseException.getStatusCode()).thenReturn(HttpStatusCodes.STATUS_CODE_SERVER_ERROR);
+        when(apiErrorResponseException.getStatusMessage()).thenReturn("Underlying error");
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(loggingUtils.createLogMap()).thenReturn(new HashMap<>());
 
@@ -102,7 +103,7 @@ class OrdersApiOrderRetrieverTest {
 
         // then
         OrdersResponseException exception = assertThrows(OrdersResponseException.class, actual);
-        assertEquals("Order URI /orders/1234, API exception Orders API unavailable, HTTP status 500",
+        assertEquals("Order URI /orders/1234, API exception Orders API unavailable, HTTP status 500, status message Underlying error",
                 exception.getMessage());
     }
 
@@ -123,7 +124,7 @@ class OrdersApiOrderRetrieverTest {
 
         //then
         OrdersServiceException exception = assertThrows(OrdersServiceException.class, actual);
-        assertEquals("Order URI /orders/1234, API exception Resource not found, HTTP status 404",
+        assertEquals("Order URI /orders/1234, API exception Resource not found, HTTP status 404, status message null",
                 exception.getMessage());
     }
 

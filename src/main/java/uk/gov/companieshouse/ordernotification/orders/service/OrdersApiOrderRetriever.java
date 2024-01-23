@@ -41,10 +41,12 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
             loggingUtils.getLogger().debug("Order data returned from API client", logMap);
             return new OrdersApiWrapper(ordersApi);
         } catch (ApiErrorResponseException exception) {
-            String message = String.format("Order URI %s, API exception %s, HTTP status %d",
-                    orderUri,
-                    exception.getMessage(),
-                    exception.getStatusCode()
+            String message = String.format(
+                "Order URI %s, API exception %s, HTTP status %d, status message %s",
+                orderUri,
+                exception.getMessage(),
+                exception.getStatusCode(),
+                exception.getStatusMessage()
             );
             if (exception.getStatusCode() != HttpStatus.SC_NOT_FOUND) {
                 loggingUtils.getLogger().info(message, logMap);
