@@ -141,4 +141,54 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
             is(ITEM_GROUP_PROCESSED_SEND.getItem().getDigitalDocumentLocation()));
     }
 
+    @Test
+    @DisplayName("Handles item-group-processed-send message error")
+    void testHandlesItemGroupProcessedSendMessageError()
+        throws ExecutionException, InterruptedException, IOException {
+
+        // given
+        client.when(request()
+                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
+                .withMethod(HttpMethod.GET.toString()))
+            .respond(response()
+                .withStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
+                .withBody(JsonBody.json(IOUtils.resourceToString(
+                    "/fixtures/digital-certified-copy.json",
+                    StandardCharsets.UTF_8))));
+
+        // when
+        itemGroupProcessedSendProducer.send(new ProducerRecord<>("item-group-processed-send",
+            "item-group-processed-send",
+            ITEM_GROUP_PROCESSED_SEND)).get();
+
+        // then
+        final boolean messageHandled = eventLatch.await(60, TimeUnit.SECONDS);
+        if (!messageHandled) {
+            fail("FAILED to handle the item-group-processed-send message produced!");
+        }
+
+        eventLatch.await(30, TimeUnit.SECONDS);
+        Thread.sleep(100000);
+//        final email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
+//            .iterator()
+//            .next()
+//            .value();
+//
+//        // then
+//        assertThat(actual.getAppId(), is("order_notification_sender"));
+//        assertThat(actual.getMessageId(), is("digital_item_ready"));
+//        assertThat(actual.getMessageType(), is("digital_item_ready"));
+//        assertThat(actual.getEmailAddress(), is("noreply@companieshouse.gov.uk"));
+//        assertThat(actual.getData(), is(notNullValue()));
+//
+//        final ItemReadyNotificationEmailData data =
+//            objectMapper.readValue(actual.getData(), ItemReadyNotificationEmailData.class);
+//        assertThat(data.getOrderNumber(), is(ITEM_GROUP_PROCESSED_SEND.getOrderNumber()));
+//        assertThat(data.getGroupItem(), is(ITEM_GROUP_PROCESSED_SEND.getGroupItem()));
+//        assertThat(data.getItemId(), is(ITEM_GROUP_PROCESSED_SEND.getItem().getId()));
+//        assertThat(data.getDigitalDocumentLocation(),
+//            is(ITEM_GROUP_PROCESSED_SEND.getItem().getDigitalDocumentLocation()));
+    }
+
 }
