@@ -26,6 +26,7 @@ public class CertificateEmailDataMapper {
                 .withCompanyNumber(certificateItem.getCompanyNumber())
                 .withCertificateType(certificateTypeMapper.mapCertificateType(itemOptions.getCertificateType()))
                 .withDeliveryMethod(deliveryMappings.get(itemOptions.getDeliveryTimescale()))
+                .withQuantity(certificateItem.getQuantity())
                 .withFee("£" + certificateItem.getTotalItemCost())
                 .build();
     }
