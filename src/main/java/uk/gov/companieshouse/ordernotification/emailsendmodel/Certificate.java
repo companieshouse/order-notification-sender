@@ -7,13 +7,15 @@ public class Certificate {
     private final String companyNumber;
     private final String certificateType;
     private final String deliveryMethod;
+    private final Integer quantity;
     private final String fee;
 
-    public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, String fee) {
+    public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, Integer quantity, String fee) {
         this.id = id;
         this.companyNumber = companyNumber;
         this.certificateType = certificateType;
         this.deliveryMethod = deliveryMethod;
+        this.quantity = quantity;
         this.fee = fee;
     }
 
@@ -36,6 +38,9 @@ public class Certificate {
     public String getFee() {
         return fee;
     }
+    public Integer getQuantity() {
+        return quantity;
+    }
 
     public static CertificateBuilder builder() {
         return new CertificateBuilder();
@@ -47,6 +52,7 @@ public class Certificate {
         private String companyNumber;
         private String deliveryMethod;
         private String fee;
+        private Integer quantity;
 
         @Override
         protected CertificateBuilder clone() {
@@ -77,13 +83,18 @@ public class Certificate {
             return this;
         }
 
+        public CertificateBuilder withQuantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
         public CertificateBuilder withFee(String fee) {
             this.fee = fee;
             return this;
         }
 
         public Certificate build() {
-            return new Certificate(id, companyNumber, certificateType, deliveryMethod, fee);
+            return new Certificate(id, companyNumber, certificateType, deliveryMethod, quantity, fee);
         }
     }
 
@@ -100,11 +111,12 @@ public class Certificate {
                 && Objects.equals(certificateType, that.certificateType)
                 && Objects.equals(companyNumber, that.companyNumber)
                 && Objects.equals(deliveryMethod, that.deliveryMethod)
+                && Objects.equals(quantity, that.quantity)
                 && Objects.equals(fee, that.fee);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, certificateType, companyNumber, deliveryMethod, fee);
+        return Objects.hash(id, certificateType, companyNumber, deliveryMethod, quantity, fee);
     }
 }
