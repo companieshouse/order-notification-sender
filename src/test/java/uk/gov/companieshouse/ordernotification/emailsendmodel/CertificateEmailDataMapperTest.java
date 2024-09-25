@@ -29,12 +29,16 @@ public class CertificateEmailDataMapperTest {
     private static final ItemBuilder standardCertificate = itemBuilder()
             .withId(TestConstants.CERTIFICATE_ID)
             .withCompanyNumber(TestConstants.COMPANY_NUMBER)
-            .withTotalItemCost(TestConstants.ORDER_COST);
+            .withTotalItemCost(TestConstants.ORDER_COST)
+            .withQuantity(TestConstants.QUANTITY);
+
+
 
     private static final Certificate.CertificateBuilder mappedCertificate = Certificate.builder()
             .withId(TestConstants.CERTIFICATE_ID)
             .withCompanyNumber(TestConstants.COMPANY_NUMBER)
-            .withFee(TestConstants.ORDER_VIEW);
+            .withFee(TestConstants.ORDER_VIEW)
+             .withQuantity(TestConstants.QUANTITY);
 
     private static final ItemBuilder incorporation = standardCertificate.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.STANDARD)
@@ -128,6 +132,7 @@ public class CertificateEmailDataMapperTest {
         private String companyNumber;
         private DeliveryTimescaleApi deliveryTimescale;
         private String totalItemCost;
+        private Integer quantity;
 
         @Override
         protected ItemBuilder clone() {
@@ -163,6 +168,11 @@ public class CertificateEmailDataMapperTest {
             return this;
         }
 
+        public ItemBuilder withQuantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
         BaseItemApi build() {
             BaseItemApi result = new BaseItemApi();
             CertificateItemOptionsApi itemOptionsApi = new CertificateItemOptionsApi();
@@ -170,6 +180,7 @@ public class CertificateEmailDataMapperTest {
             result.setCompanyNumber(companyNumber);
             result.setTotalItemCost(totalItemCost);
             result.setItemOptions(itemOptionsApi);
+            result.setQuantity(quantity);
             itemOptionsApi.setCertificateType(certificateType);
             itemOptionsApi.setDeliveryTimescale(deliveryTimescale);
             return result;

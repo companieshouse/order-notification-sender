@@ -17,6 +17,7 @@ public final class TestConstants {
     public static final String PAYMENT_TIME = "27 July 2021 - 15:20:10";
     public static final String MAPPED_STANDARD_DELIVERY_TEXT = "Standard";
     public static final String MAPPED_EXPRESS_DELIVERY_TEXT = "Express";
+    public static final Integer QUANTITY = 1;
 
     //certificates
     public static final String CERTIFICATE_ID = "CRT-123456-123456";
