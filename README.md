@@ -14,7 +14,7 @@ Application specific attributes | Value                                | Descrip
 :---------|:-----------------------------------------------------------------------------|:-----------
 **ECS Cluster**        |{{order-service}}                                      | ECS cluster (stack) the service belongs to
 **Load balancer**      | N/A - consumer service                                            | The load balancer that sits in front of the service
-**Concourse pipeline**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/order-notification-sender) <br> [Pipeline code](https://github.com/companieshouse/ci-pipelines/blob/master/pipelines/ssplatform/team-development/payments.web.ch.gov.uk) <br> [Pipeline code](https://github.com/companieshouse/ci-pipelines/blob/master/pipelines/ssplatform/team-development/order-notification-sender)                                  | Concourse pipeline link in shared services
+**Concourse pipeline**     |[Pipeline link](https://ci-platform.companieshouse.gov.uk/teams/team-development/pipelines/order-notification-sender) <br> [Pipeline code](https://github.com/companieshouse/ci-pipelines/blob/master/pipelines/ssplatform/team-development/order-notification-sender)                                  | Concourse pipeline link in shared services
 
 
 ### Contributing
