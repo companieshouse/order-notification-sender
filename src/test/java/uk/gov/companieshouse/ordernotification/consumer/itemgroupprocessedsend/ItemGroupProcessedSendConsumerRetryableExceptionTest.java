@@ -11,6 +11,7 @@ import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTo
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAME_PARTITION_KEY;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -87,7 +88,7 @@ class ItemGroupProcessedSendConsumerRetryableExceptionTest {
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 30000L, 6);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(30000L), 6);
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-retry"), is(3));
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-error"), is(1));

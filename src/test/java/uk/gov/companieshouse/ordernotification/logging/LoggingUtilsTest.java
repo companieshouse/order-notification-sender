@@ -164,9 +164,9 @@ class LoggingUtilsTest {
 
     private Map<String, Object> expectedKafkaHeaders() {
         Map<String, Object> result = new HashMap<>();
-        result.put(KafkaHeaders.RECEIVED_MESSAGE_KEY, "key");
+        result.put(KafkaHeaders.RECEIVED_KEY, "key");
         result.put(KafkaHeaders.RECEIVED_TOPIC, TestConstants.KAFKA_TOPIC);
-        result.put(KafkaHeaders.RECEIVED_PARTITION_ID, 2);
+        result.put(KafkaHeaders.RECEIVED_PARTITION, 2);
         result.put(KafkaHeaders.OFFSET, 3L);
         return result;
     }

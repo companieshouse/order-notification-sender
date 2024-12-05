@@ -8,6 +8,7 @@ import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTo
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAME_PARTITION_KEY;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -81,7 +82,7 @@ class ItemGroupProcessedSendConsumerPositiveTest {
         }
 
         //then
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 1);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L), 1);
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-retry"), is(0));
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-error"), is(0));

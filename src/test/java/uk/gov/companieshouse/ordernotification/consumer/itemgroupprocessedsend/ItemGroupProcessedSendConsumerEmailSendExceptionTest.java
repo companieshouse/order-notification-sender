@@ -17,6 +17,7 @@ import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAM
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -196,7 +197,7 @@ class ItemGroupProcessedSendConsumerEmailSendExceptionTest {
         }
 
         // then
-        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 15000L, 6);
+        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(15000L), 6);
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-retry"), is(3));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-error"), is(1));
@@ -234,7 +235,7 @@ class ItemGroupProcessedSendConsumerEmailSendExceptionTest {
         }
 
         // then
-        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 15000L, 2);
+        final ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(15000L), 2);
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-retry"), is(0));
         assertThat(noOfRecordsForTopic(consumerRecords, inboundTopic + "-error"), is(0));

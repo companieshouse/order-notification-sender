@@ -6,6 +6,7 @@ import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTo
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAME_PARTITION_KEY;
 
+import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -68,7 +69,7 @@ class ItemGroupProcessedSendConsumerInvalidTopicTest {
                 SAME_PARTITION_KEY,
                 ITEM_GROUP_PROCESSED_SEND));
         future.get();
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 30000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(30000L), 2);
 
         //then
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName), is(1));
