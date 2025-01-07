@@ -1,6 +1,6 @@
 artifact_name       := order-notification-sender
 version             := latest
-repository_prefix   := 169942020521.dkr.ecr.eu-west-1.amazonaws.com
+repository_prefix   := 416670754337.dkr.ecr.eu-west-2.amazonaws.com
 dependency_check_base_suppressions:=common_suppressions_spring_6.xml
 
 # dependency_check_suppressions_repo_branch
