@@ -34,6 +34,7 @@
         <mockserver-client-java>5.15.0</mockserver-client-java>
         <jib-maven-plugin>3.4.4</jib-maven-plugin>
         <avro.version>1.12.0</avro.version>
+        <mockito-core.version>5.14.2</mockito-core.version>
         <sonar.exclusions>
             **/config/ApplicationConfig.java,
             **/config/EmailConfiguration.java,
@@ -75,12 +76,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <repositories>
-        <repository>
-            <id>maven-central</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
@@ -137,13 +132,6 @@
             <version>${mockito-junit-jupiter-version}</version>
             <scope>test</scope>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.junit.jupiter</groupId>-->
-<!--            <artifactId>junit-jupiter-engine</artifactId>-->
-<!--            <version>${junit-jupiter-engine-version}</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -214,7 +202,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.14.2</version>
+            <version>${mockito-core.version}</version>
             <scope>test</scope>
         </dependency>
 
