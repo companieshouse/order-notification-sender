@@ -10,6 +10,7 @@ import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTo
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAME_PARTITION_KEY;
 
+import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -82,7 +83,7 @@ class ItemGroupProcessedSendConsumerNonRetryableExceptionTest {
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }
-        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, 10000L, 2);
+        ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(10000L), 2);
 
         //then
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName), is(1));
