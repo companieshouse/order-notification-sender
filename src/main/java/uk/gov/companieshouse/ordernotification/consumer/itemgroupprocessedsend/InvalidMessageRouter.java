@@ -19,6 +19,7 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ItemGro
 
     public static final String MESSAGE_FLAGS = "message.flags";
     public static final String INVALID_MESSAGE_TOPIC = "invalid.message.topic";
+    public static final String ENABLE_IDEMPOTENCE = "enable.idempotence";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(APPLICATION_NAMESPACE);
 
