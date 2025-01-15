@@ -31,6 +31,7 @@ build:
 	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
 	mvn package -DskipTests=true
 
+
 .PHONY: test
 test: test-unit
 
@@ -39,7 +40,20 @@ test-unit: clean
 	mvn test
 
 .PHONY: package
-package: build
+package:
+ifndef version
+	$(error No version given. Aborting)
+endif
+	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+	$(info Packaging version: $(version))
+	@test -s ./$(artifact_name).jar || { echo "ERROR: Service JAR not found"; exit 1; }
+	$(eval tmpdir:=$(shell mktemp -d build-XXXXXXXXXX))
+	cp ./start.sh $(tmpdir)
+	cp ./routes.yaml $(tmpdir)
+	cp -r ./fonts $(tmpdir)
+	cp ./$(artifact_name).jar $(tmpdir)/$(artifact_name).jar
+	cd $(tmpdir); zip -r ../$(artifact_name)-$(version).zip *
+	rm -rf $(tmpdir)
 
 .PHONY: dist
 dist: clean build docker-build
