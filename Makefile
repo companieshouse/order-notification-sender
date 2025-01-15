@@ -1,6 +1,6 @@
-artifact_name       := ixbrl-renderer-service
-version             := unversioned
-
+artifact_name       := order-notification-sender
+version             := latest
+repository_prefix   := 416670754337.dkr.ecr.eu-west-2.amazonaws.com
 dependency_check_base_suppressions:=common_suppressions_spring_6.xml
 
 # dependency_check_suppressions_repo_branch
@@ -15,28 +15,29 @@ dependency_check_assembly_analyzer_enabled := false
 dependency_check_suppressions_repo_url:=git@github.com:companieshouse/dependency-check-suppressions.git
 suppressions_file := target/suppressions.xml
 
+.PHONY: all
+all: build
+
 .PHONY: clean
 clean:
 	mvn clean
 	rm -f ./$(artifact_name).jar
 	rm -f ./$(artifact_name)-*.zip
-	rm -rf ./BOOT-INF
-	rm -f ./core-renderer-R5pre1patched.jar
-	rm -f ./itext-2.0.8.jar
 	rm -rf ./build-*
-	rm -rf ./build.log-*
+	rm -f ./build.log
+
+.PHONY: build
+build:
+	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+	mvn package -DskipTests=true
+
+
+.PHONY: test
+test: test-unit
 
 .PHONY: test-unit
-test-unit: coverage
-
-.PHONY: verify
-verify: coverage
-
-.PHONY: coverage
-coverage: clean
-	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false jacoco:prepare-agent test \
-	jacoco:prepare-agent-integration verify \
-	jacoco:report jacoco:report-integration
+test-unit: clean
+	mvn test
 
 .PHONY: package
 package:
@@ -54,24 +55,21 @@ endif
 	cd $(tmpdir); zip -r ../$(artifact_name)-$(version).zip *
 	rm -rf $(tmpdir)
 
-.PHONY: build
-build: clean
-	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
-	mvn package -Dskip.unit.tests=true
-	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
-
 .PHONY: dist
-dist: test-unit
+dist: clean build docker-build
 
 .PHONY: sonar
 sonar:
-	mvn sonar:sonar
+	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar
 
 .PHONY: sonar-pr-analysis
 sonar-pr-analysis:
-	mvn sonar:sonar -P sonar-pr-analysis
+	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar -P sonar-pr-analysis
 
-##### Start of dependency-check block to be put at bottom of Makefile
+.PHONY: docker-build
+docker-build: build
+	DOCKER_BUILDKIT=0 docker build -t $(repository_prefix)/$(artifact_name):$(version) .
+
 .PHONY: dependency-check
 dependency-check:
 	@ if [ -d "$(DEPENDENCY_CHECK_SUPPRESSIONS_HOME)" ]; then \
@@ -103,5 +101,3 @@ dependency-check:
 
 .PHONY: security-check
 security-check: dependency-check
-
-##### End of dependency-check block
