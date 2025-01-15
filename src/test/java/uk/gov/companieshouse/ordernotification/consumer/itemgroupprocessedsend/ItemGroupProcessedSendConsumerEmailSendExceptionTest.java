@@ -148,18 +148,6 @@ class ItemGroupProcessedSendConsumerEmailSendExceptionTest {
         client.reset();
     }
 
-    @Ignore
-    void testTimeoutExceptionInEmailSendIsRetried()
-        throws InterruptedException, SerializationException, ExecutionException, TimeoutException, IOException {
-        verifyExceptionInEmailSendIsRetried(TimeoutException.class);
-    }
-
-    @Ignore
-    void testExecutionExceptionInEmailSendIsRetried()
-        throws InterruptedException, SerializationException, ExecutionException, TimeoutException, IOException {
-        verifyExceptionInEmailSendIsRetried(ExecutionException.class);
-    }
-
     @Test
     void testSerializationExceptionInEmailSendIsNotRetried()
         throws InterruptedException, SerializationException, ExecutionException, TimeoutException, IOException {
