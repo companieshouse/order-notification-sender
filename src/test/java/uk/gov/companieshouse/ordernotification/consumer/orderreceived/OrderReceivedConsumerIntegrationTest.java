@@ -83,7 +83,6 @@ class OrderReceivedConsumerIntegrationTest {
         client.reset();
     }
 
-
     private static OrderReceived getOrderReceived() {
         OrderReceived orderReceived = new OrderReceived();
         orderReceived.setOrderUri(TestConstants.ORDER_NOTIFICATION_REFERENCE);

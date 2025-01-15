@@ -27,7 +27,7 @@
         <mockito-inline.version>5.2.0</mockito-inline.version>
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
         <junit-jupiter-engine-version>5.11.4</junit-jupiter-engine-version>
-        <private-api-sdk-java.version>4.0.99</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.259</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
         <testcontainers.version>1.20.4</testcontainers.version>
         <org.hamcrest.version>3.0</org.hamcrest.version>
@@ -83,20 +83,19 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
             <version>${structured-logging.version}</version>
+          <exclusions>
+            <exclusion>
+              <groupId>org.slf4j</groupId>
+              <artifactId>*</artifactId>
+            </exclusion>
+          </exclusions>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <!-- Exclude logback to prevent multiple SLF4J binding warning -->
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-                <exclusion>
-                    <!--Exclude slf4j-simple to prevent loss of log formatting. See DCAC-294. -->
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-simple</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-logging</artifactId>
+      </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
