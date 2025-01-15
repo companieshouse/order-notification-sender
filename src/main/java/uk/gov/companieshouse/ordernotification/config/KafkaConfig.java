@@ -1,8 +1,5 @@
 package uk.gov.companieshouse.ordernotification.config;
 
-import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.INVALID_MESSAGE_TOPIC;
-import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.MESSAGE_FLAGS;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -34,6 +31,8 @@ import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter;
 import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.MessageFlags;
 import uk.gov.companieshouse.orders.OrderReceived;
+
+import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.*;
 
 @Configuration
 public class KafkaConfig {
@@ -101,6 +100,7 @@ public class KafkaConfig {
         config.setRoundRobinPartitioner(true);
         config.setAcks(Acks.WAIT_FOR_ALL);
         config.setRetries(10);
+        config.setEnableIdempotence(false);
         return config;
     }
 
@@ -141,6 +141,7 @@ public class KafkaConfig {
             InvalidMessageRouter.class.getName());
         producerFactoryConfig.put(MESSAGE_FLAGS, messageFlags);
         producerFactoryConfig.put(INVALID_MESSAGE_TOPIC, invalidMessageTopic);
+        producerFactoryConfig.put(ENABLE_IDEMPOTENCE, false);
 
         return new DefaultKafkaProducerFactory<>(
             producerFactoryConfig,
