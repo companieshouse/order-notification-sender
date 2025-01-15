@@ -100,6 +100,7 @@ public class KafkaConfig {
         config.setRoundRobinPartitioner(true);
         config.setAcks(Acks.WAIT_FOR_ALL);
         config.setRetries(10);
+        config.setEnableIdempotence(false);
         return config;
     }
 
