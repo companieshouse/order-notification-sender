@@ -126,18 +126,10 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedProducer.send(producerRecord).get();
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-//        email_send actual = KafkaTestUtils.getSingleRecord(emailSendConsumer, kafkaTopics.getEmailSend()).value();
 
         //then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
-//        assertEquals("order_notification_sender",
-//                actual.getAppId());
-//        assertEquals("order_notification_sender_summary",
-//                actual.getMessageId());
-//        assertEquals("order_notification_sender_summary",
-//                actual.getMessageType());
-//        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
     }
 
     @Test
@@ -165,18 +157,10 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedProducer.send(producerRecord).get();
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-//        email_send actual = KafkaTestUtils.getSingleRecord(emailSendConsumer, kafkaTopics.getEmailSend()).value();
 
         //then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
-//        assertEquals("order_notification_sender",
-//                actual.getAppId());
-//        assertEquals("order_notification_sender_summary",
-//                actual.getMessageId());
-//        assertEquals("order_notification_sender_summary",
-//                actual.getMessageType());
-//        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
     }
 
     @Test
@@ -202,15 +186,10 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedProducer.send(producerRecord).get();
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-//        email_send actual = KafkaTestUtils.getSingleRecord(emailSendConsumer, kafkaTopics.getEmailSend()).value();
 
         //then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
-//        assertEquals("order_notification_sender", actual.getAppId());
-//        assertEquals("order_notification_sender_summary", actual.getMessageId());
-//        assertEquals("order_notification_sender_summary", actual.getMessageType());
-//        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
     }
 
     @Test
@@ -236,16 +215,10 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedProducer.send(producerRecord).get();
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-//        email_send actual = KafkaTestUtils.getSingleRecord(emailSendConsumer,
-//                kafkaTopics.getEmailSend()).value();
 
         //then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
-//        assertEquals("order_notification_sender", actual.getAppId());
-//        assertEquals("order_notification_sender_summary", actual.getMessageId());
-//        assertEquals("order_notification_sender_summary", actual.getMessageType());
-//        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
     }
 
     @Test
@@ -265,14 +238,8 @@ class OrderReceivedErrorConsumerIntegrationTest {
                 getOrderReceived());
         orderReceivedProducer.send(producerRecord).get();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-
-        // Get order received from retry topic
-//        OrderReceived actual = KafkaTestUtils.getSingleRecord(orderReceivedRetryConsumer, kafkaTopics.getOrderReceivedRetry(), Duration.ofMillis(30000L)).value();
-
         // then
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
-//        assertNotNull(actual);
-//        assertEquals(getOrderReference(), actual.getOrderUri());
     }
 
     private OrderReceived getOrderReceived() {
