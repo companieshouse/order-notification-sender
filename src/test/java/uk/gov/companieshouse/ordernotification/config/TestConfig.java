@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.EmbeddedKafkaZKBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
@@ -34,7 +35,7 @@ public class TestConfig {
 
     @Bean
     EmbeddedKafkaBroker embeddedKafkaBroker() {
-        return new EmbeddedKafkaBroker(1);
+        return new EmbeddedKafkaZKBroker(1);
     }
 
     @Bean

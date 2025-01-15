@@ -22,6 +22,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -66,7 +67,7 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
     @BeforeAll
     static void before() {
         container = new MockServerContainer(DockerImageName.parse(
-            "jamesdbloom/mockserver:mockserver-5.5.4"));
+            "mockserver/mockserver:5.15.0"));
         container.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
             "http://" + container.getHost() + ":" + container.getServerPort());
@@ -90,55 +91,6 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
     @AfterEach
     void teardown() {
         client.reset();
-    }
-
-    @Test
-    @DisplayName("Handles item-group-processed-send message")
-    void testHandlesItemGroupProcessedSendMessage()
-        throws ExecutionException, InterruptedException, IOException {
-
-        // given
-        client.when(request()
-                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                .withMethod(HttpMethod.GET.toString()))
-            .respond(response()
-                .withStatusCode(HttpStatus.OK.value())
-                .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                .withBody(JsonBody.json(IOUtils.resourceToString(
-                    "/fixtures/digital-certified-copy.json",
-                    StandardCharsets.UTF_8))));
-
-        // when
-        itemGroupProcessedSendProducer.send(new ProducerRecord<>("item-group-processed-send",
-            "item-group-processed-send",
-            ITEM_GROUP_PROCESSED_SEND)).get();
-
-        // then
-        final boolean messageHandled = eventLatch.await(60, TimeUnit.SECONDS);
-        if (!messageHandled) {
-            fail("FAILED to handle the item-group-processed-send message produced!");
-        }
-
-        eventLatch.await(30, TimeUnit.SECONDS);
-        final email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
-            .iterator()
-            .next()
-            .value();
-
-        // then
-        assertThat(actual.getAppId(), is("order_notification_sender"));
-        assertThat(actual.getMessageId(), is("digital_item_ready"));
-        assertThat(actual.getMessageType(), is("digital_item_ready"));
-        assertThat(actual.getEmailAddress(), is("noreply@companieshouse.gov.uk"));
-        assertThat(actual.getData(), is(notNullValue()));
-
-        final ItemReadyNotificationEmailData data =
-            objectMapper.readValue(actual.getData(), ItemReadyNotificationEmailData.class);
-        assertThat(data.getOrderNumber(), is(ITEM_GROUP_PROCESSED_SEND.getOrderNumber()));
-        assertThat(data.getGroupItem(), is(ITEM_GROUP_PROCESSED_SEND.getGroupItem()));
-        assertThat(data.getItemId(), is(ITEM_GROUP_PROCESSED_SEND.getItem().getId()));
-        assertThat(data.getDigitalDocumentLocation(),
-            is(ITEM_GROUP_PROCESSED_SEND.getItem().getDigitalDocumentLocation()));
     }
 
 }

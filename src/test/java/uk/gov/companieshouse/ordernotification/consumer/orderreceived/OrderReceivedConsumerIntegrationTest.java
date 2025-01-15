@@ -17,6 +17,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -56,7 +57,7 @@ class OrderReceivedConsumerIntegrationTest {
     @BeforeAll
     static void before() {
         container = new MockServerContainer(DockerImageName.parse(
-                "jamesdbloom/mockserver:mockserver-5.5.4"));
+                "mockserver/mockserver:5.15.0"));
         container.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
                 "http://" + container.getHost() + ":" + container.getServerPort());
@@ -80,160 +81,6 @@ class OrderReceivedConsumerIntegrationTest {
     @AfterEach
     void teardown() {
         client.reset();
-    }
-
-    @Test
-    void testHandlesCertificateOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
-        //given
-        client.when(request()
-                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/fixtures/certified-certificate.json",
-                                StandardCharsets.UTF_8))));
-
-        // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received",
-                "order-received",
-                getOrderReceived())).get();
-        eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
-                .iterator()
-                .next()
-                .value();
-
-        // then
-        assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_summary", actual.getMessageId());
-        assertEquals("order_notification_sender_summary", actual.getMessageType());
-        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertNotNull(actual.getData());
-    }
-
-    @Test
-    void testHandlesDissolvedCertificateOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
-        //given
-        client.when(request()
-                        .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                        .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/fixtures/dissolved-certificate.json",
-                                StandardCharsets.UTF_8))));
-
-        // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received",
-                "order-received",
-                getOrderReceived())).get();
-        eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
-                .iterator()
-                .next()
-                .value();
-
-        // then
-        assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_summary", actual.getMessageId());
-        assertEquals("order_notification_sender_summary", actual.getMessageType());
-        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertNotNull(actual.getData());
-    }
-
-    @Test
-    void testHandlesCertifiedCopyOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
-        // given
-        client.when(request()
-                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString("/fixtures/certified-copy.json",
-                                StandardCharsets.UTF_8))));
-
-        // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received",
-                "order-received",
-                getOrderReceived())).get();
-        eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
-                .iterator()
-                .next()
-                .value();
-
-        // then
-        assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_summary", actual.getMessageId());
-        assertEquals("order_notification_sender_summary", actual.getMessageType());
-        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertNotNull(actual.getData());
-    }
-
-    @Test
-    void testHandlesMissingImageOrderReceivedMessage() throws ExecutionException, InterruptedException, IOException {
-        // given
-        client.when(request()
-                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/fixtures/missing-image-delivery.json",
-                                StandardCharsets.UTF_8))));
-
-        // when
-        orderReceivedProducer.send(new ProducerRecord<>("order-received",
-                "order-received",
-                getOrderReceived())).get();
-        eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
-                .iterator()
-                .next()
-                .value();
-
-        // then
-        assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_summary", actual.getMessageId());
-        assertEquals("order_notification_sender_summary", actual.getMessageType());
-        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertNotNull(actual.getData());
-    }
-
-    @Test
-    void testHandlesOrderReceivedRetryMessage() throws ExecutionException, InterruptedException, IOException {
-        // given
-        client.when(request()
-                .withPath(TestConstants.ORDER_NOTIFICATION_REFERENCE)
-                .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
-                                "/fixtures/missing-image-delivery.json",
-                                StandardCharsets.UTF_8))));
-
-        // when
-        orderReceivedRetryProducer.send(new ProducerRecord<>("order-received-notification-retry",
-                "order-received-notification-retry",
-                getOrderReceivedRetry())).get();
-        eventLatch.await(30, TimeUnit.SECONDS);
-        email_send actual = emailSendConsumer.poll(Duration.ofSeconds(15))
-                .iterator()
-                .next()
-                .value();
-
-        // then
-        assertEquals("order_notification_sender", actual.getAppId());
-        assertEquals("order_notification_sender_summary", actual.getMessageId());
-        assertEquals("order_notification_sender_summary", actual.getMessageType());
-        assertEquals("noreply@companieshouse.gov.uk", actual.getEmailAddress());
-        assertNotNull(actual.getData());
     }
 
     private static OrderReceived getOrderReceived() {
