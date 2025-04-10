@@ -66,6 +66,7 @@ module "ecs-service" {
   fargate_subnets                    = local.application_subnet_ids
   service_autoscale_scale_in_cooldown  = var.service_autoscale_scale_in_cooldown
   service_autoscale_scale_out_cooldown = var.service_autoscale_scale_out_cooldown
+  read_only_root_filesystem = false
 
 
   # Service environment variable and secret configs
