@@ -67,7 +67,7 @@ class OrdersApiOrderRetrieverTest {
     void getOrderData() throws Exception {
         //given
         Map<String, Object> logMap = new HashMap<>();
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClient.getPrivateApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
         when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
         when(ordersGet.execute()).thenReturn(ordersResponse);
@@ -88,7 +88,7 @@ class OrdersApiOrderRetrieverTest {
     @Test
     void getOrderDataThrowsResponseExceptionIfApiErrorResponseExceptionThrown() throws ApiErrorResponseException, URIValidationException {
         //given
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClient.getPrivateApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
         when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
         when(ordersGet.execute()).thenThrow(apiErrorResponseException);
@@ -109,7 +109,7 @@ class OrdersApiOrderRetrieverTest {
     @Test
     void getOrderDataThrowsServiceExceptionIf404ReturnedByOrdersApi() throws ApiErrorResponseException, URIValidationException {
         //given
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClient.getPrivateApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
         when(privateOrderResourceHandler.getOrder(ORDER_URL)).thenReturn(ordersGet);
         when(ordersGet.execute()).thenThrow(apiErrorResponseException);
@@ -131,7 +131,7 @@ class OrdersApiOrderRetrieverTest {
     void getOrderDataThrowsServiceExceptionForIncorrectUri() throws ApiErrorResponseException, URIValidationException {
         //given
         Map<String, Object> logMap = new HashMap<>();
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClient.getPrivateApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);
         when(privateOrderResourceHandler.getOrder(anyString())).thenReturn(ordersGet);
         when(ordersGet.execute()).thenThrow(URIValidationException.class);
