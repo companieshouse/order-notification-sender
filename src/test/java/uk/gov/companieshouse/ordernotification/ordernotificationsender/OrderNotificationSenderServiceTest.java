@@ -6,12 +6,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
+import uk.gov.companieshouse.api.InternalApiClient;
+import uk.gov.companieshouse.api.error.ApiErrorResponseException;
+import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
+import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
+import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
+import uk.gov.companieshouse.ordernotification.emailsender.EmailSendFailedEvent;
 import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import uk.gov.companieshouse.ordernotification.orders.service.ApiClient;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 import java.util.HashMap;
@@ -47,13 +54,28 @@ class OrderNotificationSenderServiceTest {
     @Mock
     private EmailSend emailSend;
 
+    @Mock
+    private ApiClient apiClient;
+
+    @Mock
+    private InternalApiClient internalApiClient;
+
+    @Mock
+    private PrivateSendEmailHandler privateSendEmailHandler;
+
+    @Mock
+    private PrivateSendEmailPost privateSendEmailPost;
+
     @Test
-    void testPublishEmailSendEventWhenSendOrderNotificationEventHandled() throws OrdersResponseException {
+    void testPublishEmailSendEventWhenSendOrderNotificationEventHandled() throws OrdersResponseException, ApiErrorResponseException {
         //given
         when(orderNotificationEnricher.enrich(any())).thenReturn(emailSend);
         when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
-        when(sendOrderNotificationEvent.getRetryCount()).thenReturn(1);
         when(loggingUtils.getLogger()).thenReturn(logger);
+        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
+        when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any())).thenReturn(privateSendEmailPost);
+        when(privateSendEmailPost.execute()).thenReturn(new ApiResponse<>(200, null, null));
         Map<String, Object> data = new HashMap<>();
         when(loggingUtils.createLogMap()).thenReturn(data);
         orderNotificationSenderService.setApplicationEventPublisher(eventPublisher);
@@ -62,7 +84,7 @@ class OrderNotificationSenderServiceTest {
         orderNotificationSenderService.handleEvent(sendOrderNotificationEvent);
 
         //then
-        verify(eventPublisher).publishEvent(new SendEmailEvent(TestConstants.ORDER_NOTIFICATION_REFERENCE, 1, emailSend));
+        verify(privateSendEmailPost).execute();
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).debug("Successfully enriched order; notifying email sender", data);
         verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -85,6 +107,30 @@ class OrderNotificationSenderServiceTest {
         verify(eventPublisher).publishEvent(new OrderEnrichmentFailedEvent(sendOrderNotificationEvent));
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).error(eq("Failed to enrich order; notifying error handler"), any(), same(data));
+        verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
+    }
+
+    @Test
+    void testEmailSendFailedEventWhenApiErrorResponseExceptionThrown() throws OrdersResponseException, ApiErrorResponseException {
+        //given
+        when(orderNotificationEnricher.enrich(any())).thenReturn(emailSend);
+        when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        when(loggingUtils.getLogger()).thenReturn(logger);
+        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
+        when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any())).thenReturn(privateSendEmailPost);
+        when(privateSendEmailPost.execute()).thenThrow(ApiErrorResponseException.class);
+        Map<String, Object> data = new HashMap<>();
+        when(loggingUtils.createLogMap()).thenReturn(data);
+        orderNotificationSenderService.setApplicationEventPublisher(eventPublisher);
+
+        //when
+        orderNotificationSenderService.handleEvent(sendOrderNotificationEvent);
+
+        //then
+        verify(eventPublisher).publishEvent(new EmailSendFailedEvent(sendOrderNotificationEvent));
+        verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        verify(logger).error(eq("Failed to send email for enriched order; notifying error handler"), any(), same(data));
         verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
     }
 }

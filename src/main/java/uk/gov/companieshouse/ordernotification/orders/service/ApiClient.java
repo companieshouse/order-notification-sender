@@ -5,10 +5,14 @@ import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.sdk.manager.ApiSdkManager;
 
 @Component
-class ApiClient {
+public class ApiClient {
+
+    public InternalApiClient getPrivateApiClient() {
+        return ApiSdkManager.getPrivateSDK();
+    }
 
     public InternalApiClient getInternalApiClient() {
-        return ApiSdkManager.getPrivateSDK();
+        return ApiSdkManager.getInternalSDK();
     }
 
 }

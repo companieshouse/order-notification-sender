@@ -32,7 +32,7 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
         Map<String, Object> logMap = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(logMap, LoggingUtils.ORDER_URI, orderUri);
         try {
-            InternalApiClient internalApiClient = apiClient.getInternalApiClient();
+            InternalApiClient internalApiClient = apiClient.getPrivateApiClient();
             PrivateOrderResourceHandler privateOrderResourceHandler = internalApiClient.privateOrderResourceHandler();
             ApiResponse<OrdersApi> response = privateOrderResourceHandler.getOrder(orderUri)
                     .execute();
