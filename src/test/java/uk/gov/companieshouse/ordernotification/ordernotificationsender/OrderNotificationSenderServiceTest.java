@@ -83,6 +83,7 @@ class OrderNotificationSenderServiceTest {
         orderNotificationSenderService.handleEvent(sendOrderNotificationEvent);
 
         //then
+        verify(internalApiClient).setBasePath(any());
         verify(privateSendEmailPost).execute();
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(logger).debug("Successfully enriched order; notifying email sender", data);

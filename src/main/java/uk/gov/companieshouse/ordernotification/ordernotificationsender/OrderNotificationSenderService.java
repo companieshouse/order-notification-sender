@@ -1,6 +1,8 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
@@ -26,12 +28,17 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
     private final OrderNotificationEnrichable orderEnricher;
     private final LoggingUtils loggingUtils;
     private ApplicationEventPublisher applicationEventPublisher;
-    private ApiClient apiClient;
+    private final ApiClient apiClient;
+    private final String chsKafkaUrl;
 
-    public OrderNotificationSenderService(OrderNotificationEnrichable orderEnricher, LoggingUtils loggingUtils, ApiClient apiClient) {
+    public OrderNotificationSenderService(@Value("${chs.kafka.api.endpoint}")String chsKafkaUrl,
+                                          OrderNotificationEnrichable orderEnricher,
+                                          LoggingUtils loggingUtils,
+                                          ApiClient apiClient) {
         this.orderEnricher = orderEnricher;
         this.loggingUtils = loggingUtils;
         this.apiClient = apiClient;
+        this.chsKafkaUrl = chsKafkaUrl;
     }
 
     /**
@@ -45,8 +52,9 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
         Map<String, Object> loggerArgs = loggingUtils.createLogMap();
         loggingUtils.logIfNotNull(loggerArgs, LoggingUtils.ORDER_URI, sendOrderNotificationEvent.getOrderURI());
         try {
-            InternalApiClient internalApiClient = apiClient.getInternalApiClient();
             EmailSend emailSend = orderEnricher.enrich(sendOrderNotificationEvent.getOrderURI());
+            InternalApiClient internalApiClient = apiClient.getInternalApiClient();
+            internalApiClient.setBasePath(chsKafkaUrl);
             loggingUtils.getLogger().debug("Successfully enriched order; notifying email sender", loggerArgs);
 
             SendEmail sendEmail = new SendEmail();
