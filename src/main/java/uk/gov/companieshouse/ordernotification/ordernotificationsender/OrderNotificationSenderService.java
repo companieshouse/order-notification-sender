@@ -14,7 +14,6 @@ import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableE
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSendFailedEvent;
-import uk.gov.companieshouse.ordernotification.emailsender.SendEmailEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.ApiClient;
 
