@@ -1,5 +1,14 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,15 +28,6 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.ApiClient;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderNotificationSenderServiceTest {
@@ -86,8 +86,9 @@ class OrderNotificationSenderServiceTest {
         verify(internalApiClient).setBasePath(any());
         verify(privateSendEmailPost).execute();
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
-        verify(logger).debug("Successfully enriched order; notifying email sender", data);
         verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
+
+        verify(logger, times(1)).debug("Preparing to enrich order; using order enricher...", data);
     }
 
     @Test

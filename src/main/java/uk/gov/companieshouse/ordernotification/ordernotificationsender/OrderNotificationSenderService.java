@@ -60,8 +60,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
         try {
             var emailSend = orderEnricher.enrich(event.getOrderURI());
-            logger.debug(format("Successfully enriched order; preparing to build email payload: %s",
-                    convertToString(emailSend)));
+            loggingUtils.logAsJson("EmailSend", emailSend);
 
             var sendEmail = new SendEmail();
             sendEmail.setAppId(emailSend.getAppId());
@@ -98,12 +97,4 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
         this.applicationEventPublisher = publisher;
     }
 
-    private String convertToString(final EmailSend emailSend) {
-        try {
-            return new ObjectMapper().writeValueAsString(emailSend);
-
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
