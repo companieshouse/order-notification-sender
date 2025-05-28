@@ -36,5 +36,4 @@ public class EmailSendFailedEvent implements EventSourceRetrievable {
     public int hashCode() {
         return Objects.hash(eventSource);
     }
-
 }

@@ -5,17 +5,13 @@ import static java.lang.String.format;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
-import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
-import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
@@ -64,7 +60,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
         try {
             var emailSend = orderEnricher.enrich(event.getOrderURI());
-            logger.debug(format("Successfully enriched order; preparing to build email payload from model: %s",
+            logger.debug(format("Successfully enriched order; preparing to build email payload: %s",
                     convertToString(emailSend)));
 
             var sendEmail = new SendEmail();
@@ -104,7 +100,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
     private String convertToString(final EmailSend emailSend) {
         try {
-            new ObjectMapper().writeValueAsString(emailSend);
+            return new ObjectMapper().writeValueAsString(emailSend);
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
