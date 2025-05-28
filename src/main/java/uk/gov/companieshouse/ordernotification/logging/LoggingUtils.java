@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.ordernotification.logging;
 
+import static java.lang.String.format;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.MessageHeaders;
@@ -7,12 +13,10 @@ import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 import uk.gov.companieshouse.logging.util.DataMap;
 
 public class LoggingUtils {
+
     public static final String TOPIC = "topic";
     public static final String OFFSET = "offset";
     public static final String KEY = "key";
@@ -29,6 +33,7 @@ public class LoggingUtils {
     public static final String EXCEPTION = "exception";
     public static final String PAYMENT_REFERENCE = "payment_reference";
     public static final String COMPANY_NUMBER = "company_number";
+    public static final String JSON_OUTPUT = "json_output";
 
     private final Logger logger;
 
@@ -72,6 +77,18 @@ public class LoggingUtils {
         if (loggingObject != null) {
             logMap.put(key, loggingObject);
         }
+    }
+
+    public void logAsJson(String key, Object value) {
+        Map<String, Object> logMap = createLogMap();
+        try {
+            logIfNotNull(logMap, key, new ObjectMapper().writeValueAsString(value));
+
+        } catch (JsonProcessingException e) {
+            logIfNotNull(logMap, key, format("Error converting object '%s' to JSON: %s",
+                    value.getClass().getSimpleName(), e.getMessage()));
+        }
+        logger.debug("Logging object as JSON", logMap);
     }
 
     public Map<String, Object> logWithOrderUri(String logMessage,

@@ -1,8 +1,7 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
-import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
-
 import java.util.Objects;
+import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
 
 /**
  * Raised when an order is ready to be processed.
@@ -43,4 +42,26 @@ public class SendOrderNotificationEvent implements OrderIdentifiable {
     public int hashCode() {
         return Objects.hash(orderReference, retryCount);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class SendOrderNotificationEvent {\n");
+        sb.append("    orderReference: ").append(this.toIndentedString(this.orderReference)).append("\n");
+        sb.append("    retryCount: ").append(this.toIndentedString(this.retryCount)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+
+    /**
+     * Converts the given object to string with each line indented by 4 spaces
+     * (except the first line).
+     *
+     * @param o The object to convert to string.
+     * @return The indented string representation of the object.
+     */
+    private String toIndentedString(Object o) {
+        return o == null ? "null" : o.toString().replace("\n", "\n    ");
+    }
+
 }
