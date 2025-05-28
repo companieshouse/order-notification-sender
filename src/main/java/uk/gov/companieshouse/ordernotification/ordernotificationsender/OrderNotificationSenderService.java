@@ -2,8 +2,6 @@ package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
 import static java.lang.String.format;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
@@ -16,7 +14,6 @@ import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
-import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSendFailedEvent;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.orders.service.ApiClient;
@@ -68,8 +65,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             sendEmail.setMessageType(emailSend.getMessageType());
             sendEmail.setJsonData(emailSend.getData());
             sendEmail.setEmailAddress(emailSend.getEmailAddress());
-
-            logger.debug(format("Email Payload: %s", sendEmail));
+            loggingUtils.logAsJson("SendEmail", sendEmail);
 
             var internalApiClient = apiClient.getInternalApiClient();
             internalApiClient.setBasePath(chsKafkaUrl);

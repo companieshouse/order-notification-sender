@@ -33,6 +33,7 @@ public class LoggingUtils {
     public static final String EXCEPTION = "exception";
     public static final String PAYMENT_REFERENCE = "payment_reference";
     public static final String COMPANY_NUMBER = "company_number";
+    public static final String JSON_OUTPUT = "json_output";
 
     private final Logger logger;
 
@@ -78,16 +79,16 @@ public class LoggingUtils {
         }
     }
 
-    public void logAsJson(String customLabel, Object value) {
+    public void logAsJson(String key, Object value) {
         Map<String, Object> logMap = createLogMap();
         try {
-            var valueAsString = new ObjectMapper().writeValueAsString(value);
-            logIfNotNull(logMap, customLabel, valueAsString);
+            logIfNotNull(logMap, key, new ObjectMapper().writeValueAsString(value));
 
         } catch (JsonProcessingException e) {
-            logIfNotNull(logMap, customLabel, format("Error converting object '%s' to JSON: %s",
+            logIfNotNull(logMap, key, format("Error converting object '%s' to JSON: %s",
                     value.getClass().getSimpleName(), e.getMessage()));
         }
+        logger.debug("Logging object as JSON", logMap);
     }
 
     public Map<String, Object> logWithOrderUri(String logMessage,
