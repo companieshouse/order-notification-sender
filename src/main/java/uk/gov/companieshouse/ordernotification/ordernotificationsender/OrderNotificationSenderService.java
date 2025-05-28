@@ -57,7 +57,6 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
         try {
             var emailSend = orderEnricher.enrich(event.getOrderURI());
-            loggingUtils.logAsJson("EmailSend", emailSend);
 
             var sendEmail = new SendEmail();
             sendEmail.setAppId(emailSend.getAppId());
@@ -75,7 +74,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
             ApiResponse<Void> response = sendEmailPost.execute();
 
-            logger.info(String.format("Posted '%s' email to CHS Kafka API (AppId: %s): (Response %d)",
+            logger.debug(String.format("Posted '%s' email to CHS Kafka API (AppId: %s): (Response %d)",
                     sendEmail.getMessageType(), sendEmail.getAppId(), response.getStatusCode()));
 
         } catch (RetryableErrorException e) {

@@ -1,9 +1,5 @@
 package uk.gov.companieshouse.ordernotification.logging;
 
-import static java.lang.String.format;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -21,19 +17,9 @@ public class LoggingUtils {
     public static final String OFFSET = "offset";
     public static final String KEY = "key";
     public static final String PARTITION = "partition";
-    public static final String RETRY_ATTEMPT = "retry_attempt";
-    public static final String MESSAGE = "message";
-    public static final String CURRENT_TOPIC = "current_topic";
-    public static final String NEXT_TOPIC = "next_topic";
-    public static final String ORDER_RECEIVED_GROUP_ERROR = "order_received_error";
-    public static final String ORDER_REFERENCE_NUMBER = "order_reference_number";
     public static final String ORDER_URI = "order_uri";
     public static final String DESCRIPTION_LOG_KEY = "description_key";
     public static final String ITEM_ID = "item_id";
-    public static final String EXCEPTION = "exception";
-    public static final String PAYMENT_REFERENCE = "payment_reference";
-    public static final String COMPANY_NUMBER = "company_number";
-    public static final String JSON_OUTPUT = "json_output";
 
     private final Logger logger;
 
@@ -81,25 +67,17 @@ public class LoggingUtils {
 
     public void logAsJson(String key, Object value) {
         Map<String, Object> logMap = createLogMap();
-        try {
-            logIfNotNull(logMap, key, new ObjectMapper().writeValueAsString(value));
-
-        } catch (JsonProcessingException e) {
-            logIfNotNull(logMap, key, format("Error converting object '%s' to JSON: %s",
-                    value.getClass().getSimpleName(), e.getMessage()));
-        }
+        logIfNotNull(logMap, key, value);
         logger.debug("Logging object as JSON", logMap);
     }
 
-    public Map<String, Object> logWithOrderUri(String logMessage,
-                                               String orderUri) {
+    public Map<String, Object> logWithOrderUri(String logMessage, String orderUri) {
         Map<String, Object> logMap = createLogMapWithOrderUri(orderUri);
         logger.debug(logMessage, logMap);
         return logMap;
     }
 
-    public Map<String, Object> logMessageWithOrderUri(Message message,
-                                                      String logMessage, String orderUri) {
+    public Map<String, Object> logMessageWithOrderUri(Message message, String logMessage, String orderUri) {
         Map<String, Object> logMap = createLogMapWithKafkaMessage(message);
         logIfNotNull(logMap, ORDER_URI, orderUri);
         logger.debug(logMessage, logMap);
