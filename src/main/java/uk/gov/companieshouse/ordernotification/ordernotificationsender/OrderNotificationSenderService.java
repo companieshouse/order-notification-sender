@@ -78,10 +78,14 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             loggingUtils.logApiResponse("ApiResponse", sendEmail, response);
 
         } catch (RetryableErrorException e) {
+            logger.debug(format("RetryableErrorException has been raised: %s", e.getMessage()));
+
             logger.error("Failed to enrich order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new OrderEnrichmentFailedEvent(event));
 
         } catch (ApiErrorResponseException e) {
+            logger.debug(format("ApiErrorResponseException has been raised: %s", e.getMessage()));
+
             logger.error("Failed to send email for enriched order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
 
