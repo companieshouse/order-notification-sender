@@ -46,9 +46,9 @@ public class SendOrderNotificationEvent implements OrderIdentifiable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class SendOrderNotificationEvent {");
-        sb.append("    orderReference: ").append(this.toIndentedString(this.orderReference));
-        sb.append("    retryCount: ").append(this.toIndentedString(this.retryCount));
+        sb.append("class SendOrderNotificationEvent {\n");
+        sb.append("    orderReference: ").append(this.toIndentedString(this.orderReference)).append("\n");
+        sb.append("    retryCount: ").append(this.toIndentedString(this.retryCount)).append("\n");
         sb.append("}");
         return sb.toString();
     }
