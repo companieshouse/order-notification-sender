@@ -1,14 +1,10 @@
 package uk.gov.companieshouse.ordernotification.logging;
 
-import static java.lang.String.format;
-
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.MessageHeaders;
-import uk.gov.companieshouse.api.chskafka.SendEmail;
-import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.itemgroupprocessedsend.Item;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.message.Message;
@@ -24,7 +20,6 @@ public class LoggingUtils {
     public static final String ORDER_URI = "order_uri";
     public static final String DESCRIPTION_LOG_KEY = "description_key";
     public static final String ITEM_ID = "item_id";
-    public static final String API_RESPONSE = "api_response";
 
     private final Logger logger;
 
@@ -74,16 +69,6 @@ public class LoggingUtils {
         Map<String, Object> logMap = createLogMap();
         logIfNotNull(logMap, key, value);
         logger.debug("Logging object as JSON", logMap);
-    }
-
-    public void logApiResponse(String logMessage, SendEmail sendEmail, ApiResponse<?> apiResponse) {
-        Map<String, Object> logMap = createLogMap();
-
-        String message = format("Posted '%s' email to CHS Kafka API (AppId: %s): (Response %d)",
-                sendEmail.getMessageType(), sendEmail.getAppId(), apiResponse.getStatusCode());
-
-        logIfNotNull(logMap, API_RESPONSE, message);
-        logger.debug(logMessage, logMap);
     }
 
     public Map<String, Object> logWithOrderUri(String logMessage, String orderUri) {

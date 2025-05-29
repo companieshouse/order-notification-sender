@@ -8,9 +8,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import uk.gov.companieshouse.api.InternalApiClient;
+import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
 import uk.gov.companieshouse.api.model.order.item.IncludeAddressRecordsTypeApi;
@@ -69,4 +73,13 @@ public class ApplicationConfig implements WebMvcConfigurer {
         return mappings;
     }
 
+    @Bean
+    Supplier<InternalApiClient> internalApiClient(@Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
+        return () -> {
+            InternalApiClient apiClient = new InternalApiClient(new ApiKeyHttpClient(""));
+            apiClient.setBasePath(chsKafkaApiUrl);
+
+            return apiClient;
+        };
+    }
 }

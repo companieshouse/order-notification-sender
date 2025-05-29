@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +27,6 @@ import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSendFailedEvent;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-import uk.gov.companieshouse.ordernotification.orders.service.ApiClient;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +54,7 @@ class OrderNotificationSenderServiceTest {
     private EmailSend emailSend;
 
     @Mock
-    private ApiClient apiClient;
+    private Supplier<InternalApiClient> apiClient;
 
     @Mock
     private InternalApiClient internalApiClient;
@@ -71,7 +71,7 @@ class OrderNotificationSenderServiceTest {
         when(orderNotificationEnricher.enrich(any())).thenReturn(emailSend);
         when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(loggingUtils.getLogger()).thenReturn(logger);
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClient.get()).thenReturn(internalApiClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any())).thenReturn(privateSendEmailPost);
         when(privateSendEmailPost.execute()).thenReturn(new ApiResponse<>(200, null, null));
@@ -83,7 +83,6 @@ class OrderNotificationSenderServiceTest {
         orderNotificationSenderService.handleEvent(sendOrderNotificationEvent);
 
         //then
-        verify(internalApiClient).setBasePath(any());
         verify(privateSendEmailPost).execute();
         verify(orderNotificationEnricher).enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         verify(loggingUtils).logIfNotNull(data, LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -117,7 +116,7 @@ class OrderNotificationSenderServiceTest {
         when(orderNotificationEnricher.enrich(any())).thenReturn(emailSend);
         when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(loggingUtils.getLogger()).thenReturn(logger);
-        when(apiClient.getInternalApiClient()).thenReturn(internalApiClient);
+        when(apiClient.get()).thenReturn(internalApiClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any())).thenReturn(privateSendEmailPost);
         when(privateSendEmailPost.execute()).thenThrow(ApiErrorResponseException.class);
