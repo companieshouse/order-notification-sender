@@ -73,9 +73,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             var sendEmailPost = sendEmailHandler.postSendEmail("/send-email", sendEmail);
 
             ApiResponse<Void> response = sendEmailPost.execute();
-
-            logger.debug(String.format("Posted '%s' email to CHS Kafka API (AppId: %s): (Response %d)",
-                    sendEmail.getMessageType(), sendEmail.getAppId(), response.getStatusCode()));
+            loggingUtils.logApiResponse("ApiResponse", sendEmail, response);
 
         } catch (RetryableErrorException e) {
             logger.error("Failed to enrich order; notifying error handler", e, loggerArgs);
