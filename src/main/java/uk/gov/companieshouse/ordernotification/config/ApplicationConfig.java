@@ -24,7 +24,6 @@ import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
 @Configuration
 public class ApplicationConfig implements WebMvcConfigurer {
 
-
     @Bean
     DeserializerFactory deserializerFactory() {
         return new DeserializerFactory();
@@ -76,9 +75,11 @@ public class ApplicationConfig implements WebMvcConfigurer {
     @Bean
     Supplier<InternalApiClient> internalApiClientSupplier(@Value("${chs.kafka.api.key}") final String chsKafkaApiKey,
                                                           @Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
-        InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(chsKafkaApiKey));
-        internalApiClient.setBasePath(chsKafkaApiUrl);
+        return () -> {
+            InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(chsKafkaApiKey));
+            internalApiClient.setBasePath(chsKafkaApiUrl);
 
-        return () -> internalApiClient;
+            return internalApiClient;
+        };
     }
 }
