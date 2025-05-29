@@ -74,12 +74,11 @@ public class ApplicationConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    Supplier<InternalApiClient> internalApiClient(@Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
-        return () -> {
-            InternalApiClient apiClient = new InternalApiClient(new ApiKeyHttpClient(""));
-            apiClient.setBasePath(chsKafkaApiUrl);
+    Supplier<InternalApiClient> internalApiClientSupplier(@Value("${chs.kafka.api.key}") final String chsKafkaApiKey,
+                                                          @Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
+        InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(chsKafkaApiKey));
+        internalApiClient.setBasePath(chsKafkaApiUrl);
 
-            return apiClient;
-        };
+        return () -> internalApiClient;
     }
 }
