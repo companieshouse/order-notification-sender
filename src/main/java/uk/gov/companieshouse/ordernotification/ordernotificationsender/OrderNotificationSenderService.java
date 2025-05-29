@@ -66,6 +66,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             sendEmail.setEmailAddress(emailSend.getEmailAddress());
             loggingUtils.logAsJson("SendEmail", sendEmail);
 
+            logger.debug(format("Preparing Internal API Client for sending emails: %s", chsKafkaUrl));
             var internalApiClient = apiClient.getInternalApiClient();
             internalApiClient.setBasePath(chsKafkaUrl);
 
@@ -82,6 +83,10 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
         } catch (ApiErrorResponseException e) {
             logger.error("Failed to send email for enriched order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
+
+        } catch(Exception e) {
+            logger.error("Unexpected error occurred while processing order notification: ", e);
+            throw new RuntimeException(e);
         }
     }
 
