@@ -3,11 +3,13 @@ package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 import static java.lang.String.format;
 
 import java.util.Map;
+import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
+import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.chskafka.SendEmail;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.model.ApiResponse;
@@ -27,17 +29,14 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
     private final OrderNotificationEnrichable orderEnricher;
     private final LoggingUtils loggingUtils;
     private ApplicationEventPublisher applicationEventPublisher;
-    private final ApiClient apiClient;
-    private final String chsKafkaUrl;
+    private final Supplier<InternalApiClient> apiClient;
 
-    public OrderNotificationSenderService(@Value("${chs.kafka.api.endpoint}") String chsKafkaUrl,
-            OrderNotificationEnrichable orderEnricher,
+    public OrderNotificationSenderService(OrderNotificationEnrichable orderEnricher,
             LoggingUtils loggingUtils,
-            ApiClient apiClient) {
+            Supplier<InternalApiClient> apiClient) {
         this.orderEnricher = orderEnricher;
         this.loggingUtils = loggingUtils;
         this.apiClient = apiClient;
-        this.chsKafkaUrl = chsKafkaUrl;
     }
 
     /**
@@ -64,18 +63,16 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             sendEmail.setMessageType(emailSend.getMessageType());
             sendEmail.setJsonData(emailSend.getData());
             sendEmail.setEmailAddress(emailSend.getEmailAddress());
+
             loggingUtils.logAsJson("SendEmail", sendEmail);
 
-            var internalApiClient = apiClient.getInternalApiClient();
-            internalApiClient.setBasePath(chsKafkaUrl);
-
-            var sendEmailHandler = internalApiClient.sendEmailHandler();
+            var sendEmailHandler = apiClient.get().sendEmailHandler();
             var sendEmailPost = sendEmailHandler.postSendEmail("/send-email", sendEmail);
 
-            logger.debug(format("Preparing to send email to CHS Kafka API: %s", chsKafkaUrl));
             ApiResponse<Void> response = sendEmailPost.execute();
 
-            loggingUtils.logApiResponse("ApiResponse", sendEmail, response);
+            logger.info(format("Posted '%s' email to CHS Kafka API (AppId: %s): (Response %d)",
+                    sendEmail.getMessageType(), sendEmail.getAppId(), response.getStatusCode()));
 
         } catch (RetryableErrorException e) {
             logger.debug(format("RetryableErrorException has been raised: %s", e.getMessage()));
