@@ -72,21 +72,32 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             var sendEmailHandler = internalApiClient.sendEmailHandler();
             var sendEmailPost = sendEmailHandler.postSendEmail("/send-email", sendEmail);
 
+            logger.debug(format("Preparing to send email to CHS Kafka API: %s", chsKafkaUrl));
             ApiResponse<Void> response = sendEmailPost.execute();
+
             loggingUtils.logApiResponse("ApiResponse", sendEmail, response);
 
         } catch (RetryableErrorException e) {
+            logger.debug(format("RetryableErrorException has been raised: %s", e.getMessage()));
+
             logger.error("Failed to enrich order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new OrderEnrichmentFailedEvent(event));
 
         } catch (ApiErrorResponseException e) {
+            logger.debug(format("ApiErrorResponseException has been raised: %s", e.getMessage()));
+
             logger.error("Failed to send email for enriched order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
+
+        } catch(Exception e) {
+            logger.error("Unexpected error occurred while processing order notification: ", e);
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher publisher) {
+        loggingUtils.getLogger().trace(format("setApplicationEventPublisher(%s) method called.", publisher.getClass().getSimpleName()));
         this.applicationEventPublisher = publisher;
     }
 

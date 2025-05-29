@@ -35,6 +35,9 @@
         <jib-maven-plugin>3.4.4</jib-maven-plugin>
         <avro.version>1.12.0</avro.version>
         <mockito-core.version>5.14.2</mockito-core.version>
+
+        <common-beanutils.version>1.11.0</common-beanutils.version>
+
         <sonar.exclusions>
             **/config/ApplicationConfig.java,
             **/config/EmailConfiguration.java,
@@ -264,11 +267,14 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- private-api-sdk-java uses commons-beanutils (1.9.4), but has CVEs which need updating -->
+        <!-- Once this has been updated in Private SDK, we can remove this dependency -->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.11.0</version>
+            <version>${common-beanutils.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
