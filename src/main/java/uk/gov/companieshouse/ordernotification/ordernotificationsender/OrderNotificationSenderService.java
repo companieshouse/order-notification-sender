@@ -66,14 +66,15 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
             sendEmail.setEmailAddress(emailSend.getEmailAddress());
             loggingUtils.logAsJson("SendEmail", sendEmail);
 
-            logger.debug(format("Preparing Internal API Client for sending emails: %s", chsKafkaUrl));
             var internalApiClient = apiClient.getInternalApiClient();
             internalApiClient.setBasePath(chsKafkaUrl);
 
             var sendEmailHandler = internalApiClient.sendEmailHandler();
             var sendEmailPost = sendEmailHandler.postSendEmail("/send-email", sendEmail);
 
+            logger.debug(format("Preparing to send email to CHS Kafka API: %s", chsKafkaUrl));
             ApiResponse<Void> response = sendEmailPost.execute();
+
             loggingUtils.logApiResponse("ApiResponse", sendEmail, response);
 
         } catch (RetryableErrorException e) {
@@ -92,6 +93,7 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher publisher) {
+        loggingUtils.getLogger().trace(format("setApplicationEventPublisher(%s) method called.", publisher.getClass().getSimpleName()));
         this.applicationEventPublisher = publisher;
     }
 
