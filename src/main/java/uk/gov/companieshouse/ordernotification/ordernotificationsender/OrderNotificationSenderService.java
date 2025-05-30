@@ -85,10 +85,6 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
         } catch (ApiErrorResponseException e) {
             loggingUtils.getLogger().error("Failed to send email for enriched order; notifying error handler", e, loggerArgs);
             applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
-
-        } catch (Exception e) {
-            loggingUtils.getLogger().error("Failed to send email for enriched order; an unknown error occurred", e, loggerArgs);
-            applicationEventPublisher.publishEvent(new EmailSendFailedEvent(event));
         }
     }
 
