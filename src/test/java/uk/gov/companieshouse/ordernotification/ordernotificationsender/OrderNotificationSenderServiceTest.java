@@ -20,6 +20,7 @@ import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
 import uk.gov.companieshouse.api.handler.chskafka.PrivateSendEmailHandler;
 import uk.gov.companieshouse.api.handler.chskafka.request.PrivateSendEmailPost;
+import uk.gov.companieshouse.api.http.HttpClient;
 import uk.gov.companieshouse.api.model.ApiResponse;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.emailmodel.OrderNotificationEnrichable;
@@ -60,6 +61,9 @@ class OrderNotificationSenderServiceTest {
     private InternalApiClient internalApiClient;
 
     @Mock
+    private HttpClient httpClient;
+
+    @Mock
     private PrivateSendEmailHandler privateSendEmailHandler;
 
     @Mock
@@ -72,6 +76,7 @@ class OrderNotificationSenderServiceTest {
         when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(apiClient.get()).thenReturn(internalApiClient);
+        when(internalApiClient.getHttpClient()).thenReturn(httpClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any())).thenReturn(privateSendEmailPost);
         when(privateSendEmailPost.execute()).thenReturn(new ApiResponse<>(200, null, null));
@@ -117,6 +122,7 @@ class OrderNotificationSenderServiceTest {
         when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(apiClient.get()).thenReturn(internalApiClient);
+        when(internalApiClient.getHttpClient()).thenReturn(httpClient);
         when(internalApiClient.sendEmailHandler()).thenReturn(privateSendEmailHandler);
         when(privateSendEmailHandler.postSendEmail(eq("/send-email"), any())).thenReturn(privateSendEmailPost);
         when(privateSendEmailPost.execute()).thenThrow(ApiErrorResponseException.class);
