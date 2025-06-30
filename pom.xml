@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.11</version>
+        <version>2.1.12</version>
         <relativePath/>
     </parent>
 
@@ -16,25 +16,26 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot-dependencies.version>3.4.6</spring-boot-dependencies.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <spring-boot-dependencies.version>3.5.3</spring-boot-dependencies.version>
+        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <ch-kafka.version>3.0.3</ch-kafka.version>
-        <kafka-models.version>3.0.8</kafka-models.version>
-        <structured-logging.version>3.0.20</structured-logging.version>
-        <mockito-junit-jupiter-version>5.14.2</mockito-junit-jupiter-version>
+        <kafka-models.version>3.0.18</kafka-models.version>
+        <structured-logging.version>3.0.32</structured-logging.version>
+        <mockito-junit-jupiter-version>5.18.0</mockito-junit-jupiter-version>
         <mockito-inline.version>5.2.0</mockito-inline.version>
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
-        <junit-jupiter-engine-version>5.11.4</junit-jupiter-engine-version>
-        <private-api-sdk-java.version>4.0.288</private-api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.6</api-sdk-manager-java-library.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <junit-jupiter.version>5.13.2</junit-jupiter.version>
+        <junit-jupiter-engine-version>5.13.2</junit-jupiter-engine-version>
+        <private-api-sdk-java.version>4.0.315</private-api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.7</api-sdk-manager-java-library.version>
+        <testcontainers.version>1.21.2</testcontainers.version>
         <org.hamcrest.version>3.0</org.hamcrest.version>
         <mockserver-client-java>5.15.0</mockserver-client-java>
-        <jib-maven-plugin>3.4.4</jib-maven-plugin>
+        <jib-maven-plugin>3.4.6</jib-maven-plugin>
         <avro.version>1.12.0</avro.version>
-        <mockito-core.version>5.14.2</mockito-core.version>
+        <mockito-core.version>5.18.0</mockito-core.version>
+        <opentelemetry-instrumentation-bom.version>2.16.0</opentelemetry-instrumentation-bom.version>
 
         <common-beanutils.version>1.11.0</common-beanutils.version>
 
@@ -70,6 +71,13 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom</artifactId>
+                <version>${opentelemetry-instrumentation-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -126,6 +134,11 @@
             <artifactId>junit-jupiter-api</artifactId>
             <version>${junit-jupiter.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-spring-boot-starter</artifactId>
         </dependency>
 
         <dependency>
