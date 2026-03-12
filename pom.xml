@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.12</version>
+        <version>2.1.13</version>
         <relativePath/>
     </parent>
 
@@ -16,46 +16,37 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot-dependencies.version>3.5.3</spring-boot-dependencies.version>
-        <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <spring-boot-dependencies.version>3.5.11</spring-boot-dependencies.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <ch-kafka.version>3.0.3</ch-kafka.version>
-        <kafka-models.version>3.0.18</kafka-models.version>
-        <structured-logging.version>3.0.32</structured-logging.version>
-        <mockito-junit-jupiter-version>5.18.0</mockito-junit-jupiter-version>
-        <mockito-inline.version>5.2.0</mockito-inline.version>
+        <ch-kafka.version>3.0.8</ch-kafka.version>
+        <kafka-models.version>3.0.29</kafka-models.version>
+        <structured-logging.version>3.0.51</structured-logging.version>
         <junit-jupiter.version>5.13.2</junit-jupiter.version>
         <junit-jupiter-engine-version>5.13.2</junit-jupiter-engine-version>
-        <private-api-sdk-java.version>4.0.315</private-api-sdk-java.version>
-        <api-sdk-manager-java-library.version>3.0.7</api-sdk-manager-java-library.version>
-        <testcontainers.version>1.21.2</testcontainers.version>
+        <private-api-sdk-java.version>4.0.476</private-api-sdk-java.version>
+        <api-sdk-manager-java-library.version>3.0.16</api-sdk-manager-java-library.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
         <org.hamcrest.version>3.0</org.hamcrest.version>
-        <mockserver-client-java>5.15.0</mockserver-client-java>
-        <jib-maven-plugin>3.4.6</jib-maven-plugin>
-        <avro.version>1.12.0</avro.version>
+        <mockserver-client-java.version>5.15.0</mockserver-client-java.version>
+        <jib-maven-plugin.version>3.4.6</jib-maven-plugin.version>
+        <avro.version>1.12.1</avro.version>
         <mockito-core.version>5.18.0</mockito-core.version>
-        <opentelemetry-instrumentation-bom.version>2.16.0</opentelemetry-instrumentation-bom.version>
-
+        <opentelemetry-instrumentation-bom.version>2.17.0</opentelemetry-instrumentation-bom.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
+        <log4j-api.version>2.25.3</log4j-api.version>
+        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
         <common-beanutils.version>1.11.0</common-beanutils.version>
 
-        <sonar.exclusions>
+         <sonar.exclusions>
             **/config/ApplicationConfig.java,
             **/config/EmailConfiguration.java,
-            **/config/EmailDataConfiguration.java,
             **/emailsender/EmailSend.java,
             **/emailsender/EmailSendFailedEvent.java,
             **/emailsender/NonRetryableFailureException.java,
-            **/emailsender/SendEmailEvent.java,
-            **/emailsendmodel/CertificateAppointmentDetailsModel.java,
-            **/emailsendmodel/CertificateOrderNotificationModel.java,
-            **/emailsendmodel/DeliveryMethodTuple.java,
-            **/emailsendmodel/DocumentOrderNotificationModel.java,
-            **/emailsendmodel/FilingHistoryDetailsModel.java,
             **/emailsendmodel/MappingException.java,
-            **/emailsendmodel/MissingImageOrderNotificationModel.java,
-            **/emailsendmodel/OrderModel.java,
-            **/errorhandler/ErrorHandlingFailureException.java,
             **/ordernotificationsender/OrderEnrichmentFailedEvent.java,
             **/ordernotificationsender/SendOrderNotificationEvent.java,
             **/orders/service/OrdersResponseException.java,
@@ -63,11 +54,6 @@
             **/ordersconsumer/RetryableErrorException.java,
             **/OrderNotificationApplication.java
         </sonar.exclusions>
-
-        <argLine>
-            --add-opens java.base/java.util=ALL-UNNAMED
-            --add-opens java.base/java.lang=ALL-UNNAMED
-        </argLine>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -85,11 +71,43 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Transitive dependency: CVE-2020-29582(5.3) -->
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>2.2.21</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>structured-logging</artifactId>
@@ -98,6 +116,10 @@
             <exclusion>
               <groupId>org.slf4j</groupId>
               <artifactId>*</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.msgpack</groupId>
+                <artifactId>msgpack-core</artifactId>
             </exclusion>
           </exclusions>
             <scope>compile</scope>
@@ -127,25 +149,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit-jupiter.version}</version>
-            <scope>test</scope>
+            <!-- CVE-2026-24400: Exclusions added to mitigate the vulnerability -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.assertj</groupId>
+                    <artifactId>assertj-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito-junit-jupiter-version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -158,6 +173,7 @@
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>kafka-models</artifactId>
             <version>${kafka-models.version}</version>
+            <!-- CVE-2025-33042: Exclusions added to mitigate the vulnerability -->
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.avro</groupId>
@@ -179,14 +195,18 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>${avro.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.lz4</groupId>
+                    <artifactId>lz4-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bitbucket.b_c</groupId>
+                    <artifactId>jose4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -202,23 +222,24 @@
                     <groupId>org.apache.kafka</groupId>
                     <artifactId>kafka-streams-test-utils</artifactId>
                 </exclusion>
-                    <exclusion>
-                        <groupId>org.pcollections</groupId>
-                        <artifactId>pcollections</artifactId>
-                    </exclusion>
+                <exclusion>
+                    <groupId>org.pcollections</groupId>
+                    <artifactId>pcollections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.lz4</groupId>
+                    <artifactId>lz4-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bitbucket.b_c</groupId>
+                    <artifactId>jose4j</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito-core.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -256,7 +277,7 @@
         <dependency>
             <groupId>org.mock-server</groupId>
             <artifactId>mockserver-client-java</artifactId>
-            <version>${mockserver-client-java}</version>
+            <version>${mockserver-client-java.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -279,15 +300,6 @@
             <version>${org.hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- private-api-sdk-java uses commons-beanutils (1.9.4), but has CVEs which need updating -->
-        <!-- Once this has been updated in Private SDK, we can remove this dependency -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>${common-beanutils.version}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -314,12 +326,13 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
             </plugin>
 
             <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
-                <version>${jib-maven-plugin}</version>
+                <version>${jib-maven-plugin.version}</version>
                 <configuration>
                     <from>
                         <image>416670754337.dkr.ecr.eu-west-2.amazonaws.com/ci-corretto-build-21:latest</image>
