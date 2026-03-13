@@ -1,19 +1,18 @@
+
 package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
 
-import email.email_send;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.io.IOUtils;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterAll;
@@ -21,18 +20,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockserver.client.MockServerClient;
-import org.mockserver.model.JsonBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.MockServerContainer;
-import org.testcontainers.utility.DockerImageName;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+
 import uk.gov.companieshouse.ordernotification.config.KafkaConfig;
 import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
 import uk.gov.companieshouse.ordernotification.config.TestConfig;
@@ -44,20 +40,13 @@ import uk.gov.companieshouse.orders.OrderReceived;
 @Import({KafkaConfig.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:application-stubbed.properties",
         properties = {"uk.gov.companieshouse.order-notification-sender.error-consumer=true"})
+
 class OrderReceivedErrorConsumerIntegrationTest {
-
-    private static int orderId = 123456;
-    private static MockServerContainer container;
-    private MockServerClient client;
-
-    @Autowired
-    private KafkaConsumer<String, email_send> emailSendConsumer;
+        private static int orderId = 123456;
+        private static WireMockServer wireMockServer;
 
     @Autowired
     private KafkaProducer<String, OrderReceived> orderReceivedProducer;
-
-    @Autowired
-    private KafkaConsumer<String, OrderReceived> orderReceivedRetryConsumer;
 
     @Autowired
     private OrderReceivedErrorConsumerAspect orderReceivedErrorConsumerAspect;
@@ -73,46 +62,43 @@ class OrderReceivedErrorConsumerIntegrationTest {
 
     @BeforeAll
     static void before() {
-        container = new MockServerContainer(DockerImageName.parse(
-                "mockserver/mockserver:5.15.0"));
-        container.start();
+        wireMockServer = new WireMockServer(8080); // Use 0 for random port if needed
+        wireMockServer.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
-                "http://" + container.getHost() + ":" + container.getServerPort());
+                "http://localhost:" + wireMockServer.port());
         TestEnvironmentSetupHelper.setEnvironmentVariable("CHS_API_KEY", "123");
         TestEnvironmentSetupHelper.setEnvironmentVariable("PAYMENTS_API_URL",
-                "http://" + container.getHost() + ":" + container.getServerPort());
+                "http://localhost:" + wireMockServer.port());
     }
 
-    @AfterAll
-    static void after() {
-        container.stop();
-    }
-    
-    @BeforeEach
-    void setup() {
-        client = new MockServerClient(container.getHost(), container.getServerPort());
-        errorRecoveryOffset.reset();
-        errorConsumerController.resumeConsumerThread();
-    }
+        @AfterAll
+        static void after() {
+                wireMockServer.stop();
+        }
 
-    @AfterEach
-    void teardown() {
-        client.reset();
-        ++orderId;
-    }
+        @BeforeEach
+        void setup() {
+                errorRecoveryOffset.reset();
+                errorConsumerController.resumeConsumerThread();
+                wireMockServer.resetAll();
+        }
+
+        @AfterEach
+        void teardown() {
+                wireMockServer.resetAll();
+                ++orderId;
+        }
 
     @Test
     void testConsumesCertificateOrderReceivedFromErrorTopic() throws
             ExecutionException, InterruptedException,
             IOException {
         //given
-        client.when(request()
-                        .withPath(getOrderReference())
-                        .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
+        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                        .withBody(IOUtils.resourceToString(
                                 "/fixtures/certified-certificate.json",
                                 StandardCharsets.UTF_8))));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
@@ -137,13 +123,11 @@ class OrderReceivedErrorConsumerIntegrationTest {
             ExecutionException, InterruptedException,
             IOException {
         //given
-        client.when(request()
-                        .withPath(getOrderReference())
-                        .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
+        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                        .withBody(IOUtils.resourceToString(
                                 "/fixtures/dissolved-certificate.json",
                                 StandardCharsets.UTF_8))));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
@@ -166,13 +150,11 @@ class OrderReceivedErrorConsumerIntegrationTest {
     @Test
     void testConsumesCertifiedDocumentOrderReceivedFromErrorTopic() throws ExecutionException, InterruptedException, IOException {
         //given
-        client.when(request()
-                        .withPath(getOrderReference())
-                        .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
+        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                        .withBody(IOUtils.resourceToString(
                                 "/fixtures/certified-copy.json",
                                 StandardCharsets.UTF_8))));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
@@ -195,13 +177,11 @@ class OrderReceivedErrorConsumerIntegrationTest {
     @Test
     void testConsumesMissingImageDeliveryFromNotificationErrorAndPublishesToEmailSend() throws ExecutionException, InterruptedException, IOException {
         //given
-        client.when(request()
-                        .withPath(getOrderReference())
-                        .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.OK.value())
+        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(JsonBody.json(IOUtils.resourceToString(
+                        .withBody(IOUtils.resourceToString(
                                 "/fixtures/missing-image-delivery.json",
                                 StandardCharsets.UTF_8))));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
@@ -224,11 +204,9 @@ class OrderReceivedErrorConsumerIntegrationTest {
     @Test
     void testPublishesOrderReceivedToRetryTopicWhenOrdersApiIsUnavailable() throws ExecutionException, InterruptedException {
         //given
-        client.when(request()
-                        .withPath(getOrderReference())
-                        .withMethod(HttpMethod.GET.toString()))
-                .respond(response()
-                        .withStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value()));
+        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
 
         // when

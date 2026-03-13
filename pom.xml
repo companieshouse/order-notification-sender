@@ -23,14 +23,12 @@
         <ch-kafka.version>3.0.8</ch-kafka.version>
         <kafka-models.version>3.0.29</kafka-models.version>
         <structured-logging.version>3.0.51</structured-logging.version>
-        <private-api-sdk-java.version>4.0.477</private-api-sdk-java.version>
+        <private-api-sdk-java.version>4.0.478</private-api-sdk-java.version>
         <api-sdk-manager-java-library.version>3.0.16</api-sdk-manager-java-library.version>
         <testcontainers.version>1.21.4</testcontainers.version>
         <org.hamcrest.version>3.0</org.hamcrest.version>
-        <mockserver-client-java>5.15.0</mockserver-client-java>
         <jib-maven-plugin>3.5.1</jib-maven-plugin>
-        <avro.version>1.12.1</avro.version>
-        <mockito-core.version>5.23.0</mockito-core.version>
+        <wiremock.version>3.13.2</wiremock.version>
         <opentelemetry-instrumentation-bom.version>2.23.0</opentelemetry-instrumentation-bom.version>
         <sonar.exclusions>
             **/config/ApplicationConfig.java,
@@ -207,23 +205,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mockserver</artifactId>
-            <version>${testcontainers.version}</version>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mock-server</groupId>
-            <artifactId>mockserver-client-java</artifactId>
-            <version>${mockserver-client-java}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.ethlo.time</groupId>
-                    <artifactId>itu</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -255,17 +240,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
 
             <plugin>
