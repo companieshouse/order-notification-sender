@@ -42,7 +42,7 @@ class ItemGroupProcessedSendConsumerIntegrationTest {
 
     @BeforeAll
     static void before() {
-        wireMockServer = new WireMockServer(8080); // or use 0 for random port
+        wireMockServer = new WireMockServer(0);
         wireMockServer.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
             "http://localhost:" + wireMockServer.port());

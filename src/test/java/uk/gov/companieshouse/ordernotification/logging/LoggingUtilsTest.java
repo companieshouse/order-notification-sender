@@ -64,8 +64,7 @@ class LoggingUtilsTest {
         RecordMetadata metadata = new RecordMetadata(
                 new TopicPartition(TestConstants.KAFKA_TOPIC, 2),
                 0L,
-                3L,
-                0L,
+                3,
                 0L,
                 0,
                 0

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
@@ -39,6 +40,7 @@ import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTest
 )
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @Import(ItemGroupProcessedSendTestConfig.class)
+@EnableKafka
 class ItemGroupProcessedSendConsumerInvalidTopicTest {
 
     @Autowired

@@ -1,4 +1,3 @@
-
 package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -25,11 +24,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.test.context.EmbeddedKafka;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 
-import uk.gov.companieshouse.ordernotification.config.KafkaConfig;
 import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
 import uk.gov.companieshouse.ordernotification.config.TestConfig;
 import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
@@ -37,13 +38,19 @@ import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @SpringBootTest
-@Import({KafkaConfig.class, TestConfig.class})
-@TestPropertySource(locations = "classpath:application-stubbed.properties",
-        properties = {"uk.gov.companieshouse.order-notification-sender.error-consumer=true"})
-
+@Import(TestConfig.class)
+@TestPropertySource(locations = "classpath:application-stubbed.properties", properties = {
+        "uk.gov.companieshouse.order-notification-sender.error-consumer=true" })
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@EmbeddedKafka(topics = { "${kafka.topics.order-received}",
+        "${kafka.topics.order-received}-retry",
+        "${kafka.topics.order-received}-error",
+        "${kafka.topics.order-received}-invalid" }, controlledShutdown = true, partitions = 1)
+@EnableKafka
 class OrderReceivedErrorConsumerIntegrationTest {
-        private static int orderId = 123456;
-        private static WireMockServer wireMockServer;
+    private static int orderId = 123456;
+
+    private static WireMockServer wireMockServer;
 
     @Autowired
     private KafkaProducer<String, OrderReceived> orderReceivedProducer;
@@ -62,7 +69,7 @@ class OrderReceivedErrorConsumerIntegrationTest {
 
     @BeforeAll
     static void before() {
-        wireMockServer = new WireMockServer(8080); // Use 0 for random port if needed
+        wireMockServer = new WireMockServer(0);
         wireMockServer.start();
         TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL",
                 "http://localhost:" + wireMockServer.port());
@@ -71,29 +78,28 @@ class OrderReceivedErrorConsumerIntegrationTest {
                 "http://localhost:" + wireMockServer.port());
     }
 
-        @AfterAll
-        static void after() {
-                wireMockServer.stop();
-        }
+    @AfterAll
+    static void after() {
+        wireMockServer.stop();
+    }
 
-        @BeforeEach
-        void setup() {
-                errorRecoveryOffset.reset();
-                errorConsumerController.resumeConsumerThread();
-                wireMockServer.resetAll();
-        }
+    @BeforeEach
+    void setup() {
+        errorRecoveryOffset.reset();
+        errorConsumerController.resumeConsumerThread();
+        wireMockServer.resetAll();
+    }
 
-        @AfterEach
-        void teardown() {
-                wireMockServer.resetAll();
-                ++orderId;
-        }
+    @AfterEach
+    void teardown() {
+        wireMockServer.resetAll();
+        ++orderId;
+    }
 
     @Test
-    void testConsumesCertificateOrderReceivedFromErrorTopic() throws
-            ExecutionException, InterruptedException,
+    void testConsumesCertificateOrderReceivedFromErrorTopic() throws ExecutionException, InterruptedException,
             IOException {
-        //given
+        // given
         wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
@@ -104,7 +110,7 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
 
-        //when
+        // when
         ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
                 kafkaTopics.getOrderReceivedError(),
                 kafkaTopics.getOrderReceivedError(),
@@ -113,16 +119,16 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
 
-        //then
+        // then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
     }
 
     @Test
-    void testConsumesDissolvedCertificateOrderReceivedFromErrorTopic() throws
-            ExecutionException, InterruptedException,
+    void testConsumesDissolvedCertificateOrderReceivedFromErrorTopic()
+            throws ExecutionException, InterruptedException,
             IOException {
-        //given
+        // given
         wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
@@ -133,7 +139,7 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
 
-        //when
+        // when
         ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
                 kafkaTopics.getOrderReceivedError(),
                 kafkaTopics.getOrderReceivedError(),
@@ -142,14 +148,15 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
 
-        //then
+        // then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
     }
 
     @Test
-    void testConsumesCertifiedDocumentOrderReceivedFromErrorTopic() throws ExecutionException, InterruptedException, IOException {
-        //given
+    void testConsumesCertifiedDocumentOrderReceivedFromErrorTopic()
+            throws ExecutionException, InterruptedException, IOException {
+        // given
         wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
@@ -159,8 +166,8 @@ class OrderReceivedErrorConsumerIntegrationTest {
                                 StandardCharsets.UTF_8))));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
-
-        //when
+        Thread.sleep(5000);
+        // when
         ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
                 kafkaTopics.getOrderReceivedError(),
                 kafkaTopics.getOrderReceivedError(),
@@ -169,14 +176,15 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
 
-        //then
+        // then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
     }
 
     @Test
-    void testConsumesMissingImageDeliveryFromNotificationErrorAndPublishesToEmailSend() throws ExecutionException, InterruptedException, IOException {
-        //given
+    void testConsumesMissingImageDeliveryFromNotificationErrorAndPublishesToEmailSend()
+            throws ExecutionException, InterruptedException, IOException {
+        // given
         wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
@@ -187,7 +195,7 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
 
-        //when
+        // when
         ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
                 kafkaTopics.getOrderReceivedError(),
                 kafkaTopics.getOrderReceivedError(),
@@ -196,14 +204,15 @@ class OrderReceivedErrorConsumerIntegrationTest {
         orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
         orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
 
-        //then
+        // then
         assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
     }
 
     @Test
-    void testPublishesOrderReceivedToRetryTopicWhenOrdersApiIsUnavailable() throws ExecutionException, InterruptedException {
-        //given
+    void testPublishesOrderReceivedToRetryTopicWhenOrdersApiIsUnavailable()
+            throws ExecutionException, InterruptedException {
+        // given
         wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())));

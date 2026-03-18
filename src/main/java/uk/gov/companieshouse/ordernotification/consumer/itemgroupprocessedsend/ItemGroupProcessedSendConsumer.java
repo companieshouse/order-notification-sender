@@ -1,11 +1,11 @@
 package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
+import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.messaging.Message;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
@@ -41,7 +41,7 @@ public class ItemGroupProcessedSendConsumer {
     @RetryableTopic(
         attempts = "${kafka.topics.item-group-processed-send.max_attempts}",
         autoCreateTopics = "false",
-        backoff = @Backoff(delayExpression = "${kafka.topics.item-group-processed-send.backoff_delay}"),
+        backOff =  @BackOff(delayString = "${kafka.topics.item-group-processed-send.backoff_delay_ms}"),
         dltTopicSuffix = "-error",
         dltStrategy = DltStrategy.FAIL_ON_ERROR,
         sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC,

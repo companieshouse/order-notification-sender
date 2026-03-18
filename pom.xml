@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>21</java.version>
-        <spring-boot-dependencies.version>3.5.11</spring-boot-dependencies.version>
+        <spring-boot-dependencies.version>4.0.3</spring-boot-dependencies.version>
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
@@ -135,7 +135,7 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
 
         <dependency>
@@ -195,6 +195,10 @@
                 <exclusion>
                     <groupId>org.bitbucket.b_c</groupId>
                     <artifactId>jose4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.dynatrace.hash4j</groupId>
+                    <artifactId>hash4j</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

