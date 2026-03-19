@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -96,16 +99,16 @@ class OrderReceivedErrorConsumerIntegrationTest {
         ++orderId;
     }
 
-    @Test
-    void testConsumesCertificateOrderReceivedFromErrorTopic() throws ExecutionException, InterruptedException,
-            IOException {
+    @ParameterizedTest
+    @MethodSource("orderReceivedFixturesProvider")
+    void testConsumesOrderReceivedFromErrorTopicParameterized(String fixtureFile) throws ExecutionException, InterruptedException, IOException {
         // given
         wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                         .withBody(IOUtils.resourceToString(
-                                "/fixtures/certified-certificate.json",
+                                fixtureFile,
                                 StandardCharsets.UTF_8))));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
@@ -124,61 +127,12 @@ class OrderReceivedErrorConsumerIntegrationTest {
         assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
     }
 
-    @Test
-    void testConsumesDissolvedCertificateOrderReceivedFromErrorTopic()
-            throws ExecutionException, InterruptedException,
-            IOException {
-        // given
-        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(IOUtils.resourceToString(
-                                "/fixtures/dissolved-certificate.json",
-                                StandardCharsets.UTF_8))));
-        orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
-        orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
-
-        // when
-        ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
-                kafkaTopics.getOrderReceivedError(),
-                kafkaTopics.getOrderReceivedError(),
-                getOrderReceived());
-        orderReceivedProducer.send(producerRecord).get();
-        orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
-        orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-
-        // then
-        assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
-        assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
-    }
-
-    @Test
-    void testConsumesCertifiedDocumentOrderReceivedFromErrorTopic()
-            throws ExecutionException, InterruptedException, IOException {
-        // given
-        wireMockServer.stubFor(get(urlEqualTo(getOrderReference()))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-                        .withBody(IOUtils.resourceToString(
-                                "/fixtures/certified-copy.json",
-                                StandardCharsets.UTF_8))));
-        orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
-        orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
-        Thread.sleep(5000);
-        // when
-        ProducerRecord<String, OrderReceived> producerRecord = new ProducerRecord<>(
-                kafkaTopics.getOrderReceivedError(),
-                kafkaTopics.getOrderReceivedError(),
-                getOrderReceived());
-        orderReceivedProducer.send(producerRecord).get();
-        orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().countDown();
-        orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().await(30, TimeUnit.SECONDS);
-
-        // then
-        assertEquals(0, orderReceivedErrorConsumerAspect.getBeforeProcessOrderReceivedEventLatch().getCount());
-        assertEquals(0, orderReceivedErrorConsumerAspect.getAfterOrderConsumedEventLatch().getCount());
+    private static Stream<String> orderReceivedFixturesProvider() {
+        return Stream.of(
+            "/fixtures/certified-certificate.json",
+            "/fixtures/dissolved-certificate.json",
+            "/fixtures/certified-copy.json"
+        );
     }
 
     @Test
