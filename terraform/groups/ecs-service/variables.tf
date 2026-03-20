@@ -43,10 +43,17 @@ variable "required_memory" {
   default = 1024 # defaulted low for node service in dev environments, override for production
 
 }
+
 variable "max_task_count" {
   type        = number
   description = "The maximum number of tasks for this service."
-  default     = 3
+  default     = 2
+}
+
+variable "min_task_count" {
+  type        = number
+  description = "The minimum number of tasks for this service."
+  default     = 1
 }
 
 variable "use_fargate" {
@@ -85,6 +92,16 @@ variable "service_scaleup_schedule" {
 
   default     = ""
 }
+
+# ----------------------------------------------------------------------
+# Cloudwatch alerts
+# ----------------------------------------------------------------------
+variable "cloudwatch_alarms_enabled" {
+  description = "Whether to create a standard set of cloudwatch alarms for the service.  Requires an SNS topic to have already been created for the stack."
+  type        = bool
+  default     = true
+}
+
 variable "service_autoscale_scale_in_cooldown" {
   type        = number
   description = "Cooldown in seconds for ECS Service scale in (run fewer tasks)"
@@ -111,8 +128,26 @@ variable "use_set_environment_files" {
   default     = false
   description = "Toggle default global and shared environment files"
 }
-
 variable "order_notification_sender_version" {
   type        = string
-  description = "The version of the order-notification-sender container to run."
+  description = "The version of the order_notification_sender container to run."
+}
+
+variable "create_old_kafka_service" {
+  type        = bool
+  description = "Whether to create the old Kafka 0.10 ECS service alongside the upgraded one."
+  default     = false
+}
+variable "order_notification_sender_old_kafka_version" {
+  type        = string
+  description = "The specific release tag for the old Kafka 0.10 version of the container."
+}
+
+# ------------------------------------------------------------------------------
+# Kafka Consumer Configurations
+# ------------------------------------------------------------------------------
+variable "backoff_delay" {
+  default   = 32000
+  type      = number
+  description = "The delay in milliseconds between message republish attempts."
 }
