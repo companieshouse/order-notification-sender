@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 @ExtendWith(MockitoExtension.class)
-public class CertifiedCopyEmailDataMapperTest {
+class CertifiedCopyEmailDataMapperTest {
     private static final BaseItemBuilder baseCertifiedCopy = baseItemBuilder()
             .withId(TestConstants.CERTIFIED_COPY_ID)
             .withCompanyNumber(TestConstants.COMPANY_NUMBER)
@@ -66,12 +67,9 @@ public class CertifiedCopyEmailDataMapperTest {
 
     @BeforeEach
     void setup() {
-        Map<DeliveryTimescaleApi, String> deliveryMappings = new HashMap<DeliveryTimescaleApi, String>() {
-            {
-                put(DeliveryTimescaleApi.STANDARD, "Standard");
-                put(DeliveryTimescaleApi.SAME_DAY, "Express");
-            }
-        };
+        Map<DeliveryTimescaleApi, String> deliveryMappings = new EnumMap<>(DeliveryTimescaleApi.class);
+        deliveryMappings.put(DeliveryTimescaleApi.STANDARD, "Standard");
+        deliveryMappings.put(DeliveryTimescaleApi.SAME_DAY, "Express");
         mapper = new CertifiedCopyEmailDataMapper(deliveryMappings, providerService, config);
     }
 
@@ -81,7 +79,6 @@ public class CertifiedCopyEmailDataMapperTest {
     void testMapCertifiedCopy(String name, ExpectationsBuilder expectationsBuilder) {
         // given
         BaseItemApi input = expectationsBuilder.buildBaseItem();
-        CertifiedCopyItemOptionsApi itemOptions = (CertifiedCopyItemOptionsApi) input.getItemOptions();
         CertifiedCopy expected = expectationsBuilder.buildCertifiedCopy();
 
         when(config.getFilingHistoryDateFormat()).thenReturn(TestConstants.FILING_HISTORY_EMAIL_DATE_FORMAT);

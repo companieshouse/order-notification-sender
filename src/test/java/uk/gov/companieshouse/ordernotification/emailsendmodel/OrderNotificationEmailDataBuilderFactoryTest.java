@@ -10,7 +10,7 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class OrderNotificationEmailDataBuilderFactoryTest {
+class OrderNotificationEmailDataBuilderFactoryTest {
 
     @InjectMocks
     private OrderNotificationEmailDataBuilderFactory factory;

@@ -1,7 +1,14 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import java.util.HashMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,21 +17,15 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
 import uk.gov.companieshouse.api.model.order.item.DeliveryTimescaleApi;
-
-import java.util.stream.Stream;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
-public class CertificateEmailDataMapperTest {
+class CertificateEmailDataMapperTest {
 
     private static final ItemBuilder standardCertificate = itemBuilder()
             .withId(TestConstants.CERTIFICATE_ID)
@@ -65,12 +66,9 @@ public class CertificateEmailDataMapperTest {
 
     @BeforeEach
     void setup() {
-        Map<DeliveryTimescaleApi, String> deliveryMappings = new HashMap<DeliveryTimescaleApi, String>() {
-            {
-                put(DeliveryTimescaleApi.STANDARD, "Standard");
-                put(DeliveryTimescaleApi.SAME_DAY, "Express");
-            }
-        };
+        Map<DeliveryTimescaleApi, String> deliveryMappings = new EnumMap<>(DeliveryTimescaleApi.class);
+        deliveryMappings.put(DeliveryTimescaleApi.STANDARD, "Standard");
+        deliveryMappings.put(DeliveryTimescaleApi.SAME_DAY, "Express");
         mapper = new CertificateEmailDataMapper(typeMapper, deliveryMappings);
     }
 

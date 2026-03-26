@@ -37,7 +37,7 @@ public class ItemGroupProcessedSendTestConfig {
 
     @Bean
     KafkaConsumer<String, email_send> emailSendConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers, EmbeddedKafkaBroker embeddedKafkaBroker, KafkaTopics kafkaTopics) {
-        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), Boolean.toString(true));
+        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), true);
         KafkaConsumer<String, email_send> kafkaConsumer = new KafkaConsumer<>(props,
                 new StringDeserializer(),
                 new MessageDeserialiser<>(email_send.class));
@@ -48,7 +48,7 @@ public class ItemGroupProcessedSendTestConfig {
 
     @Bean
     KafkaConsumer<String, OrderReceived> orderReceivedRetryConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers, EmbeddedKafkaBroker embeddedKafkaBroker, KafkaTopics kafkaTopics) {
-        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), Boolean.toString(true));
+        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), true);
         KafkaConsumer<String, OrderReceived> kafkaConsumer = new KafkaConsumer<>(props,
                 new StringDeserializer(),
                 new MessageDeserialiser<>(OrderReceived.class));

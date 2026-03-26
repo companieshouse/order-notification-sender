@@ -21,7 +21,7 @@ import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersApiWrappable;
 
 @ExtendWith(MockitoExtension.class)
-public class OrdersApiDetailsMapperTest {
+class OrdersApiDetailsMapperTest {
 
     @InjectMocks
     private OrdersApiDetailsMapper mapper;

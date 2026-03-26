@@ -16,12 +16,13 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
@@ -29,6 +30,8 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTestConfig;
 
@@ -44,6 +47,7 @@ import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTest
 )
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @Import(ItemGroupProcessedSendTestConfig.class)
+@ExtendWith(MockitoExtension.class)
 class ItemGroupProcessedSendConsumerPositiveTest {
 
     @Autowired
@@ -62,7 +66,7 @@ class ItemGroupProcessedSendConsumerPositiveTest {
     @Value("${kafka.topics.item-group-processed-send}")
     private String mainTopicName;
 
-    @MockBean
+    @MockitoBean
     private ItemGroupProcessedSendHandler itemGroupProcessedSendHandler;
 
     @Captor

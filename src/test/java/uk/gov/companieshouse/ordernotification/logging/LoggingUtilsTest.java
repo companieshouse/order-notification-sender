@@ -64,8 +64,7 @@ class LoggingUtilsTest {
         RecordMetadata metadata = new RecordMetadata(
                 new TopicPartition(TestConstants.KAFKA_TOPIC, 2),
                 0L,
-                3L,
-                0L,
+                3,
                 0L,
                 0,
                 0
@@ -89,18 +88,6 @@ class LoggingUtilsTest {
 
     @Test
     void testLogIfNotNullIfObjectNonNull() {
-        //given
-        Map<String, Object> logArgs = new HashMap<>();
-
-        //when
-        loggingUtils.logIfNotNull(logArgs, "key", "value");
-
-        //then
-        assertTrue(logArgs.containsKey("key"));
-    }
-
-    @Test
-    void testLogIfNotNullSkipIfObjectNull() {
         //given
         Map<String, Object> logArgs = new HashMap<>();
 

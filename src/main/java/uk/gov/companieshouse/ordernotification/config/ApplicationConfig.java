@@ -1,18 +1,20 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
@@ -66,7 +68,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     Map<DeliveryTimescaleApi, String> deliveryMethodMappings() {
-        Map<DeliveryTimescaleApi, String> mappings = new HashMap<>();
+        Map<DeliveryTimescaleApi, String> mappings = new EnumMap<>(DeliveryTimescaleApi.class);
         mappings.put(DeliveryTimescaleApi.STANDARD, "Standard");
         mappings.put(DeliveryTimescaleApi.SAME_DAY, "Express");
         return mappings;

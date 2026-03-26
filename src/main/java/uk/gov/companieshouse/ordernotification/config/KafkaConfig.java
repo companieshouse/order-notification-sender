@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -35,6 +36,7 @@ import uk.gov.companieshouse.orders.OrderReceived;
 import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.*;
 
 @Configuration
+@EnableKafka
 public class KafkaConfig {
 
     private final String brokerAddresses;
