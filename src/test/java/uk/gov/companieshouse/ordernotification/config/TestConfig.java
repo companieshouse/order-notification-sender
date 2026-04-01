@@ -1,10 +1,10 @@
 package uk.gov.companieshouse.ordernotification.config;
 
-import email.email_send;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -19,8 +19,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.EmbeddedKafkaZKBroker;
+import org.springframework.kafka.test.EmbeddedKafkaKraftBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
+
+import email.email_send;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.kafka.exceptions.SerializationException;
 import uk.gov.companieshouse.kafka.serialization.SerializerFactory;
@@ -35,12 +37,13 @@ public class TestConfig {
 
     @Bean
     EmbeddedKafkaBroker embeddedKafkaBroker() {
-        return new EmbeddedKafkaZKBroker(1);
+      return new EmbeddedKafkaKraftBroker(1, 1,"item-group-processed-send" )
+        .brokerListProperty("spring.kafka.bootstrap-servers");
     }
 
     @Bean
     KafkaConsumer<String, email_send> emailSendConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers, EmbeddedKafkaBroker embeddedKafkaBroker, KafkaTopics kafkaTopics) {
-        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), Boolean.toString(true));
+        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), true);
         KafkaConsumer<String, email_send> kafkaConsumer = new KafkaConsumer<>(props,
                 new StringDeserializer(),
                 new MessageDeserialiser<>(email_send.class));
@@ -51,7 +54,7 @@ public class TestConfig {
 
     @Bean
     KafkaConsumer<String, OrderReceived> orderReceivedRetryConsumer(@Value("${spring.kafka.bootstrap-servers}") String bootstrapServers, EmbeddedKafkaBroker embeddedKafkaBroker, KafkaTopics kafkaTopics) {
-        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), Boolean.toString(true));
+        Map<String, Object> props = KafkaTestUtils.consumerProps(bootstrapServers, UUID.randomUUID().toString(), true);
         KafkaConsumer<String, OrderReceived> kafkaConsumer = new KafkaConsumer<>(props,
                 new StringDeserializer(),
                 new MessageDeserialiser<>(OrderReceived.class));

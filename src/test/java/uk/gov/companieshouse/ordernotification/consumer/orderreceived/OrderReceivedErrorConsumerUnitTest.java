@@ -58,8 +58,7 @@ class OrderReceivedErrorConsumerUnitTest {
 
     @BeforeEach
     void beforeEach() {
-        orderReceivedErrorConsumer.setErrorGroup("order-notification-sender-order-received-"
-                + "notification-error");
+        orderReceivedErrorConsumer.setErrorGroup("order-notification-sender-order-received-notification-error");
         orderReceivedErrorConsumer.setErrorTopic("order-received-notification-error");
     }
 

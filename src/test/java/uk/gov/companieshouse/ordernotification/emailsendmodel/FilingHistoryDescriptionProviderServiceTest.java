@@ -1,19 +1,19 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import uk.gov.companieshouse.logging.LoggerFactory;
-import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
-import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static uk.gov.companieshouse.ordernotification.logging.LoggingUtilsConfiguration.APPLICATION_NAMESPACE;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
-import static uk.gov.companieshouse.ordernotification.logging.LoggingUtilsConfiguration.APPLICATION_NAMESPACE;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import uk.gov.companieshouse.logging.LoggerFactory;
+import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
+import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 class FilingHistoryDescriptionProviderServiceTest {
     private static final Map<String, Object> DESCRIPTION_VALUES;
@@ -82,14 +82,14 @@ class FilingHistoryDescriptionProviderServiceTest {
     @DisplayName("Returns null when filing history description file not found")
     void mapFilingHistoryDescriptionFileNotFoundReturnsNull() {
         final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService("notfound.yaml", new LoggingUtils(LoggerFactory.getLogger(APPLICATION_NAMESPACE)), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES), is(nullValue()));
+        assertNull(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES));
     }
 
     @Test
     @DisplayName("Returns null if root property absent from file")
     void mapFilingHistoryDescriptionFileAbsentPropertyReturnsNull() {
         final FilingHistoryDescriptionProviderService provider = new FilingHistoryDescriptionProviderService("missing-key.yaml", new LoggingUtils(LoggerFactory.getLogger(APPLICATION_NAMESPACE)), TestConstants.EMAIL_DATE_FORMAT);
-        assertThat(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES), is(nullValue()));
+        assertNull(provider.mapFilingHistoryDescription(TestConstants.DESCRIPTION_KEY, DESCRIPTION_VALUES));
     }
 
 }
