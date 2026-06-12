@@ -12,5 +12,5 @@ service_autoscale_scale_out_cooldown = 600
 
 
 # Enable Parallel Old Kafka Service
-create_old_kafka_service = true
+create_old_kafka_service = false
 order_notification_sender_old_kafka_version = "0.1.56" 
