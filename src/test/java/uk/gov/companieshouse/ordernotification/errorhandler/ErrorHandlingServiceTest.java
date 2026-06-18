@@ -1,5 +1,16 @@
 package uk.gov.companieshouse.ordernotification.errorhandler;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,18 +25,6 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 import uk.gov.companieshouse.ordernotification.messageproducer.MessageProducer;
 import uk.gov.companieshouse.orders.OrderReceived;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ErrorHandlingServiceTest {
@@ -53,7 +52,8 @@ class ErrorHandlingServiceTest {
     }
 
     @Test
-    void testRepublishOrderNotificationToRetryTopicIfRetryCountNotExceeded() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+    void testRepublishOrderNotificationToRetryTopicIfRetryCountNotExceeded()
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
         when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -66,12 +66,14 @@ class ErrorHandlingServiceTest {
         errorHandlingService.handleEvent(eventSourceRetrievable);
 
         //then
-        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE, 1), TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-retry");
+        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE, 1),
+                TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-retry");
         verify(logger).debug("Publishing message to retry topic", logArgs);
     }
 
     @Test
-    void testPublishOrderNotificationToErrorTopicIfRetryCountExceeded() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+    void testPublishOrderNotificationToErrorTopicIfRetryCountExceeded()
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
         when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -84,12 +86,14 @@ class ErrorHandlingServiceTest {
         errorHandlingService.handleEvent(eventSourceRetrievable);
 
         //then
-        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE, 0), TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-error");
+        verify(messageProducer).sendMessage(new OrderReceived(TestConstants.ORDER_NOTIFICATION_REFERENCE, 0),
+                TestConstants.ORDER_NOTIFICATION_REFERENCE, "order-received-notification-error");
         verify(logger).debug("Maximum number of attempts exceeded; publishing message to error topic", logArgs);
     }
 
     @Test
-    void testThrowRuntimeExceptionIfSerializationException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+    void testThrowRuntimeExceptionIfSerializationException()
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
         when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -108,7 +112,8 @@ class ErrorHandlingServiceTest {
     }
 
     @Test
-    void testThrowRuntimeExceptionIfExecutionException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+    void testThrowRuntimeExceptionIfExecutionException()
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
         when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -127,7 +132,8 @@ class ErrorHandlingServiceTest {
     }
 
     @Test
-    void testThrowRuntimeExceptionIfInterruptedException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+    void testThrowRuntimeExceptionIfInterruptedException()
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
         when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);
@@ -146,7 +152,8 @@ class ErrorHandlingServiceTest {
     }
 
     @Test
-    void testThrowRuntimeExceptionIfTimeoutException() throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
+    void testThrowRuntimeExceptionIfTimeoutException()
+            throws SerializationException, ExecutionException, InterruptedException, TimeoutException {
         //given
         Map<String, Object> logArgs = new HashMap<>();
         when(orderIdentifiable.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);

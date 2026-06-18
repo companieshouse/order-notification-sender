@@ -46,14 +46,14 @@ class OrderResourceItemReadyNotificationEnricherTest {
 
     @Test
     void testThrowExceptionIfOrdersApiErrorsDuringEnrichmentWithItemGroupProcessedSend()
-        throws OrdersResponseException {
+            throws OrdersResponseException {
         //given
         when(orderRetrievable.getOrderData(anyString())).thenThrow(OrdersResponseException.class);
         when(loggingUtils.logWithOrderUri(any(), any())).thenReturn(Collections.emptyMap());
 
         //when
         Executable actual = () -> enricher.enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE,
-            ITEM_GROUP_PROCESSED_SEND);
+                ITEM_GROUP_PROCESSED_SEND);
 
         //then
         assertThrows(OrdersResponseException.class, actual);
@@ -66,18 +66,18 @@ class OrderResourceItemReadyNotificationEnricherTest {
         //given
         when(orderRetrievable.getOrderData(anyString())).thenReturn(ordersApiWrappable);
         when(ordersApiMapper.mapToEmailSend(any(), any())).thenThrow(
-            IllegalArgumentException.class);
+                IllegalArgumentException.class);
         when(loggingUtils.logWithOrderUri(any(), any())).thenReturn(Collections.emptyMap());
         when(loggingUtils.getLogger()).thenReturn(logger);
 
         //when
         Executable actual = () -> enricher.enrich(TestConstants.ORDER_NOTIFICATION_REFERENCE,
-            ITEM_GROUP_PROCESSED_SEND);
+                ITEM_GROUP_PROCESSED_SEND);
 
         //then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, actual);
         verify(logger).error("Failed to map order and item ready notification", exception,
-            Collections.emptyMap());
+                Collections.emptyMap());
     }
 
 }

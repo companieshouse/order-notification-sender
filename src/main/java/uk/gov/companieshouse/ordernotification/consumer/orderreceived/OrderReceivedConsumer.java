@@ -22,8 +22,7 @@ public class OrderReceivedConsumer {
      * <p>Consumes a message from the order-received topic and notifies the application that an order
      * is ready to be published.</p>
      *
-     * @param message A {@link Message message} containing an
-     *                {@link OrderReceived order received entity}.
+     * @param message A {@link Message message} containing an {@link OrderReceived order received entity}.
      */
     @KafkaListener(id = "#{'${kafka.topics.order-received-group}'}",
             groupId = "#{'${kafka.topics.order-received-group}'}",
@@ -38,8 +37,7 @@ public class OrderReceivedConsumer {
      * <p>Consumes a message from the order-received-retry topic and notifies the application that an order
      * is ready to be published.</p>
      *
-     * @param message A {@link Message message} containing an
-     *                {@link OrderReceived order received entity}.
+     * @param message A {@link Message message} containing an {@link OrderReceived order received entity}.
      */
     @KafkaListener(id = "#{'${kafka.topics.order-received-retry-group}'}",
             groupId = "#{'${kafka.topics.order-received-retry-group}'}",

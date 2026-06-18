@@ -9,6 +9,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 
 /**
  * OrderReceived deserializer based on apache kafka Deserializer interface
+ *
  * @param <T>
  */
 public class MessageDeserialiser<T extends IndexedRecord> implements Deserializer<T> {

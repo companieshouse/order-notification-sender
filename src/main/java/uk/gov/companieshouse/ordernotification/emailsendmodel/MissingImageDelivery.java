@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class MissingImageDelivery {
+
     private final String id;
     private final String dateFiled;
     private final String type;
@@ -11,7 +12,7 @@ public class MissingImageDelivery {
     private final String fee;
 
     public MissingImageDelivery(String id, String dateFiled, String type, String description,
-                                String companyNumber, String fee) {
+            String companyNumber, String fee) {
         this.id = id;
         this.dateFiled = dateFiled;
         this.type = type;
@@ -49,6 +50,7 @@ public class MissingImageDelivery {
     }
 
     static class MissingImageDeliveryBuilder {
+
         private String id;
         private String dateFiled;
         private String type;
@@ -100,7 +102,9 @@ public class MissingImageDelivery {
             return false;
         }
         MissingImageDelivery that = (MissingImageDelivery) o;
-        return Objects.equals(id, that.id) && Objects.equals(dateFiled, that.dateFiled) && Objects.equals(type, that.type) && Objects.equals(description, that.description) && Objects.equals(companyNumber, that.companyNumber) && Objects.equals(fee, that.fee);
+        return Objects.equals(id, that.id) && Objects.equals(dateFiled, that.dateFiled) && Objects.equals(type, that.type)
+                && Objects.equals(description, that.description) && Objects.equals(companyNumber, that.companyNumber)
+                && Objects.equals(fee, that.fee);
     }
 
     @Override

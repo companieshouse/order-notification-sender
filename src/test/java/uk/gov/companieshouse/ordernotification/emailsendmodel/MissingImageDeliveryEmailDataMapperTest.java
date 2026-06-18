@@ -1,7 +1,13 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,14 +17,6 @@ import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MissingImageDeliveryEmailDataMapperTest {
@@ -45,7 +43,8 @@ class MissingImageDeliveryEmailDataMapperTest {
         // then
         MissingImageDelivery expected = getMappedMissingImageDelivery();
         assertEquals(expected, actual);
-        verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION, getFilingHistoryDescriptionValues());
+        verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION,
+                getFilingHistoryDescriptionValues());
     }
 
     private BaseItemApi getItem() {
@@ -66,13 +65,13 @@ class MissingImageDeliveryEmailDataMapperTest {
 
     private MissingImageDelivery getMappedMissingImageDelivery() {
         return MissingImageDelivery.builder()
-            .withId(TestConstants.MISSING_IMAGE_DELIVERY_ID)
-            .withCompanyNumber(TestConstants.COMPANY_NUMBER)
-            .withFee(TestConstants.ORDER_VIEW)
-            .withDateFiled(TestConstants.MAPPED_FILING_HISTORY_DATE)
-            .withType(TestConstants.FILING_HISTORY_TYPE)
-            .withDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION)
-            .build();
+                .withId(TestConstants.MISSING_IMAGE_DELIVERY_ID)
+                .withCompanyNumber(TestConstants.COMPANY_NUMBER)
+                .withFee(TestConstants.ORDER_VIEW)
+                .withDateFiled(TestConstants.MAPPED_FILING_HISTORY_DATE)
+                .withType(TestConstants.FILING_HISTORY_TYPE)
+                .withDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION)
+                .build();
     }
 
     private Map<String, Object> getFilingHistoryDescriptionValues() {

@@ -3,7 +3,6 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.text.MessageFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-
 import uk.gov.companieshouse.api.model.order.DeliveryDetailsApi;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
@@ -92,19 +91,19 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
 
     private void mapPaymentDetails(OrdersApi ordersApi) {
         emailData.setPaymentDetails(PaymentDetails.builder()
-            .withPaymentReference(ordersApi.getPaymentReference())
-            .withAmountPaid("£" + ordersApi.getTotalOrderCost())
-            .withPaymentDate(ordersApi.getOrderedAt().format(DateTimeFormatter.ofPattern(
-                    emailConfiguration.getPaymentDateFormat())
-            ))
-            .build()
+                .withPaymentReference(ordersApi.getPaymentReference())
+                .withAmountPaid("£" + ordersApi.getTotalOrderCost())
+                .withPaymentDate(ordersApi.getOrderedAt().format(DateTimeFormatter.ofPattern(
+                        emailConfiguration.getPaymentDateFormat())
+                ))
+                .build()
         );
     }
 
     private void mapDeliveryTimescale(DeliveryTimescaleApi deliveryTimescaleApi) {
         if (deliveryTimescaleApi == DeliveryTimescaleApi.STANDARD) {
             emailData.setHasStandardDelivery(true);
-        } else if (deliveryTimescaleApi == DeliveryTimescaleApi.SAME_DAY){
+        } else if (deliveryTimescaleApi == DeliveryTimescaleApi.SAME_DAY) {
             emailData.setHasExpressDelivery(true);
         }
     }
@@ -118,11 +117,15 @@ public class OrderNotificationEmailDataConverter implements OrderNotificationDat
             return false;
         }
         OrderNotificationEmailDataConverter that = (OrderNotificationEmailDataConverter) o;
-        return Objects.equals(emailData, that.emailData) && Objects.equals(certificateEmailDataMapper, that.certificateEmailDataMapper) && Objects.equals(certifiedCopyEmailDataMapper, that.certifiedCopyEmailDataMapper) && Objects.equals(missingImageDeliveryEmailDataMapper, that.missingImageDeliveryEmailDataMapper) && Objects.equals(emailConfiguration, that.emailConfiguration);
+        return Objects.equals(emailData, that.emailData) && Objects.equals(certificateEmailDataMapper,
+                that.certificateEmailDataMapper) && Objects.equals(certifiedCopyEmailDataMapper,
+                that.certifiedCopyEmailDataMapper) && Objects.equals(missingImageDeliveryEmailDataMapper,
+                that.missingImageDeliveryEmailDataMapper) && Objects.equals(emailConfiguration, that.emailConfiguration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(emailData, certificateEmailDataMapper, certifiedCopyEmailDataMapper, missingImageDeliveryEmailDataMapper, emailConfiguration);
+        return Objects.hash(emailData, certificateEmailDataMapper, certifiedCopyEmailDataMapper,
+                missingImageDeliveryEmailDataMapper, emailConfiguration);
     }
 }

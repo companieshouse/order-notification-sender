@@ -14,10 +14,10 @@ public class KafkaTopicInitialiser implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        broker.addTopics(new NewTopic(kafkaTopics.getEmailSend(), 1, (short)1));
-        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceived(), 1, (short)1));
-        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceivedRetry(), 1, (short)1));
-        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceivedError(), 1, (short)1));
+        broker.addTopics(new NewTopic(kafkaTopics.getEmailSend(), 1, (short) 1));
+        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceived(), 1, (short) 1));
+        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceivedRetry(), 1, (short) 1));
+        broker.addTopics(new NewTopic(kafkaTopics.getOrderReceivedError(), 1, (short) 1));
     }
 
     @Autowired

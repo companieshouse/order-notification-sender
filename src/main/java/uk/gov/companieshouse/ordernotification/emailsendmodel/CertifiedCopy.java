@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class CertifiedCopy {
+
     private final String id;
     private final String companyNumber;
     private final String deliveryMethod;
@@ -55,6 +56,7 @@ public class CertifiedCopy {
     }
 
     static class CertifiedCopyBuilder implements Cloneable {
+
         private String id;
         private String companyNumber;
         private String deliveryMethod;

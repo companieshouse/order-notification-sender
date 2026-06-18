@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.consumer;
 
 public final class PartitionOffset {
+
     private ThreadLocal<Long> offset = new ThreadLocal<>();
 
     public void setOffset(Long offset) {

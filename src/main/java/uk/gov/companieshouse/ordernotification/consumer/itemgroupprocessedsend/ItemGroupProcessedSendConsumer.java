@@ -1,18 +1,17 @@
 package uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend;
 
+import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
 import org.springframework.kafka.retrytopic.DltStrategy;
 import org.springframework.kafka.retrytopic.SameIntervalTopicReuseStrategy;
 import org.springframework.messaging.Message;
-import org.springframework.kafka.annotation.BackOff;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.consumer.orderreceived.RetryableErrorException;
 
 /**
- * Consumes <code>item-group-processed-send</code> messages and notifies the application that it is
- * ready to be processed.
+ * Consumes <code>item-group-processed-send</code> messages and notifies the application that it is ready to be processed.
  */
 @Service
 public class ItemGroupProcessedSendConsumer {
@@ -22,7 +21,7 @@ public class ItemGroupProcessedSendConsumer {
     private final MessageFlags messageFlags;
 
     public ItemGroupProcessedSendConsumer(
-        ItemGroupProcessedSendHandler itemGroupProcessedSendHandler, MessageFlags messageFlags) {
+            ItemGroupProcessedSendHandler itemGroupProcessedSendHandler, MessageFlags messageFlags) {
         this.itemGroupProcessedSendHandler = itemGroupProcessedSendHandler;
         this.messageFlags = messageFlags;
     }
@@ -30,8 +29,7 @@ public class ItemGroupProcessedSendConsumer {
     /**
      * Consumes a message from the <code>item-group-processed-send</code> topic.
      *
-     * @param message A {@link Message message} containing an
-     *                {@link ItemGroupProcessedSend entity}.
+     * @param message A {@link Message message} containing an {@link ItemGroupProcessedSend entity}.
      */
     @KafkaListener(id = "#{'${kafka.topics.item-group-processed-send-group}'}",
             groupId = "#{'${kafka.topics.item-group-processed-send-group}'}",
@@ -39,13 +37,13 @@ public class ItemGroupProcessedSendConsumer {
             autoStartup = "#{!${uk.gov.companieshouse.order-notification-sender.error-consumer}}",
             containerFactory = "kafkaItemGroupProcessedSendListenerContainerFactory")
     @RetryableTopic(
-        attempts = "${kafka.topics.item-group-processed-send.max_attempts}",
-        autoCreateTopics = "false",
-        backOff = @BackOff(delayString = "${kafka.topics.item-group-processed-send.backoff_delay}"),
-        dltTopicSuffix = "-error",
-        dltStrategy = DltStrategy.FAIL_ON_ERROR,
-        sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC,
-        include = RetryableErrorException.class
+            attempts = "${kafka.topics.item-group-processed-send.max_attempts}",
+            autoCreateTopics = "false",
+            backOff = @BackOff(delayString = "${kafka.topics.item-group-processed-send.backoff_delay}"),
+            dltTopicSuffix = "-error",
+            dltStrategy = DltStrategy.FAIL_ON_ERROR,
+            sameIntervalTopicReuseStrategy = SameIntervalTopicReuseStrategy.SINGLE_TOPIC,
+            include = RetryableErrorException.class
     )
     public void processItemGroupProcessedSend(Message<ItemGroupProcessedSend> message) {
         try {

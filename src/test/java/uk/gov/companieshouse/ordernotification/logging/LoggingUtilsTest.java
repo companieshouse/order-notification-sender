@@ -1,5 +1,12 @@
 package uk.gov.companieshouse.ordernotification.logging;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,14 +19,6 @@ import org.springframework.messaging.support.GenericMessage;
 import uk.gov.companieshouse.kafka.message.Message;
 import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class LoggingUtilsTest {
@@ -120,7 +119,8 @@ class LoggingUtilsTest {
         expectedMap.put(LoggingUtils.ORDER_URI, TestConstants.ORDER_NOTIFICATION_REFERENCE);
 
         //when
-        Map<String, Object> actual = loggingUtils.logMessageWithOrderUri(message, "logMessage", TestConstants.ORDER_NOTIFICATION_REFERENCE);
+        Map<String, Object> actual = loggingUtils.logMessageWithOrderUri(message, "logMessage",
+                TestConstants.ORDER_NOTIFICATION_REFERENCE);
 
         //then
         assertEquals(expectedMap, actual);

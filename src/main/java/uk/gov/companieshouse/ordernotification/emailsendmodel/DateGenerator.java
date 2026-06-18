@@ -1,9 +1,8 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import org.springframework.stereotype.Component;
 
 /**
  * Supply a {@link LocalDateTime} zoned to UTC.

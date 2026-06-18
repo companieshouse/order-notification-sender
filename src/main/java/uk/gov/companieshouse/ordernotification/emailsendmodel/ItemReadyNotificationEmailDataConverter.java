@@ -13,14 +13,14 @@ public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEm
     private final ItemReadyEmailConfiguration itemReadyEmailConfig;
 
     public ItemReadyNotificationEmailDataConverter(OrderNotificationEmailData emailData,
-        CertificateEmailDataMapper certificateEmailDataMapper,
-        CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper,
-        MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper,
-        EmailConfiguration emailConfiguration,
-        ItemReadyEmailConfiguration itemReadyEmailConfig,
-        ItemGroupProcessedSend itemReadyNotification) {
+            CertificateEmailDataMapper certificateEmailDataMapper,
+            CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper,
+            MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper,
+            EmailConfiguration emailConfiguration,
+            ItemReadyEmailConfiguration itemReadyEmailConfig,
+            ItemGroupProcessedSend itemReadyNotification) {
         super(emailData, certificateEmailDataMapper, certifiedCopyEmailDataMapper,
-            missingImageDeliveryEmailDataMapper, emailConfiguration);
+                missingImageDeliveryEmailDataMapper, emailConfiguration);
         this.itemReadyEmailConfig = itemReadyEmailConfig;
         this.itemReadyNotification = itemReadyNotification;
     }
@@ -29,17 +29,17 @@ public class ItemReadyNotificationEmailDataConverter extends OrderNotificationEm
     public void mapOrder(OrdersApi ordersApi) {
         super.mapOrder(ordersApi);
         final ItemReadyNotificationEmailData emailData =
-            (ItemReadyNotificationEmailData) getEmailData();
+                (ItemReadyNotificationEmailData) getEmailData();
         emailData.setOrderNumber(itemReadyNotification.getOrderNumber());
         emailData.setGroupItem(itemReadyNotification.getGroupItem());
         emailData.setItemId(itemReadyNotification.getItem().getId());
         emailData.setDigitalDocumentLocation(
-            itemReadyNotification.getItem().getDigitalDocumentLocation());
+                itemReadyNotification.getItem().getDigitalDocumentLocation());
     }
 
     @Override
     protected String buildSubject(final OrdersApi ordersApi) {
         return MessageFormat.format(itemReadyEmailConfig.getSubject(),
-            itemReadyNotification.getItem().getId(), ordersApi.getReference());
+                itemReadyNotification.getItem().getId(), ordersApi.getReference());
     }
 }

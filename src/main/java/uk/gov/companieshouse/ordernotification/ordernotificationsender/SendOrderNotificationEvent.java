@@ -54,8 +54,7 @@ public class SendOrderNotificationEvent implements OrderIdentifiable {
     }
 
     /**
-     * Converts the given object to string with each line indented by 4 spaces
-     * (except the first line).
+     * Converts the given object to string with each line indented by 4 spaces (except the first line).
      *
      * @param o The object to convert to string.
      * @return The indented string representation of the object.

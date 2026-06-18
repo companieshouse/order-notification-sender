@@ -41,8 +41,8 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
     }
 
     /**
-     * Handles an order notification by enriching it with data fetched from the orders API. If an error occurs when
-     * enriching the notification then a failure event will be published.
+     * Handles an order notification by enriching it with data fetched from the orders API. If an error occurs when enriching the
+     * notification then a failure event will be published.
      *
      * @param event The order that is being processed.
      */
@@ -90,13 +90,14 @@ public class OrderNotificationSenderService implements ApplicationEventPublisher
 
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher publisher) {
-        loggingUtils.getLogger().trace(format("setApplicationEventPublisher(%s) method called.", publisher.getClass().getSimpleName()));
+        loggingUtils.getLogger()
+                .trace(format("setApplicationEventPublisher(%s) method called.", publisher.getClass().getSimpleName()));
         this.applicationEventPublisher = publisher;
     }
 
     private Optional<String> getRequestId() {
         var attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if(attributes == null) {
+        if (attributes == null) {
             return Optional.empty();
         }
         return Optional.ofNullable(attributes.getRequest().getHeader("x-request-id"));

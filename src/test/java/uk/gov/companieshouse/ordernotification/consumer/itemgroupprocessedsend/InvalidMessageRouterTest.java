@@ -41,27 +41,27 @@ class InvalidMessageRouterTest {
     void testOnSendRoutesMessageToInvalidMessageTopicIfNonRetryableExceptionThrown() {
         // given
         ProducerRecord<String, ItemGroupProcessedSend> message =
-            new ProducerRecord<>("main", SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND);
+                new ProducerRecord<>("main", SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND);
 
         // when
         ProducerRecord<String, ItemGroupProcessedSend> actual = invalidMessageRouter.onSend(
-            message);
+                message);
 
         // then
         assertThat(actual, is(equalTo(
-            new ProducerRecord<>("invalid", SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND))));
+                new ProducerRecord<>("invalid", SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND))));
     }
 
     @Test
     void testOnSendRoutesMessageToTargetTopicIfRetryableExceptionThrown() {
         // given
         ProducerRecord<String, ItemGroupProcessedSend> message =
-            new ProducerRecord<>("main", SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND);
+                new ProducerRecord<>("main", SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND);
         when(flags.isRetryable()).thenReturn(true);
 
         // when
         ProducerRecord<String, ItemGroupProcessedSend> actual = invalidMessageRouter.onSend(
-            message);
+                message);
 
         // then
         assertThat(actual, is(sameInstance(message)));

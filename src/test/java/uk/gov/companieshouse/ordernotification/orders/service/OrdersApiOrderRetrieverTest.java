@@ -32,6 +32,7 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 @ExtendWith(MockitoExtension.class)
 class OrdersApiOrderRetrieverTest {
+
     private static final String ORDER_URL = "/orders/1234";
     private static final String ORDER_URL_INCORRECT = "/bad-orders/url";
 
@@ -86,7 +87,8 @@ class OrdersApiOrderRetrieverTest {
     }
 
     @Test
-    void getOrderDataThrowsResponseExceptionIfApiErrorResponseExceptionThrown() throws ApiErrorResponseException, URIValidationException {
+    void getOrderDataThrowsResponseExceptionIfApiErrorResponseExceptionThrown()
+            throws ApiErrorResponseException, URIValidationException {
         //given
         when(apiClient.getPrivateApiClient()).thenReturn(internalApiClient);
         when(internalApiClient.privateOrderResourceHandler()).thenReturn(privateOrderResourceHandler);

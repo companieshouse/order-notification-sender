@@ -15,7 +15,7 @@ public class ItemGroupProcessedSendConsumerAspect {
     }
 
     @After("execution(* uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend."
-        + "ItemGroupProcessedSendConsumer.processItemGroupProcessedSend(..))")
+            + "ItemGroupProcessedSendConsumer.processItemGroupProcessedSend(..))")
     void afterConsume(JoinPoint joinPoint) {
         latch.countDown();
     }

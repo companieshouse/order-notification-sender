@@ -1,6 +1,7 @@
 package uk.gov.companieshouse.ordernotification.config;
 
 public class KafkaTopics {
+
     private String emailSend;
     private String orderReceived;
     private String orderReceivedRetry;

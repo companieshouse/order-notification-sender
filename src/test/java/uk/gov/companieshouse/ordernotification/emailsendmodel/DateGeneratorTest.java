@@ -1,10 +1,9 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDateTime;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.Test;
 
 class DateGeneratorTest {
 

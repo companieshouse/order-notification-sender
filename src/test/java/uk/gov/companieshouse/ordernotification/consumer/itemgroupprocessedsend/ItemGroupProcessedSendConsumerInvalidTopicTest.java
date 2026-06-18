@@ -30,12 +30,12 @@ import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTest
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
-    topics = {"${kafka.topics.item-group-processed-send}",
-        "${kafka.topics.item-group-processed-send}-retry",
-        "${kafka.topics.item-group-processed-send}-error",
-        "${kafka.topics.item-group-processed-send}-invalid"},
-    controlledShutdown = true,
-    partitions = 1
+        topics = {"${kafka.topics.item-group-processed-send}",
+                "${kafka.topics.item-group-processed-send}-retry",
+                "${kafka.topics.item-group-processed-send}-error",
+                "${kafka.topics.item-group-processed-send}-invalid"},
+        controlledShutdown = true,
+        partitions = 1
 )
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @Import(ItemGroupProcessedSendTestConfig.class)
@@ -56,18 +56,18 @@ class ItemGroupProcessedSendConsumerInvalidTopicTest {
 
     @Test
     void testPublishToInvalidMessageTopicIfInvalidDataDeserialised()
-        throws InterruptedException, ExecutionException {
+            throws InterruptedException, ExecutionException {
         //given
         embeddedKafkaBroker.consumeFromAllEmbeddedTopics(testConsumer);
 
         //when
         Future<RecordMetadata> future =
-            itemGroupProcessedSendProducer.send(new ProducerRecord<>(
-                mainTopicName,
-                0,
-                System.currentTimeMillis(),
-                SAME_PARTITION_KEY,
-                ITEM_GROUP_PROCESSED_SEND));
+                itemGroupProcessedSendProducer.send(new ProducerRecord<>(
+                        mainTopicName,
+                        0,
+                        System.currentTimeMillis(),
+                        SAME_PARTITION_KEY,
+                        ITEM_GROUP_PROCESSED_SEND));
         future.get();
         ConsumerRecords<?, ?> consumerRecords = KafkaTestUtils.getRecords(testConsumer, Duration.ofMillis(30000L), 2);
 

@@ -1,5 +1,10 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,11 +15,6 @@ import uk.gov.companieshouse.kafka.producer.Acks;
 import uk.gov.companieshouse.kafka.producer.ProducerConfig;
 import uk.gov.companieshouse.ordernotification.config.KafkaConfig;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit tests the {@link KafkaProducer} class.
  */
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class KafkaProducerConfigurationTest {
 
     private static final String EXPECTED_CONFIG_ERROR_MESSAGE =
-        "Broker addresses for kafka broker missing, check if environment variable KAFKA_BROKER_ADDR is configured. " +
-                "[Hint: The property 'kafka.broker.addresses' uses the value of this environment variable in live " +
-                "environments and that of 'spring.embedded.kafka.brokers' property in test.]";
+            "Broker addresses for kafka broker missing, check if environment variable KAFKA_BROKER_ADDR is configured. " +
+                    "[Hint: The property 'kafka.broker.addresses' uses the value of this environment variable in live " +
+                    "environments and that of 'spring.embedded.kafka.brokers' property in test.]";
 
 
     @Test

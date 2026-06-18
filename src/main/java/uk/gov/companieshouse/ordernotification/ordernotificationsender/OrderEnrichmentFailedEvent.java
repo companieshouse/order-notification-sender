@@ -1,9 +1,8 @@
 package uk.gov.companieshouse.ordernotification.ordernotificationsender;
 
+import java.util.Objects;
 import uk.gov.companieshouse.ordernotification.eventmodel.EventSourceRetrievable;
 import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
-
-import java.util.Objects;
 
 /**
  * Raised if an error occurs when enriching an order with an order resource.

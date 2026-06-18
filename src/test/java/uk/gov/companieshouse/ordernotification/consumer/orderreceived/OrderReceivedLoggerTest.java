@@ -20,6 +20,7 @@ import uk.gov.companieshouse.orders.OrderReceived;
 
 @ExtendWith(MockitoExtension.class)
 class OrderReceivedLoggerTest {
+
     @Mock
     private Message<OrderReceived> message;
 

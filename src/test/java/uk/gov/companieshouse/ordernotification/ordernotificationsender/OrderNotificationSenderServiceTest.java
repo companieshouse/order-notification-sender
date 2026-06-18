@@ -70,7 +70,8 @@ class OrderNotificationSenderServiceTest {
     private PrivateSendEmailPost privateSendEmailPost;
 
     @Test
-    void testPublishEmailSendEventWhenSendOrderNotificationEventHandled() throws OrdersResponseException, ApiErrorResponseException {
+    void testPublishEmailSendEventWhenSendOrderNotificationEventHandled()
+            throws OrdersResponseException, ApiErrorResponseException {
         //given
         when(orderNotificationEnricher.enrich(any())).thenReturn(emailSend);
         when(sendOrderNotificationEvent.getOrderURI()).thenReturn(TestConstants.ORDER_NOTIFICATION_REFERENCE);

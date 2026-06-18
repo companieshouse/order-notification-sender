@@ -14,7 +14,7 @@ public class CertificateEmailDataMapper {
     private final Map<DeliveryTimescaleApi, String> deliveryMappings;
 
     public CertificateEmailDataMapper(CertificateTypeMapper certificateTypeMapper,
-                                      @Qualifier("deliveryMethodMappings") Map<DeliveryTimescaleApi, String> deliveryMappings) {
+            @Qualifier("deliveryMethodMappings") Map<DeliveryTimescaleApi, String> deliveryMappings) {
         this.certificateTypeMapper = certificateTypeMapper;
         this.deliveryMappings = deliveryMappings;
     }

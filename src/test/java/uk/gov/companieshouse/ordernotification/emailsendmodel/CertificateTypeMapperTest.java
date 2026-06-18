@@ -1,13 +1,12 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
-
-import java.util.Collections;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class CertificateTypeMapperTest {
 
@@ -15,7 +14,8 @@ class CertificateTypeMapperTest {
 
     @BeforeEach
     void setup() {
-        certificateTypeMapper = new CertificateTypeMapper(Collections.singletonMap(CertificateTypeApi.INCORPORATION, "Incorporation"));
+        certificateTypeMapper = new CertificateTypeMapper(
+                Collections.singletonMap(CertificateTypeApi.INCORPORATION, "Incorporation"));
     }
 
     @Test

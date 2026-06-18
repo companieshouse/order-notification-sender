@@ -29,8 +29,8 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
 
     @Autowired
     public OrderResourceOrderNotificationEnricher(OrderRetrievable orderRetrievable,
-        LoggingUtils loggingUtils,
-        OrdersApiDetailsMapper ordersApiMapper) {
+            LoggingUtils loggingUtils,
+            OrdersApiDetailsMapper ordersApiMapper) {
         this.orderRetrievable = orderRetrievable;
         this.loggingUtils = loggingUtils;
         this.ordersApiMapper = ordersApiMapper;
@@ -43,7 +43,7 @@ public class OrderResourceOrderNotificationEnricher implements OrderNotification
      */
     public EmailSend enrich(final String orderUri) throws OrdersResponseException {
         Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order",
-            orderUri);
+                orderUri);
         OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order", logArgs);
         try {

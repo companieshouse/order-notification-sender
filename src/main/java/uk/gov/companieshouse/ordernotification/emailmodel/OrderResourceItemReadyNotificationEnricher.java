@@ -29,31 +29,30 @@ public class OrderResourceItemReadyNotificationEnricher {
 
     @Autowired
     public OrderResourceItemReadyNotificationEnricher(OrderRetrievable orderRetrievable,
-        LoggingUtils loggingUtils,
-        OrdersApiDetailsMapper ordersApiMapper) {
+            LoggingUtils loggingUtils,
+            OrdersApiDetailsMapper ordersApiMapper) {
         this.orderRetrievable = orderRetrievable;
         this.loggingUtils = loggingUtils;
         this.ordersApiMapper = ordersApiMapper;
     }
 
     /**
-     * Enriches an item ready notification with an order resource fetched from the Orders API, and
-     * with item ready information.
+     * Enriches an item ready notification with an order resource fetched from the Orders API, and with item ready information.
      *
-     * @param orderUri  the order responsible for triggering the notification
+     * @param orderUri              the order responsible for triggering the notification
      * @param itemReadyNotification the incoming item ready notification
      */
     public EmailSend enrich(final String orderUri, final ItemGroupProcessedSend itemReadyNotification)
-        throws OrdersResponseException {
+            throws OrdersResponseException {
         Map<String, Object> logArgs = loggingUtils.logWithOrderUri("Fetching resource for order",
-            orderUri);
+                orderUri);
         OrdersApiWrappable order = orderRetrievable.getOrderData(orderUri);
         loggingUtils.getLogger().debug("Mapping order and item ready notification", logArgs);
         try {
             return ordersApiMapper.mapToEmailSend(order, itemReadyNotification);
         } catch (IllegalArgumentException | MappingException e) {
             loggingUtils.getLogger()
-                .error("Failed to map order and item ready notification", e, logArgs);
+                    .error("Failed to map order and item ready notification", e, logArgs);
             throw e;
         }
     }

@@ -1,5 +1,11 @@
 package uk.gov.companieshouse.ordernotification.messageproducer;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,12 +17,6 @@ import uk.gov.companieshouse.logging.StructuredLogger;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MessageProducerTest {
@@ -48,7 +48,8 @@ class MessageProducerTest {
     @Test
     void testSendMessageMarshalsEntityIntoAvroAndProducesKafkaMessage() throws Exception {
         // Given
-        when(messageFactory.createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC)).thenReturn(message);
+        when(messageFactory.createMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE,
+                TestConstants.KAFKA_TOPIC)).thenReturn(message);
 
         // When
         messageProducerUnderTest.sendMessage(emailSend, TestConstants.ORDER_NOTIFICATION_REFERENCE, TestConstants.KAFKA_TOPIC);

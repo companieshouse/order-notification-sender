@@ -23,8 +23,8 @@ class ItemGroupProcessedSendLogger {
     }
 
     @Pointcut("execution(public void "
-        + "uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendEmailSender.handleMessage(..)) "
-        + "&& args(message)")
+            + "uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.ItemGroupProcessedSendEmailSender.handleMessage(..)) "
+            + "&& args(message)")
     void handleMessage(Message<ItemGroupProcessedSend> message) {
         // Pointcut
     }
@@ -42,6 +42,6 @@ class ItemGroupProcessedSendLogger {
         final Map<String, Object> logMap = loggingUtils.getMessageHeadersAsMap(message);
         loggingUtils.logIfNotNull(logMap, ITEM_ID, message.getPayload().getItem().getId());
         loggingUtils.getLogger().info("'" + message.getHeaders().get("kafka_receivedTopic") +
-            "' message processing completed", logMap);
+                "' message processing completed", logMap);
     }
 }

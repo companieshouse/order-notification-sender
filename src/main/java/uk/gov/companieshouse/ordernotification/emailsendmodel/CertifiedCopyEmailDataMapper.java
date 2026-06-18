@@ -2,7 +2,6 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -14,6 +13,7 @@ import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
 @Component
 public class CertifiedCopyEmailDataMapper {
+
     private final Map<DeliveryTimescaleApi, String> deliveryMappings;
     private final FilingHistoryDescriptionProviderService providerService;
     private final EmailConfiguration emailConfiguration;
@@ -43,6 +43,6 @@ public class CertifiedCopyEmailDataMapper {
                         filingHistoryDocumentApi.getFilingHistoryDescription(),
                         filingHistoryDocumentApi.getFilingHistoryDescriptionValues()))
                 .withFee("£" + filingHistoryDocumentApi.getFilingHistoryCost())
-            .build();
+                .build();
     }
 }

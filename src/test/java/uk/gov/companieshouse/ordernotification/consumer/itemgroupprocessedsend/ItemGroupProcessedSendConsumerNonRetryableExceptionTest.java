@@ -13,7 +13,6 @@ import static uk.gov.companieshouse.ordernotification.fixtures.TestConstants.SAM
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -34,7 +33,6 @@ import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
 import uk.gov.companieshouse.itemgroupprocessedsend.ItemGroupProcessedSend;
 import uk.gov.companieshouse.ordernotification.config.ItemGroupProcessedSendTestConfig;
 import uk.gov.companieshouse.ordernotification.emailsender.NonRetryableFailureException;
@@ -42,12 +40,12 @@ import uk.gov.companieshouse.ordernotification.emailsender.NonRetryableFailureEx
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @EmbeddedKafka(
-    topics = {"${kafka.topics.item-group-processed-send}",
-        "${kafka.topics.item-group-processed-send}-retry",
-        "${kafka.topics.item-group-processed-send}-error",
-        "${kafka.topics.item-group-processed-send}-invalid"},
-    controlledShutdown = true,
-    partitions = 1
+        topics = {"${kafka.topics.item-group-processed-send}",
+                "${kafka.topics.item-group-processed-send}-retry",
+                "${kafka.topics.item-group-processed-send}-error",
+                "${kafka.topics.item-group-processed-send}-invalid"},
+        controlledShutdown = true,
+        partitions = 1
 )
 @TestPropertySource(locations = "classpath:application-stubbed.properties")
 @Import(ItemGroupProcessedSendTestConfig.class)
@@ -84,7 +82,7 @@ class ItemGroupProcessedSendConsumerNonRetryableExceptionTest {
 
         //when
         testProducer.send(new ProducerRecord<>(
-            mainTopicName, 0, System.currentTimeMillis(), SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND));
+                mainTopicName, 0, System.currentTimeMillis(), SAME_PARTITION_KEY, ITEM_GROUP_PROCESSED_SEND));
         if (!latch.await(30L, TimeUnit.SECONDS)) {
             fail("Timed out waiting for latch");
         }

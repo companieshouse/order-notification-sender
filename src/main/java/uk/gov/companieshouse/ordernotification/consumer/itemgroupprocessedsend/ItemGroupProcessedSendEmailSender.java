@@ -15,7 +15,7 @@ public class ItemGroupProcessedSendEmailSender implements ItemGroupProcessedSend
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public ItemGroupProcessedSendEmailSender(Logger logger,
-        ApplicationEventPublisher applicationEventPublisher) {
+            ApplicationEventPublisher applicationEventPublisher) {
         this.logger = logger;
         this.applicationEventPublisher = applicationEventPublisher;
     }

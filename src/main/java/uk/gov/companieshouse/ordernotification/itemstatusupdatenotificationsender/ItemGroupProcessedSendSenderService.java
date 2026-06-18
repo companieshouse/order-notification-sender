@@ -24,16 +24,15 @@ public class ItemGroupProcessedSendSenderService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     public ItemGroupProcessedSendSenderService(
-        OrderResourceItemReadyNotificationEnricher orderEnricher, LoggingUtils loggingUtils,
-        ApplicationEventPublisher applicationEventPublisher) {
+            OrderResourceItemReadyNotificationEnricher orderEnricher, LoggingUtils loggingUtils,
+            ApplicationEventPublisher applicationEventPublisher) {
         this.orderEnricher = orderEnricher;
         this.loggingUtils = loggingUtils;
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
     /**
-     * Handles an item group item status update notification by enriching it with data fetched from
-     * the orders API.
+     * Handles an item group item status update notification by enriching it with data fetched from the orders API.
      *
      * @param itemReadyNotification The ItemGroupProcessedSend message being processed.
      */
@@ -45,14 +44,14 @@ public class ItemGroupProcessedSendSenderService {
         try {
             final EmailSend emailSend = orderEnricher.enrich(orderUri, itemReadyNotification);
             loggingUtils.getLogger().debug(
-                "Successfully enriched item group item status update; notifying email sender",
-                loggerArgs);
+                    "Successfully enriched item group item status update; notifying email sender",
+                    loggerArgs);
             applicationEventPublisher.publishEvent(
-                new SendItemReadyEmailEvent(orderUri, itemReadyNotification.getItem().getId(),
-                    emailSend));
+                    new SendItemReadyEmailEvent(orderUri, itemReadyNotification.getItem().getId(),
+                            emailSend));
         } catch (RetryableErrorException e) {
             loggingUtils.getLogger()
-                .error("Failed to enrich item group item status update", e, loggerArgs);
+                    .error("Failed to enrich item group item status update", e, loggerArgs);
             throw e;
         }
     }

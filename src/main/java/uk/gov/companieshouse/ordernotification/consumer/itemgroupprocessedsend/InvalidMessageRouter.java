@@ -12,8 +12,7 @@ import uk.gov.companieshouse.logging.Logger;
 import uk.gov.companieshouse.logging.LoggerFactory;
 
 /**
- * Routes a message to the invalid letter topic if a non-retryable error has been thrown during
- * message processing.
+ * Routes a message to the invalid letter topic if a non-retryable error has been thrown during message processing.
  */
 public class InvalidMessageRouter implements ProducerInterceptor<String, ItemGroupProcessedSend> {
 
@@ -28,16 +27,16 @@ public class InvalidMessageRouter implements ProducerInterceptor<String, ItemGro
 
     @Override
     public ProducerRecord<String, ItemGroupProcessedSend> onSend(
-        ProducerRecord<String, ItemGroupProcessedSend> producerRecord) {
+            ProducerRecord<String, ItemGroupProcessedSend> producerRecord) {
         if (messageFlags.isRetryable()) {
             messageFlags.destroy();
             return producerRecord;
         } else {
             final ItemGroupProcessedSend message = producerRecord.value();
             LOGGER.error("Producing invalid message " + message + " to topic "
-                + invalidMessageTopic + ".", getLogMap(message));
+                    + invalidMessageTopic + ".", getLogMap(message));
             return new ProducerRecord<>(this.invalidMessageTopic, producerRecord.key(),
-                producerRecord.value());
+                    producerRecord.value());
         }
     }
 

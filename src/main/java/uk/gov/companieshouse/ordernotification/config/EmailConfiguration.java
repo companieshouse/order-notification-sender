@@ -1,17 +1,17 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import java.util.Objects;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
-
-import java.util.Objects;
 
 @Configuration
 @PropertySource("classpath:application.properties")
 @ConfigurationProperties(prefix = "email")
 @Component
 public class EmailConfiguration implements MessageTypeConfigProvider {
+
     private String dateFormat;
     private String senderAddress;
     private String paymentDateFormat;
@@ -112,11 +112,16 @@ public class EmailConfiguration implements MessageTypeConfigProvider {
             return false;
         }
         EmailConfiguration that = (EmailConfiguration) o;
-        return dispatchDays == that.dispatchDays && Objects.equals(dateFormat, that.dateFormat) && Objects.equals(senderAddress, that.senderAddress) && Objects.equals(paymentDateFormat, that.paymentDateFormat) && Objects.equals(applicationId, that.applicationId) && Objects.equals(confirmationMessage, that.confirmationMessage) && Objects.equals(messageId, that.messageId) && Objects.equals(messageType, that.messageType) && Objects.equals(filingHistoryDateFormat, that.filingHistoryDateFormat) && Objects.equals(chsUrl, that.chsUrl);
+        return dispatchDays == that.dispatchDays && Objects.equals(dateFormat, that.dateFormat) && Objects.equals(senderAddress,
+                that.senderAddress) && Objects.equals(paymentDateFormat, that.paymentDateFormat) && Objects.equals(applicationId,
+                that.applicationId) && Objects.equals(confirmationMessage, that.confirmationMessage) && Objects.equals(messageId,
+                that.messageId) && Objects.equals(messageType, that.messageType) && Objects.equals(filingHistoryDateFormat,
+                that.filingHistoryDateFormat) && Objects.equals(chsUrl, that.chsUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dateFormat, senderAddress, paymentDateFormat, applicationId, confirmationMessage, dispatchDays, messageId, messageType, filingHistoryDateFormat, chsUrl);
+        return Objects.hash(dateFormat, senderAddress, paymentDateFormat, applicationId, confirmationMessage, dispatchDays,
+                messageId, messageType, filingHistoryDateFormat, chsUrl);
     }
 }

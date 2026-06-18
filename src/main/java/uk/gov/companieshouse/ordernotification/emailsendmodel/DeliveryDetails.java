@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class DeliveryDetails {
+
     private final String addressLine1;
     private final String addressLine2;
     private final String country;
@@ -74,6 +75,7 @@ public class DeliveryDetails {
     }
 
     static class DeliveryDetailsBuilder {
+
         private String addressLine1;
         private String addressLine2;
         private String country;

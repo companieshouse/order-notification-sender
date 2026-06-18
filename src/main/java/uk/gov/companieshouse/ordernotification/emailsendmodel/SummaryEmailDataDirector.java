@@ -1,10 +1,9 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.Objects;
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.ordernotification.emailsender.NonRetryableFailureException;
-
-import java.util.Objects;
 
 public class SummaryEmailDataDirector {
 
@@ -16,7 +15,7 @@ public class SummaryEmailDataDirector {
 
     public void map(OrdersApi ordersApi) {
         converter.mapOrder(ordersApi);
-        for (BaseItemApi itemApi: ordersApi.getItems()) {
+        for (BaseItemApi itemApi : ordersApi.getItems()) {
             String kind = itemApi.getKind();
             if (Kind.CERTIFICATE.toString().equals(kind)) {
                 converter.mapCertificate(itemApi);

@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class Certificate {
+
     private final String id;
     private final String companyNumber;
     private final String certificateType;
@@ -10,7 +11,8 @@ public class Certificate {
     private final Integer quantity;
     private final String fee;
 
-    public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, Integer quantity, String fee) {
+    public Certificate(String id, String companyNumber, String certificateType, String deliveryMethod, Integer quantity,
+            String fee) {
         this.id = id;
         this.companyNumber = companyNumber;
         this.certificateType = certificateType;
@@ -38,6 +40,7 @@ public class Certificate {
     public String getFee() {
         return fee;
     }
+
     public Integer getQuantity() {
         return quantity;
     }
@@ -47,6 +50,7 @@ public class Certificate {
     }
 
     static class CertificateBuilder implements Cloneable {
+
         private String id;
         private String certificateType;
         private String companyNumber;

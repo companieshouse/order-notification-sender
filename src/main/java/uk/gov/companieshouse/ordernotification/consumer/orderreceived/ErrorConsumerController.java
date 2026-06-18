@@ -12,6 +12,7 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 @Component
 public class ErrorConsumerController {
+
     private final Logger logger;
     private final LoggingUtils loggingUtils;
     private final String errorGroup;
@@ -20,10 +21,10 @@ public class ErrorConsumerController {
     private final KafkaListenerEndpointRegistry registry;
 
     public ErrorConsumerController(Logger logger, LoggingUtils loggingUtils,
-                                   @Value("${kafka.topics.order-received-error-group}") String errorGroup,
-                                   @Value("${kafka.topics.order-received-error}") String errorTopic,
-                                   PartitionOffset partitionOffset,
-                                   KafkaListenerEndpointRegistry registry) {
+            @Value("${kafka.topics.order-received-error-group}") String errorGroup,
+            @Value("${kafka.topics.order-received-error}") String errorTopic,
+            PartitionOffset partitionOffset,
+            KafkaListenerEndpointRegistry registry) {
         this.logger = logger;
         this.loggingUtils = loggingUtils;
         this.errorGroup = errorGroup;

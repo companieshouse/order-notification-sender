@@ -1,20 +1,20 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.MissingImageDeliveryItemOptionsApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 @Component
 public class MissingImageDeliveryEmailDataMapper {
+
     private final FilingHistoryDescriptionProviderService providerService;
     private final EmailConfiguration emailConfiguration;
 
     public MissingImageDeliveryEmailDataMapper(FilingHistoryDescriptionProviderService providerService,
-                                               EmailConfiguration emailConfiguration) {
+            EmailConfiguration emailConfiguration) {
         this.providerService = providerService;
         this.emailConfiguration = emailConfiguration;
     }

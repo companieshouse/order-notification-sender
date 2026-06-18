@@ -1,17 +1,17 @@
 package uk.gov.companieshouse.ordernotification.emailsendmodel;
 
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
-
-import java.util.Map;
 
 /**
  * Maps {@link CertificateTypeApi} objects to human readable strings.
  */
 @Component
 public class CertificateTypeMapper {
+
     private final Map<CertificateTypeApi, String> certificateTypeMappings;
 
     @Autowired
@@ -25,7 +25,7 @@ public class CertificateTypeMapper {
      * @param certificateType An enum of certificate types
      * @return A string representation of the type
      */
-    public String mapCertificateType(CertificateTypeApi certificateType){
+    public String mapCertificateType(CertificateTypeApi certificateType) {
         return certificateTypeMappings.get(certificateType);
     }
 }

@@ -14,6 +14,7 @@ import uk.gov.companieshouse.logging.Logger;
 @Aspect
 @Component
 class OrderReceivedErrorConsumerAspect {
+
     private CountDownLatch beforeProcessOrderReceivedEventLatch;
     private CountDownLatch afterOrderConsumedEventLatch;
     private final Logger logger;

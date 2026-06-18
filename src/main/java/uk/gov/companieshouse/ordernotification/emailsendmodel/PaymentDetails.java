@@ -3,6 +3,7 @@ package uk.gov.companieshouse.ordernotification.emailsendmodel;
 import java.util.Objects;
 
 public class PaymentDetails {
+
     private final String paymentReference;
     private final String amountPaid;
     private final String paymentDate;
@@ -30,6 +31,7 @@ public class PaymentDetails {
     }
 
     static class PaymentDetailsBuilder {
+
         private String paymentReference;
         private String amountPaid;
         private String paymentDate;

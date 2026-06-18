@@ -41,8 +41,9 @@ public class LoggingUtils {
 
     /**
      * Creates a log map containing the required details to track the production of a message to a Kafka topic.
-     * @param acknowledgedMessage the {@link RecordMetadata} the metadata for a record that has been acknowledged by
-     *                            the server when a message has been produced to a Kafka topic.
+     *
+     * @param acknowledgedMessage the {@link RecordMetadata} the metadata for a record that has been acknowledged by the server
+     *                            when a message has been produced to a Kafka topic.
      * @return the log map populated with Kafka message production details
      */
     public Map<String, Object> createLogMapWithAcknowledgedKafkaMessage(final RecordMetadata acknowledgedMessage) {
@@ -103,13 +104,13 @@ public class LoggingUtils {
     public static Map<String, Object> getLogMap(final ItemGroupProcessedSend message) {
         final Item item = message.getItem();
         return new DataMap.Builder()
-            .orderId(message.getOrderNumber())
-            .groupItem(message.getGroupItem())
-            .itemId(item.getId())
-            .status(item.getStatus())
-            .digitalDocumentLocation(item.getDigitalDocumentLocation())
-            .build()
-            .getLogMap();
+                .orderId(message.getOrderNumber())
+                .groupItem(message.getGroupItem())
+                .itemId(item.getId())
+                .status(item.getStatus())
+                .digitalDocumentLocation(item.getDigitalDocumentLocation())
+                .build()
+                .getLogMap();
     }
 
 }

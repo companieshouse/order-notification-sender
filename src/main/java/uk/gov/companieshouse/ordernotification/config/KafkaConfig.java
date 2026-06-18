@@ -1,5 +1,9 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.ENABLE_IDEMPOTENCE;
+import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.INVALID_MESSAGE_TOPIC;
+import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.MESSAGE_FLAGS;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -33,8 +37,6 @@ import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.I
 import uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.MessageFlags;
 import uk.gov.companieshouse.orders.OrderReceived;
 
-import static uk.gov.companieshouse.ordernotification.consumer.itemgroupprocessedsend.InvalidMessageRouter.*;
-
 @Configuration
 @EnableKafka
 public class KafkaConfig {
@@ -43,7 +45,7 @@ public class KafkaConfig {
     private final Logger logger;
 
     public KafkaConfig(@Value("${spring.kafka.bootstrap-servers}") String brokerAddresses,
-        Logger logger) {
+            Logger logger) {
         this.brokerAddresses = brokerAddresses;
         this.logger = logger;
     }
@@ -56,13 +58,13 @@ public class KafkaConfig {
     @Bean
     public ConsumerFactory<String, OrderReceived> orderReceivedConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
-            new MessageDeserialiser<>(OrderReceived.class));
+                new MessageDeserialiser<>(OrderReceived.class));
     }
 
     @Bean
     public ConsumerFactory<String, ItemGroupProcessedSend> itemGroupProcessedSendConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs(), new StringDeserializer(),
-            new MessageDeserialiser<>(ItemGroupProcessedSend.class));
+                new MessageDeserialiser<>(ItemGroupProcessedSend.class));
     }
 
     @Bean
@@ -95,9 +97,11 @@ public class KafkaConfig {
         if (brokerAddresses != null && !brokerAddresses.isEmpty()) {
             config.setBrokerAddresses(brokerAddresses.split(","));
         } else {
-            throw new ProducerConfigException("Broker addresses for kafka broker missing, check if environment variable KAFKA_BROKER_ADDR is configured. " +
-                    "[Hint: The property 'kafka.broker.addresses' uses the value of this environment variable in live environments " +
-                    "and that of 'spring.embedded.kafka.brokers' property in test.]");
+            throw new ProducerConfigException(
+                    "Broker addresses for kafka broker missing, check if environment variable KAFKA_BROKER_ADDR is configured. " +
+                            "[Hint: The property 'kafka.broker.addresses' uses the value of this environment variable in live environments "
+                            +
+                            "and that of 'spring.embedded.kafka.brokers' property in test.]");
         }
         config.setRoundRobinPartitioner(true);
         config.setAcks(Acks.WAIT_FOR_ALL);
@@ -122,54 +126,54 @@ public class KafkaConfig {
     // it is swallowed by spring/spring-kafka to which our exception types would be meaningless.
     @SuppressWarnings("squid:S112")
     public ProducerFactory<String, ItemGroupProcessedSend> producerFactory(
-        @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
-        MessageFlags messageFlags,
-        @Value("${kafka.topics.item-group-processed-send.invalid_message_topic}") String invalidMessageTopic) {
+            @Value("${spring.kafka.bootstrap-servers}") String bootstrapServers,
+            MessageFlags messageFlags,
+            @Value("${kafka.topics.item-group-processed-send.invalid_message_topic}") String invalidMessageTopic) {
 
         final Map<String, Object> producerFactoryConfig = new HashMap<>();
         producerFactoryConfig.put(
-            org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-            bootstrapServers);
+                org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                bootstrapServers);
         producerFactoryConfig.put(org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG,
-            "all");
+                "all");
         producerFactoryConfig.put(
-            org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-            StringSerializer.class);
+                org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class);
         producerFactoryConfig.put(
-            org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-            StringSerializer.class);
+                org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class);
         producerFactoryConfig.put(
-            org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
-            InvalidMessageRouter.class.getName());
+                org.apache.kafka.clients.producer.ProducerConfig.INTERCEPTOR_CLASSES_CONFIG,
+                InvalidMessageRouter.class.getName());
         producerFactoryConfig.put(MESSAGE_FLAGS, messageFlags);
         producerFactoryConfig.put(INVALID_MESSAGE_TOPIC, invalidMessageTopic);
         producerFactoryConfig.put(ENABLE_IDEMPOTENCE, false);
 
         return new DefaultKafkaProducerFactory<>(
-            producerFactoryConfig,
-            new StringSerializer(),
-            (topic, data) -> {
-                try {
-                    return new SerializerFactory().getSpecificRecordSerializer(
-                            ItemGroupProcessedSend.class)
-                        .toBinary(data); //creates a leading space
-                } catch (SerializationException e) {
-                    final DataMap dataMap = new DataMap.Builder()
-                        .topic(topic)
-                        .kafkaMessage(data.toString())
-                        .build();
-                    logger.error("Caught SerializationException serializing kafka message: "
-                            + e.getMessage(),
-                        dataMap.getLogMap());
-                    throw new RuntimeException(e);
+                producerFactoryConfig,
+                new StringSerializer(),
+                (topic, data) -> {
+                    try {
+                        return new SerializerFactory().getSpecificRecordSerializer(
+                                        ItemGroupProcessedSend.class)
+                                .toBinary(data); //creates a leading space
+                    } catch (SerializationException e) {
+                        final DataMap dataMap = new DataMap.Builder()
+                                .topic(topic)
+                                .kafkaMessage(data.toString())
+                                .build();
+                        logger.error("Caught SerializationException serializing kafka message: "
+                                        + e.getMessage(),
+                                dataMap.getLogMap());
+                        throw new RuntimeException(e);
+                    }
                 }
-            }
         );
     }
 
     @Bean
     public KafkaTemplate<String, ItemGroupProcessedSend> kafkaTemplate(
-        ProducerFactory<String, ItemGroupProcessedSend> producerFactory) {
+            ProducerFactory<String, ItemGroupProcessedSend> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
 }

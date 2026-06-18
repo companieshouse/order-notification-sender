@@ -23,6 +23,7 @@ import uk.gov.companieshouse.ordernotification.logging.LoggingUtils;
 
 @ExtendWith(MockitoExtension.class)
 class ItemGroupProcessedSendLoggerTest {
+
     @Mock
     private Message<ItemGroupProcessedSend> message;
 

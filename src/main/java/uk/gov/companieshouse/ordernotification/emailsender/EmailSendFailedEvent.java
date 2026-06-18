@@ -1,9 +1,8 @@
 package uk.gov.companieshouse.ordernotification.emailsender;
 
+import java.util.Objects;
 import uk.gov.companieshouse.ordernotification.eventmodel.EventSourceRetrievable;
 import uk.gov.companieshouse.ordernotification.eventmodel.OrderIdentifiable;
-
-import java.util.Objects;
 
 /**
  * Raised if an error occurs when publishing an email message.

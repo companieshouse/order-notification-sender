@@ -11,7 +11,7 @@ public class LoggingUtilsConfiguration {
     public static final String APPLICATION_NAMESPACE = "order-notification-sender";
 
     @Bean
-    Logger getLogger(){
+    Logger getLogger() {
         return LoggerFactory.getLogger(APPLICATION_NAMESPACE);
     }
 

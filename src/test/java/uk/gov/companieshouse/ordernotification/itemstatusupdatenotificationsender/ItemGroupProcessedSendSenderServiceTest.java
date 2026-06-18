@@ -68,8 +68,8 @@ class ItemGroupProcessedSendSenderServiceTest {
 
         // then
         verify(logger).debug(
-            eq("Successfully enriched item group item status update; notifying email sender"),
-            any());
+                eq("Successfully enriched item group item status update; notifying email sender"),
+                any());
 
         verify(applicationEventPublisher).publishEvent(any(SendItemReadyEmailEvent.class));
     }
@@ -79,16 +79,16 @@ class ItemGroupProcessedSendSenderServiceTest {
 
         // given
         when(orderEnricher.enrich(anyString(), eq(event))).thenThrow(
-            new RetryableErrorException("Test exception", new Throwable("Test throwable")));
+                new RetryableErrorException("Test exception", new Throwable("Test throwable")));
         when(loggingUtils.getLogger()).thenReturn(logger);
         when(event.getItem()).thenReturn(item);
 
         // when and then
         final RetryableErrorException exception = assertThrows(RetryableErrorException.class,
-            () -> itemGroupProcessedSendSenderService.handleEvent(event));
+                () -> itemGroupProcessedSendSenderService.handleEvent(event));
 
         verify(logger).error(eq("Failed to enrich item group item status update"), eq(exception),
-            anyMap());
+                anyMap());
         assertThat(exception.getMessage(), is("Test exception"));
         assertThat(exception.getCause().getMessage(), is("Test throwable"));
     }

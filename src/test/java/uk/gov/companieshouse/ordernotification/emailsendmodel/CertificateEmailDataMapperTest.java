@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import uk.gov.companieshouse.api.model.order.item.BaseItemApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateItemOptionsApi;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
@@ -34,12 +32,11 @@ class CertificateEmailDataMapperTest {
             .withQuantity(TestConstants.QUANTITY);
 
 
-
     private static final Certificate.CertificateBuilder mappedCertificate = Certificate.builder()
             .withId(TestConstants.CERTIFICATE_ID)
             .withCompanyNumber(TestConstants.COMPANY_NUMBER)
             .withFee(TestConstants.ORDER_VIEW)
-             .withQuantity(TestConstants.QUANTITY);
+            .withQuantity(TestConstants.QUANTITY);
 
     private static final ItemBuilder incorporation = standardCertificate.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.STANDARD)
@@ -92,8 +89,10 @@ class CertificateEmailDataMapperTest {
 
     static Stream<Arguments> getArguments() {
         return Stream.of(
-                Arguments.of("Map certificate of incorporation with standard delivery", expectationsBuilder(incorporation, mappedIncorporation)),
-                Arguments.of("Map certificate of dissolution with express delivery", expectationsBuilder(dissolution, mappedDissolution))
+                Arguments.of("Map certificate of incorporation with standard delivery",
+                        expectationsBuilder(incorporation, mappedIncorporation)),
+                Arguments.of("Map certificate of dissolution with express delivery",
+                        expectationsBuilder(dissolution, mappedDissolution))
         );
     }
 
@@ -106,6 +105,7 @@ class CertificateEmailDataMapperTest {
     }
 
     static class ExpectationsBuilder {
+
         private final ItemBuilder itemBuilder;
         private final Certificate.CertificateBuilder certificateBuilder;
 

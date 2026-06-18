@@ -4,8 +4,7 @@ import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
 import uk.gov.companieshouse.ordernotification.orders.service.OrdersResponseException;
 
 /**
- * An enrichment that fetches a resource using a provided order reference number and maps it to
- * {@link EmailSend email data}.
+ * An enrichment that fetches a resource using a provided order reference number and maps it to {@link EmailSend email data}.
  */
 public interface OrderNotificationEnrichable {
 

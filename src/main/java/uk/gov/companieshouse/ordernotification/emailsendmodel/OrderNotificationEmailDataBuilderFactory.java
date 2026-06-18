@@ -14,9 +14,9 @@ public class OrderNotificationEmailDataBuilderFactory {
     private final EmailConfiguration emailConfiguration;
 
     public OrderNotificationEmailDataBuilderFactory(CertificateEmailDataMapper certificateEmailDataMapper,
-                                                    CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper,
-                                                    MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper,
-                                                    EmailConfiguration emailConfiguration) {
+            CertifiedCopyEmailDataMapper certifiedCopyEmailDataMapper,
+            MissingImageDeliveryEmailDataMapper missingImageDeliveryEmailDataMapper,
+            EmailConfiguration emailConfiguration) {
         this.certificateEmailDataMapper = certificateEmailDataMapper;
         this.certifiedCopyEmailDataMapper = certifiedCopyEmailDataMapper;
         this.missingImageDeliveryEmailDataMapper = missingImageDeliveryEmailDataMapper;
@@ -34,15 +34,15 @@ public class OrderNotificationEmailDataBuilderFactory {
     }
 
     OrderNotificationDataConvertable newConverter(final ItemGroupProcessedSend itemReadyNotification,
-        final ItemReadyEmailConfiguration itemReadyEmailConfig) {
+            final ItemReadyEmailConfiguration itemReadyEmailConfig) {
         return new ItemReadyNotificationEmailDataConverter(
-            new ItemReadyNotificationEmailData(),
-            this.certificateEmailDataMapper,
-            this.certifiedCopyEmailDataMapper,
-            this.missingImageDeliveryEmailDataMapper,
-            this.emailConfiguration,
-            itemReadyEmailConfig,
-            itemReadyNotification
+                new ItemReadyNotificationEmailData(),
+                this.certificateEmailDataMapper,
+                this.certifiedCopyEmailDataMapper,
+                this.missingImageDeliveryEmailDataMapper,
+                this.emailConfiguration,
+                itemReadyEmailConfig,
+                itemReadyNotification
         );
     }
 

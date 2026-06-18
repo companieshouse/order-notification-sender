@@ -29,6 +29,7 @@ import uk.gov.companieshouse.ordernotification.fixtures.TestConstants;
 
 @ExtendWith(MockitoExtension.class)
 class CertifiedCopyEmailDataMapperTest {
+
     private static final BaseItemBuilder baseCertifiedCopy = baseItemBuilder()
             .withId(TestConstants.CERTIFIED_COPY_ID)
             .withCompanyNumber(TestConstants.COMPANY_NUMBER)
@@ -36,26 +37,26 @@ class CertifiedCopyEmailDataMapperTest {
 
     private static final CertifiedCopy.CertifiedCopyBuilder mappedBaseCertifiedCopy =
             CertifiedCopy.builder()
-                .withId(TestConstants.CERTIFIED_COPY_ID)
-                .withCompanyNumber(TestConstants.COMPANY_NUMBER)
-                .withDateFiled(TestConstants.MAPPED_FILING_HISTORY_DATE)
-                .withType(TestConstants.FILING_HISTORY_TYPE)
-                .withDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION)
-                .withFee(TestConstants.ORDER_VIEW);
+                    .withId(TestConstants.CERTIFIED_COPY_ID)
+                    .withCompanyNumber(TestConstants.COMPANY_NUMBER)
+                    .withDateFiled(TestConstants.MAPPED_FILING_HISTORY_DATE)
+                    .withType(TestConstants.FILING_HISTORY_TYPE)
+                    .withDescription(TestConstants.MAPPED_FILING_HISTORY_DESCRIPTION)
+                    .withFee(TestConstants.ORDER_VIEW);
 
     private static final BaseItemBuilder standardDelivery = baseCertifiedCopy.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.STANDARD);
 
     private static final CertifiedCopy.CertifiedCopyBuilder mappedStandardDelivery =
             mappedBaseCertifiedCopy.clone()
-                .withDeliveryMethod(TestConstants.MAPPED_STANDARD_DELIVERY_TEXT);
+                    .withDeliveryMethod(TestConstants.MAPPED_STANDARD_DELIVERY_TEXT);
 
     private static final BaseItemBuilder expressDelivery = baseCertifiedCopy.clone()
             .withDeliveryTimescale(DeliveryTimescaleApi.SAME_DAY);
 
     private static final CertifiedCopy.CertifiedCopyBuilder mappedExpressDelivery =
             mappedBaseCertifiedCopy.clone()
-                .withDeliveryMethod(TestConstants.MAPPED_EXPRESS_DELIVERY_TEXT);
+                    .withDeliveryMethod(TestConstants.MAPPED_EXPRESS_DELIVERY_TEXT);
 
     private CertifiedCopyEmailDataMapper mapper;
 
@@ -90,7 +91,8 @@ class CertifiedCopyEmailDataMapperTest {
 
         // then
         assertEquals(expected, actual);
-        verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION, getFilingHistoryDescriptionValues());
+        verify(providerService).mapFilingHistoryDescription(TestConstants.FILING_HISTORY_DESCRIPTION,
+                getFilingHistoryDescriptionValues());
     }
 
     static Stream<Arguments> getArguments() {
@@ -102,7 +104,8 @@ class CertifiedCopyEmailDataMapperTest {
         );
     }
 
-    static ExpectationsBuilder expectationsBuilder(BaseItemBuilder baseItemBuilder, CertifiedCopy.CertifiedCopyBuilder certifiedCopyBuilder) {
+    static ExpectationsBuilder expectationsBuilder(BaseItemBuilder baseItemBuilder,
+            CertifiedCopy.CertifiedCopyBuilder certifiedCopyBuilder) {
         return new ExpectationsBuilder(baseItemBuilder, certifiedCopyBuilder);
     }
 
@@ -111,6 +114,7 @@ class CertifiedCopyEmailDataMapperTest {
     }
 
     static class ExpectationsBuilder {
+
         private final BaseItemBuilder baseItemBuilder;
         private final CertifiedCopy.CertifiedCopyBuilder certifiedCopyBuilder;
 
@@ -129,6 +133,7 @@ class CertifiedCopyEmailDataMapperTest {
     }
 
     static class BaseItemBuilder implements Cloneable {
+
         private String id;
         private String companyNumber;
         private DeliveryTimescaleApi deliveryTimescale;
