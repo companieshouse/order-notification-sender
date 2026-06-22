@@ -11,9 +11,7 @@ public class OrderNotificationEmailData {
     private String orderId;
     private List<Certificate> certificates = new ArrayList<>();
     private List<CertifiedCopy> certifiedCopies = new ArrayList<>();
-    ;
     private List<MissingImageDelivery> missingImageDeliveries = new ArrayList<>();
-    ;
     private DeliveryDetails deliveryDetails;
     private PaymentDetails paymentDetails;
     private boolean hasStandardDelivery;
