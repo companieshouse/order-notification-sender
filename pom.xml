@@ -229,6 +229,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>io.opentelemetry.instrumentation</groupId>
+            <artifactId>opentelemetry-instrumentation-api-incubator</artifactId>
+            <version>${opentelemetry-instrumentation-bom.version}-alpha</version>
+        </dependency>
+
     </dependencies>
 
     <build>
