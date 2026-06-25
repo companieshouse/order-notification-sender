@@ -91,6 +91,12 @@
                 <artifactId>tomcat-embed-websocket</artifactId>
                 <version>11.0.22</version>
             </dependency>
+            <!-- required to override the version brought in by Spring Boot -->
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>3.9.2</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
