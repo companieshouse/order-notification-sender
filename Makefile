@@ -25,15 +25,15 @@ docker-image: clean
 
 .PHONY: test
 test: clean
-	mvn verify
+	  mvn verify -Dskip.unit.tests=false -Dskip.integration.tests=false
 
 .PHONY: test-unit
 test-unit: clean
-	mvn verify
+	  mvn verify -Dskip.unit.tests=false -Dskip.integration.tests=true
 
 .PHONY: test-integration
 test-integration: clean
-	mvn verify -Dskip.unit.tests=true
+	mvn verify -Dskip.unit.tests=true -Dskip.integration.tests=false
 
 .PHONY: package
 package:
