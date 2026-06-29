@@ -16,40 +16,37 @@ clean:
 .PHONY: build
 build:
 	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
-	mvn package -DskipTests=true
+	mvn package -Dmaven.test.skip
 	cp ./target/$(artifact_name)-$(version).jar ./$(artifact_name).jar
 
+.PHONY: docker-image
+docker-image: clean
+	mvn package -Dskip.unit.tests=true -Dskip.integration.tests=true jib:dockerBuild
+
 .PHONY: test
-test: test-unit
+test: clean
+	  mvn verify -Dskip.unit.tests=false -Dskip.integration.tests=false
 
 .PHONY: test-unit
 test-unit: clean
-	mvn test
+	  mvn verify -Dskip.unit.tests=false -Dskip.integration.tests=true
+
+.PHONY: test-integration
+test-integration: clean
+	mvn verify -Dskip.unit.tests=true -Dskip.integration.tests=false
 
 .PHONY: package
 package:
 ifndef version
 	$(error No version given. Aborting)
 endif
-	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
 	$(info Packaging version: $(version))
-	@test -s ./$(artifact_name).jar || { echo "ERROR: Service JAR not found"; exit 1; }
+	mvn versions:set -DnewVersion=$(version) -DgenerateBackupPoms=false
+	mvn package -Dmaven.test.skip
 	$(eval tmpdir:=$(shell mktemp -d build-XXXXXXXXXX))
-	cp ./$(artifact_name).jar $(tmpdir)/$(artifact_name).jar
+	cp ./target/$(artifact_name)-$(version).jar $(tmpdir)/$(artifact_name).jar
 	cd $(tmpdir); zip -r ../$(artifact_name)-$(version).zip *
 	rm -rf $(tmpdir)
 
 .PHONY: dist
-dist: clean build docker-build
-
-.PHONY: sonar
-sonar:
-	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar
-
-.PHONY: sonar-pr-analysis
-sonar-pr-analysis:
-	mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar -P sonar-pr-analysis
-
-.PHONY: docker-build
-docker-build: build
-	DOCKER_BUILDKIT=0 docker build -t $(repository_prefix)/$(artifact_name):$(version) .
+dist: clean build package
