@@ -31,6 +31,34 @@
         <!--Plugin-->
         <jib-maven-plugin>3.5.1</jib-maven-plugin>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
+        <sonar.exclusions>
+            **/config/ApplicationConfig.java,
+            **/config/EmailConfiguration.java,
+            **/config/EmailDataConfiguration.java,
+            **/emailsender/EmailSend.java,
+            **/emailsender/EmailSendFailedEvent.java,
+            **/emailsender/NonRetryableFailureException.java,
+            **/emailsender/SendEmailEvent.java,
+            **/emailsendmodel/CertificateAppointmentDetailsModel.java,
+            **/emailsendmodel/CertificateOrderNotificationModel.java,
+            **/emailsendmodel/DeliveryMethodTuple.java,
+            **/emailsendmodel/DocumentOrderNotificationModel.java,
+            **/emailsendmodel/FilingHistoryDetailsModel.java,
+            **/emailsendmodel/MappingException.java,
+            **/emailsendmodel/MissingImageOrderNotificationModel.java,
+            **/emailsendmodel/OrderModel.java,
+            **/errorhandler/ErrorHandlingFailureException.java,
+            **/ordernotificationsender/OrderEnrichmentFailedEvent.java,
+            **/ordernotificationsender/SendOrderNotificationEvent.java,
+            **/orders/service/OrdersResponseException.java,
+            **/orders/service/OrdersServiceException.java,
+            **/ordersconsumer/RetryableErrorException.java,
+            **/OrderNotificationApplication.java
+        </sonar.exclusions>
+        <argLine>
+            --add-opens java.base/java.util=ALL-UNNAMED
+            --add-opens java.base/java.lang=ALL-UNNAMED
+        </argLine>
     </properties>
     <dependencyManagement>
         <dependencies>
