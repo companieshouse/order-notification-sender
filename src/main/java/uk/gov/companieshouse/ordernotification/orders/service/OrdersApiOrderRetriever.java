@@ -1,8 +1,8 @@
 package uk.gov.companieshouse.ordernotification.orders.service;
 
 import java.util.Map;
-import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.error.ApiErrorResponseException;
@@ -46,7 +46,7 @@ class OrdersApiOrderRetriever implements OrderRetrievable {
                     exception.getMessage(),
                     exception.getStatusCode()
             );
-            if (exception.getStatusCode() != HttpStatus.SC_NOT_FOUND) {
+            if (exception.getStatusCode() != HttpStatus.NOT_FOUND.value()) {
                 loggingUtils.getLogger().info(message, logMap);
                 throw new OrdersResponseException(message, exception);
             } else {
