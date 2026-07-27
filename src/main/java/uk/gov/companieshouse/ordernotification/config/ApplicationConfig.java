@@ -1,20 +1,16 @@
 package uk.gov.companieshouse.ordernotification.config;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.json.JsonMapper;
 import uk.gov.companieshouse.api.InternalApiClient;
 import uk.gov.companieshouse.api.http.ApiKeyHttpClient;
 import uk.gov.companieshouse.api.model.order.item.CertificateTypeApi;
@@ -36,14 +32,13 @@ public class ApplicationConfig implements WebMvcConfigurer {
         return new SerializerFactory();
     }
 
-    @Bean
+    @Bean("snakeCaseMapper")
     ObjectMapper objectMapper() {
-        return new ObjectMapper()
-                .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL)
-                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-                .findAndRegisterModules();
+        return JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL)
+                        .withValueInclusion(JsonInclude.Include.NON_NULL))
+                .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                .build();
     }
 
     @Bean
@@ -76,7 +71,7 @@ public class ApplicationConfig implements WebMvcConfigurer {
 
     @Bean
     Supplier<InternalApiClient> internalApiClientSupplier(@Value("${chs.kafka.api.key}") final String chsKafkaApiKey,
-                                                          @Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
+            @Value("${chs.kafka.api.url}") final String chsKafkaApiUrl) {
         return () -> {
             InternalApiClient internalApiClient = new InternalApiClient(new ApiKeyHttpClient(chsKafkaApiKey));
             internalApiClient.setBasePath(chsKafkaApiUrl);

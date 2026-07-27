@@ -6,8 +6,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +13,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+
 import uk.gov.companieshouse.api.model.order.OrdersApi;
 import uk.gov.companieshouse.ordernotification.config.EmailConfiguration;
 import uk.gov.companieshouse.ordernotification.emailsender.EmailSend;
@@ -54,7 +55,7 @@ class OrdersApiDetailsMapperTest {
     private OrderNotificationEmailData emailData;
 
     @Test
-    void testMapToEmailSendSuccess() throws JsonProcessingException {
+    void testMapToEmailSendSuccess() {
         // given
         EmailSend expected = new EmailSend();
         expected.setEmailAddress("address");
@@ -85,10 +86,10 @@ class OrdersApiDetailsMapperTest {
     }
 
     @Test
-    void testMapToEmailSendFailure() throws JsonProcessingException {
+    void testMapToEmailSendFailure() {
         // given
         when(ordersApiWrapper.getOrdersApi()).thenReturn(ordersApi);
-        when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
+        when(objectMapper.writeValueAsString(any())).thenThrow(JacksonException.class);
         when(ordersApi.getReference()).thenReturn("12345");
         when(factory.newDirector(converter)).thenReturn(director);
         when(factory.newConverter()).thenReturn(converter);
