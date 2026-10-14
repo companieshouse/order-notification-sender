@@ -10,10 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 class OrderReceivedKafkaConsumerAspect {
 
-    private static CountDownLatch eventLatch = new CountDownLatch(0);
+    private CountDownLatch eventLatch = new CountDownLatch(0);
 
-    static void setEventLatch(CountDownLatch eventLatch) {
-        OrderReceivedKafkaConsumerAspect.eventLatch = eventLatch;
+    CountDownLatch getEventLatch() {
+        return eventLatch;
+    }
+
+    void setEventLatch(CountDownLatch eventLatch) {
+        this.eventLatch = eventLatch;
     }
 
     @Pointcut("execution(public void uk.gov.companieshouse.ordernotification.consumer." +
