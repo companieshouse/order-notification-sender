@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.gov.companieshouse</groupId>
         <artifactId>companies-house-parent</artifactId>
-        <version>2.1.14</version>
+        <version>3.0.0</version>
         <relativePath/>
     </parent>
     <properties>
@@ -19,20 +19,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!--Companies House-->
-        <ch-dependency-bom.version>0.1.15</ch-dependency-bom.version>
-        <ch-test-bom.version>0.1.15</ch-test-bom.version>
-        <private-api-sdk-java.version>7.2.0</private-api-sdk-java.version>
+        <ch-dependency-bom.version>0.1.30</ch-dependency-bom.version>
+        <ch-test-bom.version>0.1.30</ch-test-bom.version>
+        <private-api-sdk-java.version>7.2.38</private-api-sdk-java.version>
+        <!-- pinned as latest major upgrade v4.0.0 includes breaking changes to this repo -->
+        <ch-kafka.version>3.0.18</ch-kafka.version>
         <!--External-->
-        <opentelemetry-instrumentation.version>2.29.0</opentelemetry-instrumentation.version>
-        <spring.boot.version>4.1.0</spring.boot.version>
+        <opentelemetry-instrumentation.version>2.31.1</opentelemetry-instrumentation.version>
+        <spring.boot.version>4.1.1</spring.boot.version>
         <!--Test-->
         <org.hamcrest.version>3.0</org.hamcrest.version>
         <wiremock.version>3.13.2</wiremock.version>
         <!--Plugin-->
         <jib-maven-plugin.version>3.5.2</jib-maven-plugin.version>
         <maven-dependency-plugin.version>3.10.0</maven-dependency-plugin.version>
-        <maven-failsafe-plugin.version>3.5.6</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
+        <maven-failsafe-plugin.version>3.6.0</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
         <sonar.exclusions>
             **/config/ApplicationConfig.java,
             **/config/EmailConfiguration.java,
@@ -110,6 +112,13 @@
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
             <artifactId>ch-kafka</artifactId>
+            <version>${ch-kafka.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.xerial.snappy</groupId>
+                    <artifactId>snappy-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.gov.companieshouse</groupId>
@@ -178,6 +187,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-kafka-test</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.xerial.snappy</groupId>
+                    <artifactId>snappy-java</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
