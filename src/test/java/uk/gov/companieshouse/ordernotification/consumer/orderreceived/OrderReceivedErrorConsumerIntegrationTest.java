@@ -3,21 +3,22 @@ package uk.gov.companieshouse.ordernotification.consumer.orderreceived;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -28,23 +29,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-
 import uk.gov.companieshouse.ordernotification.config.KafkaConfig;
 import uk.gov.companieshouse.ordernotification.config.KafkaTopics;
 import uk.gov.companieshouse.ordernotification.config.TestConfig;
-import uk.gov.companieshouse.ordernotification.config.TestEnvironmentSetupHelper;
 import uk.gov.companieshouse.ordernotification.consumer.PartitionOffset;
 import uk.gov.companieshouse.orders.OrderReceived;
 
 @SpringBootTest
-@Import({ KafkaConfig.class, TestConfig.class })
+@Import({KafkaConfig.class, TestConfig.class})
 @TestPropertySource(locations = "classpath:application-stubbed.properties", properties = {
-        "uk.gov.companieshouse.order-notification-sender.error-consumer=true" })
+        "uk.gov.companieshouse.order-notification-sender.error-consumer=true"})
 @WireMockTest(httpPort = 8523)
 class OrderReceivedErrorConsumerIntegrationTest {
+
     private static int orderId = 123456;
 
     @Autowired
@@ -62,13 +59,6 @@ class OrderReceivedErrorConsumerIntegrationTest {
     @Autowired
     private ErrorConsumerController errorConsumerController;
 
-    @BeforeAll
-    static void before() {
-        TestEnvironmentSetupHelper.setEnvironmentVariable("API_URL", "http://localhost:8523");
-        TestEnvironmentSetupHelper.setEnvironmentVariable("CHS_API_KEY", "123");
-        TestEnvironmentSetupHelper.setEnvironmentVariable("PAYMENTS_API_URL", "http://localhost:8523");
-    }
-
     @BeforeEach
     void setup() {
         errorRecoveryOffset.reset();
@@ -83,7 +73,8 @@ class OrderReceivedErrorConsumerIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("orderReceivedFixturesProvider")
-    void testConsumesOrderReceivedFromErrorTopic(String fixtureFile) throws ExecutionException, InterruptedException, IOException {
+    void testConsumesOrderReceivedFromErrorTopic(String fixtureFile)
+            throws ExecutionException, InterruptedException, IOException {
         // given
         WireMock.stubFor(get(urlEqualTo(getOrderReference()))
                 .willReturn(aResponse()
@@ -92,6 +83,9 @@ class OrderReceivedErrorConsumerIntegrationTest {
                         .withBody(IOUtils.resourceToString(
                                 fixtureFile,
                                 StandardCharsets.UTF_8))));
+        WireMock.stubFor(post("/send-email")
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())));
         orderReceivedErrorConsumerAspect.setBeforeProcessOrderReceivedEventLatch(new CountDownLatch(1));
         orderReceivedErrorConsumerAspect.setAfterOrderConsumedEventLatch(new CountDownLatch(1));
 
